@@ -19,7 +19,7 @@ The cluster is automatically configured with features such as.
 - TLS support for all web interfaces
 
 To help navigating all the cluster components, a basic console web application is available.
-![Screenshot of console web application](https://raw.githubusercontent.com/SIDN/hadoop-provisioning-manager/master/docs/img/hpm-screenshot-impala.png)
+![Screenshot of console web application](https://github.com/SIDN/hadoop-provisioning-manager/blob/9ff36208aadb7adb633b0628f67d7eb5848608c5/docs/img/hpm-screenshot-impala.png)
 
 
 # Requirements
