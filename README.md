@@ -18,6 +18,10 @@ The cluster is automatically configured with features such as.
 - Authorization (Apache Ranger)
 - TLS support for all web interfaces
 
+To help navigating all the cluster components, a basic console web application is available.
+![Screenshot of console web application](https://raw.githubusercontent.com/SIDN/hadoop-provisioning-manager/master/docs/img/hpm-screenshot-impala.png)
+
+
 # Requirements
 
 - At least 5 physical/virtual servers for testing, 8 for production usage.
