@@ -1,6 +1,6 @@
 # SIDN Labs Hadoop Provisioning
 
-SIDN Labs Hadoop Provisioning is a set of tools to make is easier to deploy a Big Data analytics cluster. A management console is provided, to help administrators and users to navigate all the available services. The analytics cluster has support for well known components.
+SIDN Labs Hadoop Provisioning Manager is a set of tools to make is easier to deploy a Big Data analytics cluster. The analytics cluster has support for well known components.
 
 - Apache Hadoop
 - Apache Impala
@@ -18,7 +18,7 @@ The cluster is automatically configured with features such as.
 - Authorization (Apache Ranger)
 - TLS support for all web interfaces
 
-To help navigating all the cluster components, a basic console web application is available.
+ A management console is provided, to help administrators and users to navigate all the available services.
 ![Screenshot of console web application](https://github.com/SIDN/hadoop-provisioning-manager/blob/9ff36208aadb7adb633b0628f67d7eb5848608c5/docs/img/hpm-screenshot-impala.png)
 
 
