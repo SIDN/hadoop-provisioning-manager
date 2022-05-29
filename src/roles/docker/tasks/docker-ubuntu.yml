@@ -1,0 +1,31 @@
+- name: Update APT cache
+  apt:
+    update_cache: yes
+  become: yes
+    
+- name: Install required packages
+  apt:
+    name: 
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: present    
+  become: yes
+
+- name: Add the GPG key for the official Docker repository
+  shell: >
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -;
+      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+  become: yes
+
+- name: Install latest Docker
+  apt:
+    name: 
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+    update_cache: yes
+  become: yes
+

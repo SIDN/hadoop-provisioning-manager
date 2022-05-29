@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# Helper script for starting hadoop services 
+# Start name node with -rollingUpgrade option when UPGRADE is required
+# can also add additional startup options when so required
+
+# path to upgrade file
+HDFS_UPGRADE_FILE="{{ hadoop_etc_dir }}/UPGRADE"
+
+SERVICE=$1
+ENV=$2
+
+. {{ hadoop_etc_dir }}/$ENV
+
+if [ "$SERVICE" = "namenode" ] && [ -f "$HDFS_UPGRADE_FILE" ]; then
+  echo "Starting $SERVICE using -upgrade option"
+  {{ stack_root }}/hadoop-latest/bin/hdfs --daemon start $SERVICE -rollingUpgrade started
+else 
+  echo "Starting $SERVICE normally"
+  {{ stack_root }}/hadoop-latest/bin/hdfs --daemon start $SERVICE
+fi
+
+
+
+
+ 

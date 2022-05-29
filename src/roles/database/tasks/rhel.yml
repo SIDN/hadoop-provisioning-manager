@@ -1,0 +1,49 @@
+- name: Add Postgresql-{{ version.postgresql }} repository (RHEL)
+  yum:
+    name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+  become: yes
+    
+ - name: Add Postgresql-{{ version.postgresql }} repository (Ubuntu)
+   shell: >
+        # Create the file repository configuration:
+        echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/postgresql.list
+        # Import the repository signing key:
+        wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+        # Update the package lists:
+        apt-get update
+   become: yes
+     
+- name: Install required packages
+  ansible.builtin.package:
+    name:
+      - postgresql{{ version.postgresql }}-server
+      - postgresql{{ version.postgresql }}-libs
+      - postgresql{{ version.postgresql }}
+      - postgresql-jdbc
+      - python-psycopg2
+      - python3-psycopg2
+    state: latest
+  become: yes
+  
+- name: Create data directory {{ db_data_dir }}
+  file:
+    path: "{{ db_data_dir }}"
+    state: directory
+    owner: postgres
+    group: postgres
+  become: yes
+  when: not postgres_initialized.stat.exists
+    
+- name: Change datadir in service unit to {{ db_data_dir }}
+  ansible.builtin.lineinfile:
+    path: "/usr/lib/systemd/system/postgresql-{{ version.postgresql }}.service"
+    regexp: "Environment=PGDATA="
+    line: "Environment=PGDATA={{ db_data_dir }}"
+  become: yes
+  when: not postgres_initialized.stat.exists
+
+- name: Initialize PostgreSQL
+  shell: >
+    postgresql-{{ version.postgresql }}-setup initdb
+  become: yes
+  when: not postgres_initialized.stat.exists

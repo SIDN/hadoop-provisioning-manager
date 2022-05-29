@@ -1,0 +1,8 @@
+- hosts: console
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: nginx
+  tasks:
+    - name: "Stop {{ service_name }}"
+      include_tasks: shutdown/tasks/generic-service.yml    

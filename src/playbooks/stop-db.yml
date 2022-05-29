@@ -1,0 +1,10 @@
+# only stop db that is part of the cluster
+# an existing external db must be stopped out of bounds
+- hosts: database
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: postgresql-{{ version.postgresql }}
+  tasks:
+    - name: "Stop {{ service_name }}"
+      include_tasks: shutdown/tasks/generic-service.yml    

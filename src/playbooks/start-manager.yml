@@ -1,0 +1,11 @@
+- hosts: manager
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: "Start {{ service_name }}"
+      include_tasks: startup/tasks/generic-service.yml    
+      loop: 
+        - docker
+        - docker_reg
+      loop_control:
+        loop_var: service_name

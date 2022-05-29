@@ -1,0 +1,22 @@
+// Created on {{ ansible_date_time.iso8601 }}
+// Pushed to: {{  inventory_hostname }}
+
+QuorumServer {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  keyTab="{{ zookeeper_etc_dir }}/zookeeper.keytab"
+  storeKey=true
+  useTicketCache=false
+  debug=false
+  principal="zookeeper/{{ inventory_hostname }}@{{ kerberos_realm }}";
+};
+
+QuorumLearner {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  keyTab="{{ zookeeper_etc_dir }}/zookeeper.keytab"
+  storeKey=true
+  useTicketCache=false
+  debug=false
+  principal="zookeeper/{{ inventory_hostname }}@{{ kerberos_realm }}";
+};

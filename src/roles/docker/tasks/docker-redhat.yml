@@ -1,0 +1,26 @@
+- name: Add Docker-CE stable repo
+  yum_repository:
+    name: docker-ce-stable
+    description: Docker CE Stable Repo
+    baseurl: "{{ docker_repo.rhel79 }}"
+  become: yes
+  when: (ansible_distribution == "RedHat") 
+    
+#   become: yes
+- name: Remove conflicting container packages
+  ansible.builtin.package:
+    name:
+      - podman
+      - buildah
+    state: absent
+  become: yes
+  when: (ansible_distribution == "RedHat") 
+    
+- name: install package dependencies
+  ansible.builtin.package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+  become: yes

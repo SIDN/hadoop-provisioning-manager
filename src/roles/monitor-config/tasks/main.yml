@@ -1,0 +1,32 @@
+- name: Create Grafana configuration files
+  ansible.builtin.template:
+    src: "{{ item.name }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { name: 'grafana/datasources.yml.j2', dest: '{{ grafana_etc_dir }}/provisioning/datasources/datasources.yml' }
+    - { name: 'grafana/dashboards.yml.j2', dest: '{{ grafana_etc_dir }}/provisioning/dashboards/dashboards.yml' }
+    - { name: 'grafana/grafana.ini.j2', dest: '{{ grafana_etc_dir }}/grafana.ini' }
+  become: yes
+  
+- name: Copy Grafana dashboards
+  ansible.builtin.copy:
+    src: ../files/dashboards
+    dest: "{{ grafana_etc_dir }}/provisioning"
+  become: yes
+  
+  
+# create hash with with htpasswd util, the ansible password_hash
+# does not work, cannot find bcrypt. even after installing the required packages
+- name: Create Prometheus password hash 
+  shell: >
+    echo "{{ prometheus_password }}" | htpasswd -niBC 10 "" | tr -d ':\n'
+  register: prometheus_password_hash
+  
+- name: Create Prometheus configuration files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ prometheus_etc_dir}}/{{ item | basename | replace('.j2','') }}"
+  loop:
+    - prometheus/prometheus.yml.j2
+    - prometheus/web-config.yml.j2
+  become: yes

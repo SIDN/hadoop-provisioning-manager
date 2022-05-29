@@ -1,0 +1,10 @@
+# byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# other
+.DS_Store
+tls/*.jks
+
+.vault_pass
+vault_password_vars.yml

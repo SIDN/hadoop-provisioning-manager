@@ -1,0 +1,49 @@
+- hosts: yarn_timelineserver
+  remote_user: hadoop-mgr
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+  become: yes
+  vars:
+    service_name: yarn_timelineserver
+  tasks:
+    - name: "Create YARN Timeline Server HDFS directories"
+      shell: >
+        {{ stack_root }}/hadoop-latest/bin/create-hdfs-yarn-dir.sh
+      become: yes
+
+    - name: "Start {{ service_name }}"
+      include_tasks: startup/tasks/generic-service.yml           
+
+- hosts: yarn_resource_mgr
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: yarn_resourcemanager
+  tasks:
+    - name: "Start {{ service_name }}"
+      include_tasks: startup/tasks/generic-service.yml      
+            
+- hosts: hadoop
+  remote_user: hadoop-mgr
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+  become: yes
+  vars:
+    service_name: yarn_nodemanager
+  tasks:
+    # # create cgroup dir, this does not work correct with the normale "file" module
+    # # remove old cgroup directories, Yarn will reinitialze under the new directory
+    # - name: Create cgroup directory
+    #   ansible.builtin.shell: |
+    #     rm -rf {{ item }};
+    #     mkdir -p {{ item }};
+    #     chown {{ hadoop_os_user.yarn }}:{{ hadoop_os_group }} {{ item }}
+    #   loop:
+    #     - "/sys/fs/cgroup/cpu,cpuacct/hadoop-yarn"
+    #     - "/sys/fs/cgroup/memory/hadoop-yarn"
+    #   become: yes
+
+    - name: "Start {{ service_name }}"
+      include_tasks: startup/tasks/generic-service.yml     

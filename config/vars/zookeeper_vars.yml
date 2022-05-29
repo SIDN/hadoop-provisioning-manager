@@ -1,0 +1,41 @@
+# OS user to run zookeeper process
+zookeeper_os_user: zookeeper
+# Group used for zookeeper OS user
+zookeeper_os_group: hadoop
+
+# location of config files
+zookeeper_etc_dir: "{{ config_root }}/zookeeper"
+
+# Location of zookeeper logging
+zookeeper_log_dir: /var/log/zookeeper
+
+# data directory on zookeeper nodes
+zookeeper_data_dir: /data/1/zookeeper
+
+# Java heap size of zookeeper process (mb)
+zookeeper_heap_size_mb: 1024
+
+# additional java properties given to the JVM during startup
+zookeeper_jvm_props:
+  zookeeper.admin.enableServer: true
+  zookeeper.admin.serverPort: 8080
+
+# additional options to be added to zoo.cfg file    
+zookeeper_options:
+  clientPort: 2181
+  tickTime: 4000
+  initLimit: 30
+  syncLimit: 15
+  maxClientCnxns: 60
+  minSessionTimeout: 4000
+  maxSessionTimeout: 60000
+  autopurge.purgeInterval: 24
+  autopurge.snapRetainCount: 5
+
+# enable/disable Prometheus exporter
+zookeeper_metrics_enabled: true
+zookeeper_metrics_port: 7000
+
+# URL where to download Apache Zookeeper
+zookeeper_download_url: https://dlcdn.apache.org/zookeeper/zookeeper-{{ version.zookeeper }}/apache-zookeeper-{{ version.zookeeper }}-bin.tar.gz
+

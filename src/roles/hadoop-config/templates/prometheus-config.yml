@@ -1,0 +1,7 @@
+#
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }} 
+#
+# for cfg options see: https://github.com/prometheus/jmx_exporter
+
+startDelaySeconds: 0

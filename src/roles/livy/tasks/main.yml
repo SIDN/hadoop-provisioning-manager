@@ -1,0 +1,97 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ livy_os_group }}"
+    state: present
+  become: yes
+  
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ livy_os_user }}"
+    new_group: "{{ livy_os_group }}"
+  
+- name: Create cfg directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ livy_etc_dir }}"
+  become: yes
+  
+- name: Create livy directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ livy_os_user }}"
+    group: "{{ livy_os_group }}"
+  loop:
+    - "{{ livy_log_dir }}"
+    - /var/run/livy
+  become: yes
+    
+- name: Create Systemd services
+  ansible.builtin.template:
+    src: ../templates/systemd_livy_service.j2
+    dest: /etc/systemd/system/livy.service
+    mode: '0644'
+  become: yes
+  
+- name: Systemctl Reload Daemons
+  command: "systemctl daemon-reload"
+  become: yes
+  
+- name: Check if Apache Livy is already downloaded
+  stat:
+    path: "{{ download_root }}/apache-livy-{{ version.livy }}-incubating-SNAPSHOT-bin.zip"
+  register: stat_livy_src
+  delegate_to: localhost
+  connection: local
+    
+- name: Download Apache Livy
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - http://hadoop-build-rhel79.sidnlabs.nl/rel/apache-livy-{{ version.livy }}-incubating-SNAPSHOT-bin.zip
+  delegate_to: localhost
+  connection: local
+  when: not stat_livy_src.stat.exists
+  
+- name: Check if Livy is already on remote
+  stat:
+    path: "{{ cache_root }}/apache-livy-{{ version.livy }}-incubating-SNAPSHOT-bin.zip"
+  register: stat_remote_livy_src
+  
+- name: Copy Livy to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/apache-livy-{{ version.livy }}-incubating-SNAPSHOT-bin.zip"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  when: not stat_remote_livy_src.stat.exists
+  
+- name: Recursively remove Livy directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/apache-livy-{{ version.livy  }}-incubating-SNAPSHOT-bin'
+    state: absent
+  become: yes
+  
+- name: Extract Livy
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/apache-livy-{{ version.livy }}-incubating-SNAPSHOT-bin.zip"
+      remote_src: true
+      dest: "{{ stack_root }}"
+      creates: "{{ stack_root }}/apache-livy-{{ version.livy  }}-incubating-SNAPSHOT-bin"
+      owner: "{{ livy_os_user }}"
+      group: "{{ livy_os_group }}"
+  become: yes
+
+- name: Create symlink latest Livy version
+  file:
+      src: "{{ stack_root }}/apache-livy-{{ version.livy  }}-incubating-SNAPSHOT-bin"
+      dest: "{{ stack_root }}/apache-livy-latest"
+      state: link
+  become: yes
+    
+  

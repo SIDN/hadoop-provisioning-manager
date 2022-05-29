@@ -1,0 +1,11 @@
+- hosts: manager
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: "Stop {{ service_name }}"
+      include_tasks: shutdown/tasks/generic-service.yml    
+      loop: 
+        - docker_reg
+        - docker
+      loop_control:
+        loop_var: service_name

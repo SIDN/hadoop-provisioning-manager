@@ -1,0 +1,1143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.livy</groupId>
+  <artifactId>livy-main</artifactId>
+  <version>0.8.0-incubating-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Livy Project Parent POM</name>
+  <description>Livy Project</description>
+  <url>http://livy.incubating.apache.org/</url>
+
+  <parent>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>18</version>
+  </parent>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:apache/incubator-livy.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/incubator-livy.git</developerConnection>
+    <url>scm:git:git@github.com:apache/incubator-livy.git</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://issues.apache.org/jira/browse/LIVY</url>
+  </issueManagement>
+
+  <mailingLists>
+    <mailingList>
+      <name>Dev Mailing List</name>
+      <post>dev@livy.incubating.apache.org</post>
+      <subscribe>dev-subscribe@livy.incubating.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@livy.incubating.apache.org</unsubscribe>
+    </mailingList>
+
+    <mailingList>
+      <name>User Mailing List</name>
+      <post>user@livy.incubating.apache.org</post>
+      <subscribe>user-subscribe@livy.incubating.apache.org</subscribe>
+      <unsubscribe>user-unsubscribe@livy.incubating.apache.org</unsubscribe>
+    </mailingList>
+
+    <mailingList>
+      <name>Commits Mailing List</name>
+      <post>commits@livy.incubating.apache.org</post>
+      <subscribe>commits-subscribe@livy.incubating.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@livy.incubating.apache.org</unsubscribe>
+    </mailingList>
+  </mailingLists>
+
+  <properties>
+    <asynchttpclient.version>2.10.1</asynchttpclient.version>
+    <hadoop.version>3.3.1</hadoop.version>
+    <hadoop.scope>compile</hadoop.scope>
+    <spark.scala-2.11.version>2.4.5</spark.scala-2.11.version>
+    <spark.scala-2.12.version>3.2.0</spark.scala-2.12.version>
+    <spark.version>${spark.scala-2.12.version}</spark.version>
+    <hive.version>3.0.0</hive.version>
+    <commons-codec.version>1.9</commons-codec.version>
+    <httpclient.version>4.5.3</httpclient.version>
+    <httpcore.version>4.4.4</httpcore.version>
+    <jackson.version>2.10.1</jackson.version>
+    <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+    <jetty.version>9.3.24.v20180605</jetty.version>
+    <json4s.spark-2.11.version>3.5.3</json4s.spark-2.11.version>
+    <json4s.spark-2.12.version>3.5.3</json4s.spark-2.12.version>
+    <json4s.version>${json4s.spark-2.11.version}</json4s.version>
+    <junit.version>4.11</junit.version>
+    <libthrift.version>0.9.3</libthrift.version>
+    <kryo.version>4.0.2</kryo.version>
+    <metrics.version>3.1.0</metrics.version>
+    <mockito.version>1.10.19</mockito.version>
+    <netty.spark-2.11.version>4.1.17.Final</netty.spark-2.11.version>
+    <netty.spark-2.12.version>4.1.17.Final</netty.spark-2.12.version>
+    <netty.version>${netty.spark-2.11.version}</netty.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <py4j.version>0.10.7</py4j.version>
+    <scala-2.11.version>2.11.12</scala-2.11.version>
+    <scala-2.12.version>2.12.15</scala-2.12.version>
+    <scala.binary.version>2.12</scala.binary.version>
+    <scala.version>${scala-2.12.version}</scala.version>
+    <scalatest.version>3.0.8</scalatest.version>
+    <scalatra.version>2.6.5</scalatra.version>
+    <java.version>1.8</java.version>
+    <test.redirectToFile>true</test.redirectToFile>
+    <execution.root>${user.dir}</execution.root>
+    <spark.home>${execution.root}/dev/spark</spark.home>
+    <spark.bin.download.url>
+      https://dlcdn.apache.org/spark/spark-3.2.0/spark-3.2.0-bin-hadoop3.2.tgz
+    </spark.bin.download.url>
+    <spark.bin.name>spark-3.2.0-bin-hadoop3.2</spark.bin.name>
+    <!--  used for testing, NCSARequestLog use it for access log  -->
+    <livy.log.dir>${basedir}/target</livy.log.dir>
+
+    <!-- Set this to "true" to skip R tests. -->
+    <skipRTests>false</skipRTests>
+
+    <!-- Set this to "true" to skip PySpark3 tests. -->
+    <skipPySpark3Tests>false</skipPySpark3Tests>
+
+    <!-- Required for testing LDAP integration -->
+    <apacheds.version>2.0.0-M21</apacheds.version>
+    <ldap-api.version>1.0.0-M33</ldap-api.version>
+
+    <curator.version>2.7.1</curator.version>
+    <zookeeper.version>3.4.6</zookeeper.version>
+
+    <!--
+      Properties for the copyright header style checks. Modules that use the ASF header
+      should override the "copyright.header" property.
+    -->
+
+    <!--
+      Artifacts that should not be deployed to a maven repo should override the "skipDeploy"
+      property in their pom.
+    -->
+    <skipDeploy>false</skipDeploy>
+
+    <asf.copyright.header><![CDATA[/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */]]></asf.copyright.header>
+
+    <copyright.header>${asf.copyright.header}</copyright.header>
+
+    <MaxPermGen>512m</MaxPermGen>
+    <CodeCacheSize>512m</CodeCacheSize>
+
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <!-- This should be at top, it makes maven try the central repo first and then others and hence faster dep resolution -->
+      <name>Maven Repository</name>
+      <url>https://repo1.maven.org/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>apache-repo</id>
+      <name>Apache Repository</name>
+      <url>https://repository.apache.org/content/repositories/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <modules>
+    <module>api</module>
+    <module>assembly</module>
+    <module>client-common</module>
+    <module>client-http</module>
+    <module>core</module>
+    <module>core/scala-2.11</module>
+    <module>core/scala-2.12</module>
+    <module>coverage</module>
+    <module>examples</module>
+    <module>python-api</module>
+    <module>repl</module>
+    <module>repl/scala-2.11</module>
+    <module>repl/scala-2.12</module>
+    <module>rsc</module>
+    <module>scala</module>
+    <module>scala-api</module>
+    <module>scala-api/scala-2.11</module>
+    <module>scala-api/scala-2.12</module>
+    <module>server</module>
+    <module>test-lib</module>
+    <module>integration-test</module>
+  </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_${scala.binary.version}</artifactId>
+      <version>${scalatest.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scalatra</groupId>
+      <artifactId>scalatra-scalatest_${scala.binary.version}</artifactId>
+      <version>${scalatra.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.mockito</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.16</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.esotericsoftware</groupId>
+        <artifactId>kryo</artifactId>
+        <version>${kryo.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-scala_${scala.binary.version}</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${commons-codec.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.dropwizard.metrics</groupId>
+        <artifactId>metrics-core</artifactId>
+        <version>${metrics.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.dropwizard.metrics</groupId>
+        <artifactId>metrics-healthchecks</artifactId>
+        <version>${metrics.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-all</artifactId>
+        <version>${netty.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax.servlet-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-auth</artifactId>
+        <version>${hadoop.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-common</artifactId>
+        <version>${hadoop.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-common</artifactId>
+        <classifier>tests</classifier>
+        <version>${hadoop.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-client</artifactId>
+        <version>${hadoop.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-hdfs</artifactId>
+        <classifier>tests</classifier>
+        <version>${hadoop.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-yarn-api</artifactId>
+        <version>${hadoop.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-yarn-client</artifactId>
+        <version>${hadoop.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-yarn-common</artifactId>
+        <version>${hadoop.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-yarn-server-tests</artifactId>
+        <classifier>tests</classifier>
+        <version>${hadoop.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>${httpcore.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclient.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-core_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.eclipse.jetty.orbit</groupId>
+            <artifactId>javax.servlet</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-hive_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-launcher_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.spark-project.spark</groupId>
+            <artifactId>unused</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-repl_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-sql_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-streaming_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-yarn_${scala.binary.version}</artifactId>
+        <version>${spark.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-http</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-continuation</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-servlet</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-util</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-plus</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-security</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.json4s</groupId>
+        <artifactId>json4s_${scala.binary.version}</artifactId>
+        <version>${json4s.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.json4s</groupId>
+        <artifactId>json4s-ast_${scala.binary.version}</artifactId>
+        <version>${json4s.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.json4s</groupId>
+        <artifactId>json4s-core_${scala.binary.version}</artifactId>
+        <version>${json4s.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.json4s</groupId>
+        <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
+        <version>${json4s.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-compiler</artifactId>
+        <version>${scala.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>${scala.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-reflect</artifactId>
+        <version>${scala.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scalatra</groupId>
+        <artifactId>scalatra_${scala.binary.version}</artifactId>
+        <version>${scalatra.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scalatra</groupId>
+        <artifactId>scalatra-jetty_${scala.binary.version}</artifactId>
+        <version>${scalatra.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scalatra</groupId>
+        <artifactId>scalatra-json_${scala.binary.version}</artifactId>
+        <version>${scalatra.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scalatra</groupId>
+        <artifactId>scalatra-metrics_${scala.binary.version}</artifactId>
+        <version>${scalatra.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.scalatra</groupId>
+        <artifactId>scalatra-test_${scala.binary.version}</artifactId>
+        <version>${scalatra.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.py4j</groupId>
+        <artifactId>py4j</artifactId>
+        <version>${py4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.asynchttpclient</groupId>
+        <artifactId>async-http-client</artifactId>
+        <version>${asynchttpclient.version}</version>
+      </dependency>
+
+      <!-- we need a version > 1.7.13 because of SLF4J-324 -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.25</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.6</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.8</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.3.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>2.4.0</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.10</version>
+        </plugin>
+
+        <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>4.5.4</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+                <goal>testCompile</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>scala-compile-first</id>
+              <phase>process-resources</phase>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <scalaVersion>${scala.version}</scalaVersion>
+            <recompileMode>incremental</recompileMode>
+            <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
+            <args>
+              <arg>-unchecked</arg>
+              <arg>-deprecation</arg>
+              <arg>-feature</arg>
+            </args>
+            <javacArgs>
+              <javacArg>-source</javacArg>
+              <javacArg>${java.version}</javacArg>
+              <javacArg>-target</javacArg>
+              <javacArg>${java.version}</javacArg>
+              <javacArg>-Xlint:unchecked</javacArg>
+            </javacArgs>
+            <jvmArgs>
+              <jvmArg>-Xms1024m</jvmArg>
+              <jvmArg>-Xmx1024m</jvmArg>
+              <jvmArg>-XX:ReservedCodeCacheSize=${CodeCacheSize}</jvmArg>
+            </jvmArgs>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.1</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.19</version>
+          <configuration>
+            <environmentVariables>
+              <LIVY_TEST>true</LIVY_TEST>
+              <SPARK_HOME>${spark.home}</SPARK_HOME>
+              <LIVY_SPARK_VERSION>${spark.version}</LIVY_SPARK_VERSION>
+            </environmentVariables>
+            <systemProperties>
+              <java.awt.headless>true</java.awt.headless>
+              <java.io.tmpdir>${project.build.directory}/tmp</java.io.tmpdir>
+              <livy.environment>development</livy.environment>
+              <jacoco.args>${argLine}</jacoco.args>
+              <spark.ui.enabled>false</spark.ui.enabled>
+              <project.version>${project.version}</project.version>
+              <skipRTests>${skipRTests}</skipRTests>
+              <skipPySpark3Tests>${skipPySpark3Tests}</skipPySpark3Tests>
+            </systemProperties>
+            <redirectTestOutputToFile>${test.redirectToFile}</redirectTestOutputToFile>
+            <useFile>${test.redirectToFile}</useFile>
+            <argLine>${argLine} -Xmx2g</argLine>
+            <failIfNoTests>false</failIfNoTests>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.scalatest</groupId>
+          <artifactId>scalatest-maven-plugin</artifactId>
+          <version>2.0.0</version>
+          <configuration>
+            <environmentVariables>
+              <LIVY_TEST>true</LIVY_TEST>
+              <SPARK_HOME>${spark.home}</SPARK_HOME>
+              <LIVY_LOG_DIR>${livy.log.dir}</LIVY_LOG_DIR>
+              <LIVY_SPARK_VERSION>${spark.version}</LIVY_SPARK_VERSION>
+              <LIVY_SCALA_VERSION>${scala.binary.version}</LIVY_SCALA_VERSION>
+            </environmentVariables>
+            <systemProperties>
+              <java.awt.headless>true</java.awt.headless>
+              <java.io.tmpdir>${project.build.directory}/tmp</java.io.tmpdir>
+              <livy.environment>development</livy.environment>
+              <jacoco.args>${argLine}</jacoco.args>
+              <spark.ui.enabled>false</spark.ui.enabled>
+              <project.version>${project.version}</project.version>
+              <skipRTests>${skipRTests}</skipRTests>
+              <skipPySpark3Tests>${skipPySpark3Tests}</skipPySpark3Tests>
+            </systemProperties>
+            <stdout>D</stdout>
+            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+            <junitxml>.</junitxml>
+            <filereports>WDF TestSuite.txt</filereports>
+            <argLine>${argLine} -Xmx2g</argLine>
+          </configuration>
+          <executions>
+            <execution>
+              <id>test</id>
+              <goals>
+                <goal>test</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.12</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>1.5</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>1.13</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.0.0-M1</version>
+          <configuration>
+            <doctitle>Livy ${project.version} Java API</doctitle>
+            <windowtitle>Livy ${project.version} JavaDoc</windowtitle>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>com.googlecode.maven-download-plugin</groupId>
+          <artifactId>download-maven-plugin</artifactId>
+          <version>1.3.0</version>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>default-testCompile</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <rules>
+            <requireJavaVersion>
+              <version>${java.version}</version>
+            </requireJavaVersion>
+            <requireMavenVersion>
+              <version>[3.0.0,)</version>
+            </requireMavenVersion>
+          </rules>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <!-- Cleans up files that tests append to (because we have two test plugins). -->
+          <execution>
+            <id>pre-test-clean</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <delete file="${project.build.directory}/unit-tests.log" quiet="true" />
+                <delete dir="${project.build.directory}/jacoco" quiet="true" />
+                <delete dir="${project.build.directory}/tmp" quiet="true" />
+              </target>
+            </configuration>
+          </execution>
+          <!-- Create the temp directory to be  used by tests. -->
+          <execution>
+            <id>create-tmp-dir</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <mkdir dir="${project.build.directory}/tmp" />
+              </target>
+            </configuration>
+          </execution>
+          <!--
+            Copy the template scalastyle / checkstyle configuration and replace the copyright
+            header.
+          -->
+          <execution>
+            <id>setup-style-checker</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <copy file="${execution.root}/scalastyle.xml"
+                  tofile="${project.build.directory}/scalastyle.xml" />
+                <replace file="${project.build.directory}/scalastyle.xml"
+                  token="{{COPYRIGHT_HEADER}}"
+                  value="${copyright.header}" />
+                <copy file="${execution.root}/checkstyle.xml"
+                  tofile="${project.build.directory}/checkstyle.xml" />
+                <echo file="${project.build.directory}/checkstyle.header"
+                  message="${copyright.header}" />
+                <replace file="${project.build.directory}/checkstyle.xml"
+                  token="{{HEADER_FILE}}"
+                  value="${project.build.directory}/checkstyle.header" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.scalastyle</groupId>
+        <artifactId>scalastyle-maven-plugin</artifactId>
+        <version>0.8.0</version>
+        <configuration>
+          <verbose>false</verbose>
+          <failOnViolation>true</failOnViolation>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <failOnWarning>false</failOnWarning>
+          <sourceDirectory>${basedir}/src/main/scala</sourceDirectory>
+          <testSourceDirectory>${basedir}/src/test/scala</testSourceDirectory>
+          <configLocation>${project.build.directory}/scalastyle.xml</configLocation>
+          <outputFile>${basedir}/target/scalastyle-output.xml</outputFile>
+          <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+          <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.17</version>
+        <configuration>
+          <verbose>false</verbose>
+          <failOnViolation>true</failOnViolation>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <failOnWarning>false</failOnWarning>
+          <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+          <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+          <configLocation>${project.build.directory}/checkstyle.xml</configLocation>
+          <outputFile>${basedir}/target/checkstyle-output.xml</outputFile>
+          <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+          <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>${skipDeploy}</skip>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <configuration>
+          <outputDirectory>${project.build.directory}/jars</outputDirectory>
+          <useSubDirectoryPerType>false</useSubDirectoryPerType>
+          <includeScope>runtime</includeScope>
+          <silent>true</silent>
+          <overWriteReleases>true</overWriteReleases>
+          <overWriteSnapshots>true</overWriteSnapshots>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <append>true</append>
+              <destFile>${project.build.directory}/jacoco/main.exec</destFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludesFile>${execution.root}/.rat-excludes</excludesFile>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+     
+
+    </plugins>
+
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <profiles>
+    <profile>
+      <id>thriftserver</id>
+      <modules>
+        <module>thriftserver/server</module>
+        <module>thriftserver/session</module>
+        <module>thriftserver/client</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>spark-3.0</id>
+      <activation>
+        <property>
+          <name>spark-3.0</name>
+        </property>
+      </activation>
+      <properties>
+        <spark.scala-2.12.version>3.2.0</spark.scala-2.12.version>
+        <spark.scala-2.11.version>2.4.5</spark.scala-2.11.version>
+        <spark.version>${spark.scala-2.12.version}</spark.version>
+        <netty.spark-2.12.version>4.1.47.Final</netty.spark-2.12.version>
+        <netty.spark-2.11.version>4.1.47.Final</netty.spark-2.11.version>
+        <netty.version>${netty.spark-2.12.version}</netty.version>
+        <java.version>1.8</java.version>
+        <py4j.version>0.10.9</py4j.version>
+        <json4s.spark-2.11.version>3.5.3</json4s.spark-2.11.version>
+        <json4s.spark-2.12.version>3.6.6</json4s.spark-2.12.version>
+        <json4s.version>${json4s.spark-2.12.version}</json4s.version>
+        <spark.bin.download.url>
+          https://dlcdn.apache.org/spark/spark-3.2.0/spark-3.2.0-bin-hadoop3.2.tgz
+        </spark.bin.download.url>
+        <spark.bin.name>spark-3.2.0-bin-hadoop3.2</spark.bin.name>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>skip-parent-modules</id>
+      <activation>
+        <file>
+          <missing>src/main/resources/build.marker</missing>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>net.alchim31.maven</groupId>
+            <artifactId>scala-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <!-- This will search remote and local repos to generate THIRD-PARTY license file, make sure
+      livy artifacts existed in either remote or local repos, otherwise run mvn install before. -->
+      <id>generate-third-party</id>
+      <activation>
+        <property>
+          <name>generate-third-party</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <outputDirectory>${execution.root}</outputDirectory>
+              <thirdPartyFilename>THIRD-PARTY</thirdPartyFilename>
+              <sortArtifactByName>true</sortArtifactByName>
+              <fileTemplate>${execution.root}/dev/third-party-file.ftl</fileTemplate>
+              <useMissingFile>true</useMissingFile>
+              <missingFile>${execution.root}/dev/third-party-missing-license.properties</missingFile>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>aggregate-add-third-party</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>public-docs</id>
+      <activation>
+        <property>
+          <name>public-docs</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <failOnError>true</failOnError>
+              <excludePackageNames>*.test,*.example,*.client,*.annotations,*.rsc</excludePackageNames>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+
+</project>

@@ -1,0 +1,82 @@
+- name: Copy nginx.conf
+  ansible.builtin.template:
+    src: ../templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: '0644'
+    
+# create user/passwd for console website
+- name: Add console username and password to access file
+  community.general.htpasswd:
+    path: /etc/nginx/mgtm_console.htpasswd
+    name: '{{ mgmt_console_web_user }}'
+    password: '{{ mgmt_console_web_password }}'
+    mode: 0644
+
+- name: restart Nginx
+  ansible.builtin.systemd: 
+    name: nginx 
+    state: restarted
+  become: yes
+  
+- name: Create remote cache and deploy directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ mgtm_console_content_dir }}/service"
+    - "{{ mgtm_console_content_dir }}/help"
+    - "{{ mgtm_console_content_dir }}/css"
+    - "{{ mgtm_console_content_dir }}/js"
+    - "{{ mgtm_console_content_dir }}/img"
+  become: yes
+       
+- name: Copy CSS
+  copy:
+    src: "{{ item }}"
+    dest: "{{ mgtm_console_content_dir }}/css/"
+  with_fileglob:
+    - "../templates/app/css/*.css"
+    
+- name: Copy JS
+  copy:
+    src: "{{ item }}"
+    dest: "{{ mgtm_console_content_dir }}/js/"
+  with_fileglob:
+    - "../templates/app/js/*.js"
+    
+- name: Copy Images
+  copy:
+    src: "{{ item }}"
+    dest: "{{ mgtm_console_content_dir }}/img/"
+  with_fileglob:
+    - "../templates/app/img/*"
+
+- name: Generate HTML
+  vars:
+    json_label_map: "{{ lookup('file','../templates/app/label_map.json') | from_json }}"
+  ansible.builtin.template:
+    src: ../templates/app/index.html.j2
+    dest: "{{ mgtm_console_content_dir }}/{{ service_item.path }}/{{ service_item.name }}.html"
+  loop:
+    - { path: 'help', src: 'security.html.j2', name: 'security' }
+    - { path: 'help', src: 'about.html.j2', name: 'about' }
+    - { path: 'service', src: 'gateway.html.j2', name: 'gateway' }
+    - { path: 'service', src: 'hdfs.html.j2', name: 'hdfs' }
+    - { path: 'service', src: 'yarn.html.j2', name: 'yarn' }
+    - { path: 'service', src: 'hive.html.j2', name: 'hive' }
+    - { path: 'service', src: 'hue.html.j2', name: 'hue' }
+    - { path: 'service', src: 'impala.html.j2', name: 'impala' }
+    - { path: 'service', src: 'livy.html.j2', name: 'livy' }
+    - { path: 'service', src: 'monitor.html.j2', name: 'monitor' }
+    - { path: 'service', src: 'ranger.html.j2', name: 'ranger' }
+    - { path: 'service', src: 'solr.html.j2', name: 'solr' }
+    - { path: 'service', src: 'spark.html.j2', name: 'spark' }
+    - { path: 'service', src: 'zookeeper.html.j2', name: 'zookeeper' }
+    - { path: '', src: 'main.html.j2', name: 'index' }
+    - { path: '', src: 'hostmap.html.j2', name: 'hostmap' }
+    - { path: '', src: 'version.html.j2', name: 'version' }  
+    - { path: '', src: 'tools.html.j2', name: 'tools' }  
+  loop_control:
+    loop_var: service_item
+  become: yes

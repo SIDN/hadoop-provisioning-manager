@@ -1,0 +1,52 @@
+# Create a non-Kerberos proxy to allow prometheus to scrape
+# metrics from kerberos protected services
+
+- name: Install required python package(s)
+  ansible.builtin.package:
+    name:
+      - python3-requests-gssapi
+    state: latest
+  become: yes
+
+- name: Copy Exporter
+  ansible.builtin.copy:
+    src: ../files/prometheus-exporter/prometheus-generic-exporter.py
+    dest: "{{ stack_root }}/apache-impala-latest/bin/impala-prometheus-exporter.py"
+    mode: '0774'
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+  become: yes
+    
+- name: Create Proxy startup scripts
+  ansible.builtin.template:
+    src: "../templates/start-prometheus-proxy.sh.j2"
+    dest: "{{ stack_root }}/apache-impala-latest/bin/start-prometheus-proxy-{{ daemon }}.sh"
+    mode: '0774'
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+  loop:
+    - impalad
+    - catalogd
+    - statestored
+  loop_control:
+    loop_var: daemon
+  become: yes
+  when: not (inventory_hostname in groups['gateway']) 
+
+- name: Create Systemd services
+  ansible.builtin.template:
+    src: "../templates/systemd_prometheus_proxy_service.j2"
+    dest: "/etc/systemd/system/impala_prometheus_proxy_{{ daemon }}.service"
+    mode: '0644'
+  loop:
+    - impalad
+    - catalogd
+    - statestored
+  loop_control:
+    loop_var: daemon
+  become: yes
+  when: not (inventory_hostname in groups['gateway']) 
+
+- name: Systemctl Reload Daemon
+  shell: systemctl daemon-reload
+  become: yes

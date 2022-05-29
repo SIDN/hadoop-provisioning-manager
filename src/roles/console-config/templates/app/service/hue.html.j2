@@ -1,0 +1,19 @@
+<h1 class="display-6">Hue</h1>
+<p>
+<a href="https://gethue.com/">Hue</a> is an open source SQL Assistant for Databases & Data Warehouses
+</p>
+<p>
+You are automatically logged-in if an active Kerberos session is detected. Kerberos principal admin@{{ kerberos_realm }} is the default Hue administrator.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['hue'] %}
+    <tr>
+     <td>Hue</td>
+      <td><a href="https://{{ host }}:{{ hue_port }}" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,9 @@
+Client {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  storeKey=true
+  renewTicket=true
+  useTicketCache=false
+  keyTab="{{ ranger_etc_dir }}/ranger.keytab"
+  principal="ranger/{{ inventory_hostname }}@{{ kerberos_realm }}";
+};

@@ -1,0 +1,28 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Prometheus Server
+After=docker.service
+Requires=docker.service
+ 
+[Service]
+TimeoutStartSec=0
+Restart=always
+RestartSec=60
+Type=exec
+
+ExecStart=/usr/bin/docker run --rm --name prometheus-server \
+-p {{ prometheus_port }}:9090 \
+-v {{ prometheus_etc_dir }}:/etc/prometheus \
+-v {{ prometheus_data_dir }}:/prometheus \
+-v {{ tls_etc_dir }}:{{ tls_etc_dir }} prom/prometheus:v{{ version.prometheus }} \
+--config.file=/etc/prometheus/prometheus.yml \
+--web.config.file=/etc/prometheus/web-config.yml
+
+ExecStop=/usr/bin/docker stop prometheus-server
+
+[Install]
+WantedBy=multi-user.target
+
+

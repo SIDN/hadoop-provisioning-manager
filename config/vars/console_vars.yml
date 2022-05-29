@@ -1,0 +1,9 @@
+# Port where nginx will serve the console ui
+mgtm_console_port: 5000
+
+# location on management node where to save
+# the web content
+mgtm_console_content_dir: /var/www/{{ inventory_hostname }}
+
+mgmt_console_web_user: admin
+mgmt_console_web_password: "{{ vault_mgmt_console_password }}"

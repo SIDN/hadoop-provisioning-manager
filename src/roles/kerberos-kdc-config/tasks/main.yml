@@ -1,0 +1,30 @@
+- name: Determine OS specific config (RHEL)
+  set_fact:
+     fact_kdc_cfg_dir: /var/kerberos/krb5kdc
+     fact_kdc_db_dir: /var/kerberos/krb5kdc
+  when: ansible_distribution == 'RedHat'
+     
+- name: Determine OS specific config (Ubuntu)
+  set_fact:
+     fact_kdc_cfg_dir: /etc/krb5kdc
+     fact_kdc_db_dir: /var/lib/krb5kdc
+  when: ansible_distribution == 'Ubuntu'
+     
+- name: Create KDC config
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: 'kadm5.acl.j2', dest: '{{ fact_kdc_cfg_dir }}/kadm5.acl'}
+    - { src: 'kdc.conf.j2', dest: '{{ fact_kdc_cfg_dir }}/kdc.conf'}
+  become: yes
+  when: inventory_hostname in groups['kerberos_kdc']
+
+- name: Create krb5.conf
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { "src": "krb5.conf.j2", "dest": "/etc/krb5.conf", mode: '644'}
+  become: yes

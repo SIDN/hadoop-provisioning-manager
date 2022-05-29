@@ -1,0 +1,59 @@
+- name: Determine Ubuntu Java version (Ubuntu)
+  set_fact:
+      ubuntu_java_version: "{{  version.java.split('.')[1] }}"
+
+- name: Print the Java version (Ubuntu)
+  ansible.builtin.debug:
+    msg: Java version == {{ ubuntu_java_version }}
+
+- name: Install required packages (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - libpython2.7  # not sure anymore where we need this package for
+      - krb5-user
+      - postgresql-client
+      - libsasl2-modules-gssapi-mit
+      - openjdk-{{ ubuntu_java_version }}-jdk
+      - software-properties-common
+    state: latest
+  become: yes
+
+- name: Add Ubuntu Python repository for newer versions
+  apt_repository: 
+    repo: 'ppa:deadsnakes/ppa'
+    state: present
+  become: yes  
+
+- name: Install Python packages (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - python{{ version.python }}
+      - python3-pip
+      - python3-pexpect
+      - python{{ version.python }}-venv
+    state: latest
+  become: yes
+
+- name: Install pip and virtualenv Python2 packages (Ubuntu 18)
+  ansible.builtin.package:
+    name:
+      - python-virtualenv
+      - python-pip
+    state: latest
+  become: yes
+  when: ansible_distribution_major_version | int == 18
+  
+# install pip and virtualenv for py2 on ubuntu 20.04 is difficult, no std packages available
+# TODO: have manager node fetch the install script and push to cluster node  
+- name: Install pip and virtualenv Python2 packages (Ubuntu 20)
+  shell: >
+    curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output /tmp/get-pip.py;
+    /usr/bin/python2 /tmp/get-pip.py;
+    /usr/bin/python2 -m pip install -U pip virtualenv
+  become: yes
+  when: ansible_distribution_major_version | int == 20
+ 
+- name: Update pip and setuptools for Python3
+  shell: >
+      /usr/bin/python3 -m pip install -U pip setuptools
+  become: yes

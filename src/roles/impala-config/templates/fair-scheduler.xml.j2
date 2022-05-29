@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<allocations>
+    <queue name="root">
+        <weight>1.0</weight>
+        <schedulingPolicy>drf</schedulingPolicy>
+        <aclSubmitApps>*</aclSubmitApps>
+        <aclAdministerApps>*</aclAdministerApps>
+        {% for queue in impala_fair_scheduler_options %}
+        <queue name="{{ queue.name }}">
+            <maxResources>{{ queue.maxResources }} mb, 0 vcores</maxResources>
+            <weight>{{ queue.weight }}</weight>
+            <schedulingPolicy>{{ queue.schedulingPolicy }}</schedulingPolicy>
+            <aclSubmitApps>{{ queue.aclSubmitApps }}</aclSubmitApps>
+            <aclAdministerApps>{{ queue.aclAdministerApps }}</aclAdministerApps>
+        </queue>
+        {% endfor %}
+    </queue>
+    <defaultQueueSchedulingPolicy>drf</defaultQueueSchedulingPolicy>
+    <queuePlacementPolicy>
+        <rule name="specified" create="false"/>
+        <rule name="default" queue="impala"/>
+    </queuePlacementPolicy>
+</allocations>

@@ -1,0 +1,30 @@
+<configuration>
+<property>
+  <name>ssl.server.truststore.type</name>
+  <value>jks</value>
+</property>
+<property>
+  <name>ssl.server.truststore.location</name>
+  <value>{{ tls_etc_dir }}/{{ tls_remote_truststore }}</value>
+</property>
+<property>
+  <name>ssl.server.truststore.password</name>
+  <value>{{ tls_remote_truststore_password }}</value>
+</property>
+<property>
+    <name>ssl.server.keystore.type</name>
+    <value>jks</value>
+  </property>
+  <property>
+    <name>ssl.server.keystore.location</name>
+    <value>{{ tls_etc_dir }}/{{ tls_remote_truststore }}</value>
+  </property>
+  <property>
+    <name>ssl.server.keystore.keypassword</name>
+    <value>{{ tls_remote_truststore_password }}</value>
+  </property>
+  <property>
+    <name>ssl.server.keystore.password</name>
+    <value>{{ tls_remote_truststore_password }}</value>
+  </property>
+</configuration>

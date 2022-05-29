@@ -1,0 +1,82 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# HDFS 
+spark.hadoop.dfs.nameservices {{ hadoop_fs_nameservices }}
+spark.hadoop.dfs.ha.namenodes.{{ hadoop_fs_nameservices }} {{ groups['hdfs_primary_nn'] | union(groups['hdfs_secondary_nn']) | join(',') }}
+{% for host in groups['hdfs_primary_nn'] %}
+spark.hadoop.dfs.namenode.rpc-address.{{ host }} {{ host }}:8020
+{% endfor %}
+{% for host in groups['hdfs_secondary_nn'] %}
+spark.hadoop.dfs.namenode.rpc-address.{{ host }} {{ host }}:8020
+{% endfor %}
+spark.hadoop.dfs.client.failover.proxy.provider.{{ hadoop_fs_nameservices }} org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider
+
+# history server app log location
+spark.history.fs.logDirectory hdfs://{{ hadoop_fs_nameservices }}/{{ spark_history_fs_logdirectory }}
+spark.history.fs.cleaner.enabled true
+spark.eventLog.enabled true
+spark.eventLog.dir hdfs://{{ hadoop_fs_nameservices }}/{{ spark_history_fs_logdirectory }}
+spark.eventLog.rolling.enabled true
+spark.eventLog.rolling.maxFileSize 128m
+spark.history.fs.eventLog.rolling.maxFilesToRetain 100
+
+# Kerberos
+spark.kerberos.enabled true
+# do NOT set the principal/keytab for spark, otherwise spark-submit with --proxy-user
+# will not work from Hue/Livy. The Kerberos session must be created before starting sparksession.
+#spark.kerberos.principal spark/{{ inventory_hostname }}@{{ kerberos_realm }}
+#spark.kerberos.keytab {{ spark_etc_dir }}/spark.keytab
+
+spark.history.kerberos.enabled true
+spark.history.kerberos.principal spark/{{ inventory_hostname }}@{{ kerberos_realm }}
+spark.history.kerberos.keytab {{ spark_etc_dir }}/spark.keytab
+
+# SSL
+spark.ssl.enabled true
+spark.ui.port 0
+spark.ssl.keyStore {{ tls_etc_dir }}/{{ tls_remote_truststore }}
+spark.ssl.keyStorePassword {{ tls_remote_truststore_password }}
+spark.ssl.trustStore {{ tls_etc_dir }}/{{ tls_remote_truststore }}
+spark.ssl.trustStorePassword {{ tls_remote_truststore_password }}
+
+# hive warehouse dir on hdfs
+# see: https://spark.apache.org/docs/latest/sql-data-sources-hive-tables.html
+spark.sql.warehouse.dir /user/{{ hive_os_user }}/warehouse
+
+# dynamic executor cfg, the min,max and initial executors are
+# configured with var: spark_default_options
+spark.dynamicAllocation.enabled true
+spark.dynamicAllocation.shuffleTracking.enabled true
+spark.shuffle.service.enabled true
+
+# Python
+# make sure Spark uses Py3
+
+spark.pyspark.python {{ python_venv_dir }}/{{ spark_default_python_venv }}/bin/python3
+
+# mitigation for: CVE-2021-44228 (Log4jShell)
+# see: https://logging.apache.org/log4j/2.x/security.html
+spark.driver.extraJavaOptions -Dlog4j2.formatMsgNoLookups=true -Djava.net.preferIPv4Stack=true
+spark.executor.extraJavaOptions -Dlog4j2.formatMsgNoLookups=true -Djava.net.preferIPv4Stack=true
+
+# debug kerberos options
+#spark.yarn.appMasterEnv.HADOOP_JAAS_DEBUG true
+#spark.yarn.am.extraJavaOptions -Dsun.security.krb5.debug=true -Dsun.security.spnego.debug=true
+
+# performance tuning options
+spark.io.compression.codec snappy
+
+# use the shared jars that alredy have been uploaded to HDFS
+spark.yarn.jars hdfs://{{ hadoop_fs_nameservices }}/user/{{ spark_os_user }}/jars/{{ version.spark }}/*.jar
+
+spark.ssl.historyServer {{ spark_ports.history_ui_port }}
+
+# default permissions for new files:
+# allow read/write fow owner and readonly for others
+spark.hadoop.fs.permissions.umask-mode 022
+
+{% for key, value in spark_default_options.items() %}
+{{ key }} {{ value | string | lower }}
+{% endfor %}
+

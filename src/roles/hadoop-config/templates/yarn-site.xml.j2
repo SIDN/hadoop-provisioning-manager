@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Created on {{ ansible_date_time.iso8601 }}
+Pushed to: {{ inventory_hostname }}
+-->
+
+<configuration>
+  <property>
+    <name>yarn.acl.enable</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.admin.acl</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.address</name>
+    <value>{{ groups['yarn_resource_mgr'][0] }}:8032</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.admin.address</name>
+    <value>{{ groups['yarn_resource_mgr'][0] }}:8033</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.scheduler.address</name>
+    <value>{{ groups['yarn_resource_mgr'][0] }}:8030</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.resource-tracker.address</name>
+    <value>{{ groups['yarn_resource_mgr'][0] }}:8031</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.webapp.https.address</name>
+    <value>{{ groups['yarn_resource_mgr'][0] }}:{{ hadoop_web_tls_port.resourcemanager }}</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.webapp.https.address</name>
+    <value>{{ inventory_hostname }}:{{ hadoop_web_tls_port.nodemanager }}</value>
+  </property>
+  
+  <property>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value>{{ yarn_node_manager_logdir | map('regex_replace', '$', '/yarn/nm/container-log') | map('regex_replace', '^', 'file://') | join(',') }}</value>
+  </property>
+
+  <property>
+    <name>yarn.application.classpath</name>
+    <value>$HADOOP_CLIENT_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.scheduler.class</name>
+    <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.capacity.resource-calculator</name>
+    <value>org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.principal</name>
+    <value>yarn/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.principal</name>
+    <value>yarn/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>yarn.timeline-service.http-authentication.kerberos.principal</name>
+    <value>HTTP/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>yarn.timeline-service.principal</name>
+    <value>yarn/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.webapp.spnego-principal</name>
+    <value>HTTP/_HOST@{{ kerberos_realm }}</value>
+  </property>
+
+  {% if role_name != "client-config" %}
+  {# Do not include keytab in client config #}
+  
+  <property>
+    <name>yarn.resourcemanager.keytab</name>
+    <value>{{ hadoop_etc_dir }}/yarn.keytab</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.keytab</name>
+    <value>{{ hadoop_etc_dir }}/yarn.keytab</value>
+  </property>
+  <property>
+    <name>yarn.timeline-service.http-authentication.kerberos.keytab</name>
+    <value>{{ hadoop_etc_dir }}/http.keytab</value>
+  </property>
+  <property>
+    <name>yarn.timeline-service.keytab</name>
+    <value>{{ hadoop_etc_dir }}/yarn.keytab</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.webapp.spnego-keytab-file</name>
+    <value>{{ hadoop_etc_dir }}/http.keytab</value>
+  </property>
+  
+  {% endif %}
+
+  <property>
+    <name>yarn.resourcemanager.webapp.delegation-token-auth-filter.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.timeline-service.http-authentication.type</name>
+    <value>kerberos</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.container-executor.class</name>
+    <value>org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.group</name>
+    <value>{{ hadoop_os_group }}</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.resources-handler.class</name>
+    <value>org.apache.hadoop.yarn.server.nodemanager.util.CgroupsLCEResourcesHandler</value>
+  </property>
+  <!-- increase the interval of time the linux container executor should attempt cleaning up the cgroups entry  -->
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.cgroups.delete-delay-ms</name>
+    <value>1000</value>
+  </property>
+
+  <!--
+   Configuring strict container memory enforcement with cgroups
+   see: https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/NodeManagerCGroupsMemory.html
+   note: alse set "yarn.nodemanager.vmem-pmem-ratio" in vars/hadoop_vars.yml
+
+  <property>
+    <name>yarn.nodemanager.resource.memory.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.resource.memory.enforced</name>
+    <value>true</value>
+  </property>
+    -->
+ <!-- disable pmem and vmem checks, this is done using cgroups 
+ <property>
+    <name>yarn.nodemanager.linux-container-executor.cgroups.mount</name>
+    <value>true</value>
+ </property>
+ <property>
+  <name>yarn.nodemanager.linux-container-executor.cgroups.mount-path</name>
+  <value>/sys/fs/cgroup/</value>
+</property>
+
+  <property>
+    <name>yarn.nodemanager.pmem-check-enabled</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+  </property>  
+-->
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.path</name>
+    <value>{{ stack_root }}/hadoop-latest/bin/container-executor</value>
+  </property>
+  <property>
+    <name>yarn.http.policy</name>
+    <value>HTTPS_ONLY</value>
+  </property>
+  <property>
+   <name>yarn.webapp.ui2.enable</name>
+   <value>true</value>
+ </property>
+ <property>
+   <name>yarn.timeline-service.http-cross-origin.enabled</name>
+   <value>true</value>
+ </property> 
+ <property>
+   <name>yarn.resourcemanager.webapp.cross-origin.enabled</name>
+   <value>true</value>
+ </property> 
+ <property>
+   <name>yarn.nodemanager.webapp.cross-origin.enabled</name>
+   <value>true</value>
+ </property> 
+ <property>
+   <name>yarn.timeline-service.hostname</name>
+   <value>{{ groups['yarn_timelineserver'][0] }}</value>
+ </property> 
+ <property>
+  <name>yarn.timeline-service.enabled</name>
+  <value>true</value>
+</property>
+<property>
+ <name>yarn.timeline-service.webapp.https.address</name>
+ <value>{{ groups['yarn_timelineserver'][0] }}:{{ hadoop_web_tls_port.timelineserver }}</value>
+</property>
+<property>
+  <name>yarn.timeline-service.generic-application-history.enabled</name>
+  <value>true</value>
+</property>
+
+<property>
+  <name>yarn.resourcemanager.proxy-user-privileges.enabled</name>
+  <value>true</value>
+</property>
+ 
+<property>
+  <name>yarn.log-aggregation-enable</name>
+  <value>true</value>
+</property>
+
+<property>
+  <name>yarn.resourcemanager.system-metrics-publisher.enabled</name>
+  <value>true</value>
+</property>
+
+<property>
+  <name>yarn.timeline-service.version</name>
+  <value>1.5</value>
+</property>
+
+<property>
+  <name>yarn.timeline-service.entity-group-fs-store.active-dir</name>
+  <value>/user/{{ hadoop_os_user.yarn }}/timeline/active</value>
+</property>
+
+<property>
+  <name>yarn.timeline-service.entity-group-fs-store.done-dir</name>
+  <value>/user/{{ hadoop_os_user.yarn }}/timeline/done</value>
+</property>
+
+<property>
+	<name>yarn.timeline-service.store-class</name>
+	<value>org.apache.hadoop.yarn.server.timeline.EntityGroupFSTimelineStore</value>
+</property>
+
+<property>
+	<name>yarn.timeline-service.leveldb-timeline-store.path</name>
+	<value>{{ yarn_timeline_service_leveldb_timeline_store_path }}/yarn/ats/leveldb</value>
+</property>
+
+<property>
+    <name>yarn.timeline-service.entity-group-fs-store.summary-store</name>
+    <value>org.apache.hadoop.yarn.server.timeline.RollingLevelDBTimelineStore</value>
+</property>
+
+<property>
+    <name>yarn.nodemanager.remote-app-log-dir</name>
+    <value>/user/{{ hadoop_os_user.yarn }}/log</value>
+</property>
+
+<property>
+  <name>yarn.nodemanager.remote-app-log-dir-suffix</name>
+  <value>logs</value>
+</property>
+
+<property>
+  <name>yarn.log.server.url</name>
+  <value>{{ groups['yarn_timelineserver'][0] }}:{{ hadoop_web_tls_port.timelineserver }}/applicationhistory/logs</value>
+</property>
+
+<!-- 
+    add external shuffle service for Spark 
+    the jar is added to classpath HADOOP_CLASSPATH in yarn-env.sh
+-->
+
+<property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>spark_shuffle</value>
+</property>
+
+<property>
+    <name>yarn.nodemanager.aux-services.spark_shuffle.class</name>
+    <value>org.apache.spark.network.yarn.YarnShuffleService</value>
+</property>
+
+{% for key, value in yarn_site_options.items() %}
+<property>
+  <name>{{ key }}</name>
+  <value>{{ value | string | lower }}</value>
+</property>
+{% endfor %}
+
+</configuration>

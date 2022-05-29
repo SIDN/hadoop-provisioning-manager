@@ -1,0 +1,29 @@
+- hosts: kerberos_kdc
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  
+  tasks:
+    - name: Determine OS specific config (RHEL)
+      set_fact:
+         fact_kdc_service_name: krb5kdc
+         fact_admin_service_name: kadmin
+      when: ansible_distribution == 'RedHat'
+         
+    - name: Determine OS specific config (Ubuntu)
+      set_fact:
+         fact_kdc_service_name: krb5-kdc
+         fact_admin_service_name: krb5-admin-server
+      when: ansible_distribution == 'Ubuntu'
+      
+    - name: Start Kerberos KDC
+      vars:
+        service_name: '{{ fact_kdc_service_name }}'
+      include_tasks: startup/tasks/generic-service.yml    
+
+    - name: Start Kerberos kadmin
+      vars:
+        service_name: '{{ fact_admin_service_name }}'
+      include_tasks: startup/tasks/generic-service.yml    

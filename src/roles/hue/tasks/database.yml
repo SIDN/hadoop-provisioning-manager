@@ -1,0 +1,35 @@
+- name: Check if hue db exists
+  postgresql_query:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      query: >
+        SELECT datname 
+        FROM pg_database
+        WHERE datname = '{{ hue_db }}'
+  delegate_to: localhost
+  connection: local
+  
+- name: Create hue db user
+  postgresql_user:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      state: present
+      name: "{{ hue_db_user }}"
+      password: "{{ hue_db_password }}"
+  delegate_to: localhost
+  connection: local
+
+- name: Create hue database
+  postgresql_db:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      owner: "{{ hue_db_user }}"
+      state: present
+      name: "{{ hue_db }}"
+  delegate_to: localhost
+  connection: local
+
+# Hue schema will be created by Hue during startup

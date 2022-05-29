@@ -1,0 +1,158 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ solr_os_group }}"
+    state: present
+  become: yes
+
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ solr_os_user }}"
+    new_group: "{{ solr_os_group }}"
+          
+- name: Install required packages
+  ansible.builtin.package:
+    name:
+      - curl
+    state: latest
+  become: yes
+  
+- name: Create conf directory
+  file:
+    path: "{{ solr_etc_dir }}"
+    state: directory
+    mode: '0755'
+  become: yes
+    
+- name: Create data directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ solr_os_user }}"
+    group: "{{ solr_os_group }}"
+  loop:
+    - "{{ solr_log_dir }}"
+    - "{{ solr_home }}/ranger_audit_server/data"
+    - "{{ solr_home }}/ranger_audit_server/conf"
+  
+- name: Create solr Systemd services
+  ansible.builtin.template:
+    src:  ../templates/{{ item.src }}
+    dest: /etc/systemd/system/{{ item.name }}.service
+    mode: '0644'
+  loop:
+      - { src: 'systemd_solr_service.j2', name: 'solr'}
+  
+- name: Systemctl Reload Daemons
+  shell: systemctl daemon-reload
+  
+- name: Check if the Apache solr is already downloaded
+  stat:
+    path: "{{ download_root }}/solr-{{ version.solr }}.tgz"
+  register: stat_solr_src
+  delegate_to: localhost
+  connection: local
+  
+- name: Download Solr.
+  get_url:
+    url: "{{ solr_download_url }}"
+    dest: "{{ download_root }}"
+    force: false
+  delegate_to: localhost
+  connection: local
+  when: not stat_solr_src.stat.exists
+
+- name: Check if the Apache Solr src is already on remote
+  stat:
+    path: "{{ cache_root }}/solr-{{ version.solr }}.tgz"
+  register: stat_remote_solr_src
+
+- name: Copy Apache Solr to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/solr-{{ version.solr }}.tgz"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  when: not stat_remote_solr_src.stat.exists
+    
+- name: Recursively remove Solr directory
+  ansible.builtin.file:
+    path: '{{ cache_root }}/solr-{{ version.solr }}'
+    state: absent
+  become: yes
+  
+# extract in cache dir and then run install script
+- name: Extract Solr
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/solr-{{ version.solr }}.tgz"
+      remote_src: true
+      dest: "{{ cache_root }}"
+      creates: "{{ cache_root }}/solr-{{ version.solr }}"
+      owner: "{{ solr_os_user }}"
+      group: "{{ solr_os_group }}"
+
+# need to have the config now otherwise generating solr start will fail.  
+- name: Include Keberos configuration
+  include_tasks: ../solr-config/tasks/main.yml
+  
+- name: Run Solr installation script.
+  command: >
+    {{ cache_root }}/solr-{{ version.solr }}/bin/install_solr_service.sh
+    {{ cache_root }}/solr-{{ version.solr }}.tgz
+    -i {{ stack_root }}
+    -d {{ solr_home }}
+    -u {{ solr_os_user }}
+    -s solr
+    -p {{ solr_port }}
+    -f
+    -n
+  register: solr_install_script_result
+  become: yes
+  
+- name: Rename Solr installation directory.
+  command: mv {{ stack_root }}/solr {{ stack_root }}/solr-{{ version.solr }}
+  when: solr_install_script_result.changed
+  
+- name: Create symlink latest SOLR version
+  file:
+      src: "{{ stack_root }}/solr-{{ version.solr }}"
+      dest: "{{ stack_root }}/apache-solr-latest"
+      state: link
+  become: yes
+
+- name: Create Cleanup Script
+  ansible.builtin.template:
+    src: ../templates/{{ item.src }}
+    dest: '{{ item.dest }}'
+    mode: '755'
+    owner: '{{ solr_os_user }}'
+    group: '{{ solr_os_group}}'
+  loop:
+    - { src: 'solr-clean.sh.j2', dest: '{{ stack_root }}/apache-solr-latest/bin/solr-clean.sh'}
+  
+- name: Create Cron jon for cleaning SOLR index
+  ansible.builtin.cron:
+    name: 'Cleanup SOLR index'
+    minute: '0'
+    hour: '1'
+    user: '{{ solr_os_group }}'
+    job: '{{ stack_root }}/apache-solr-latest/bin/solr-clean.sh'
+    
+# Workaround for bug https://github.com/ansible/ansible-modules-core/issues/915.
+- name: Ensure solr is stopped (RHEL 7 workaround).
+  command: service solr stop
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_version.split(".")[0] == '7'
+    - solr_install_script_result.changed
+  failed_when: false
+  become: yes
+  
+  
+## create SOLR core for audit data
+- name: Run systemd daemon_reload (RHEL 7 workaround).
+  systemd:
+    name: solr
+    state: restarted
+    daemon_reload: true
+  become: yes

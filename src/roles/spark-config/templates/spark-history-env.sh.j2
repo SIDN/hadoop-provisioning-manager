@@ -1,0 +1,6 @@
+{% include './templates/spark-env.sh.j2' %}
+
+# Options for the Spark History server
+
+export SPARK_DAEMON_MEMORY={{ spark_heap.history_server }}
+

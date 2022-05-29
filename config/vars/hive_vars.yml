@@ -1,0 +1,33 @@
+# OS user to run hive process
+hive_os_user: hive
+# Group used for hive OS user
+hive_os_group: hadoop
+
+# Location of Hive configuration files
+hive_etc_dir: "{{ config_root }}/hive"
+# Location of Hive logging
+hive_log_dir: /var/log/hive
+
+# Hive metastore database options 
+hive_db: metastore
+hive_db_user: hive
+hive_db_password: "{{ vault_hive_db_password }}"
+
+# ports used by hive components
+hive_ports:
+  metastore: 9083
+    
+# The heap size for the hive components
+# config file: hive-env.sh
+hive_heap:
+  metastore: 4g
+  
+# Additional options are added to the hive-ste.xml config file
+hive_additional_options:
+  datanucleus.connectionPool.maxPoolSize: 10 # maximum number of connections in the connection pool.
+  hive.metastore.client.socket.timeout: 60
+  hive.metastore.connect.retries: 5
+
+
+# URL where to download Apache Hive package
+hive_download_url: https://dlcdn.apache.org/hive/hive-{{ version.hive }}/apache-hive-{{ version.hive }}-bin.tar.gz

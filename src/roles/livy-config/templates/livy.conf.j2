@@ -1,0 +1,35 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+livy.rsc.rpc.server.address = {{ inventory_hostname }}
+livy.environment = production
+livy.server.csrf-protection.enabled = true
+
+# let users submit requests for other users 
+livy.impersonation.enabled = true
+# make hue a superuser then it is allowed to submit jobs as another user (impersonation)
+livy.superusers = hue
+
+livy.server.auth.type = kerberos
+
+# krb for web ui SPNEGO
+livy.server.auth.kerberos.principal = HTTP/{{ groups['livy'][0] }}@{{ kerberos_realm }}
+livy.server.auth.kerberos.keytab = {{ livy_etc_dir }}/http.keytab
+
+# keystore contains tls pub cert and priv key
+livy.keystore = {{ tls_etc_dir }}/{{ tls_remote_truststore }}
+livy.keystore.password = {{ tls_remote_truststore_password }}
+
+# krb for launching spark jobs
+livy.server.launch.kerberos.principal = livy/{{ groups['livy'][0] }}@{{ kerberos_realm }}
+livy.server.launch.kerberos.keytab = {{ livy_etc_dir }}/livy.keytab
+
+# What spark master Livy sessions should use.
+livy.spark.master = yarn
+
+# What spark deploy mode Livy sessions should use.
+livy.spark.deploy-mode = cluster
+
+{% for key, value in livy_conf_options.items() %}
+{{ key }}={{ value }}
+{% endfor %}

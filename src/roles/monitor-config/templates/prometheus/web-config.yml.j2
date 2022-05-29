@@ -1,0 +1,9 @@
+# TLS and basic authentication configuration example.
+#
+# Additionally, a certificate and a key file are needed.
+tls_server_config:
+  cert_file: {{ tls_etc_dir }}/ssl.crt
+  key_file: {{ tls_etc_dir }}/ssl.key
+
+basic_auth_users:
+  {{ prometheus_user }}: {{ prometheus_password_hash.stdout }}

@@ -1,0 +1,9 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# Additional options, these are merged with the mail hue.ini config file
+# contents are merged to form the Hue configuration, which can
+# can be viewed on the Hue at http://<hue_host>:<port>/dump_config
+
+{{ hue_additional_cfg_block }}
+

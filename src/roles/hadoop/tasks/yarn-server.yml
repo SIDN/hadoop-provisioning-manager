@@ -1,0 +1,111 @@
+- name: Create log directory
+  file:
+    path: "{{ yarn_log_dir }}"
+    state: directory
+    owner: "{{ hadoop_os_user.yarn }}"
+    group: "{{ hadoop_os_group }}"
+  become: yes
+      
+# make sure yarn is allowd to create dir below cgroup mounts
+- name: Set correct cgroup directory permissions
+  shell: >
+    chown :{{ hadoop_os_group }} -R {{ item }};
+    chmod g+rwx -R {{ item }}
+  loop:
+    - "/sys/fs/cgroup/cpu,cpuacct"
+    - "/sys/fs/cgroup/memory"
+  become: yes
+  when: >
+    inventory_hostname in groups['hadoop']
+
+- name: Create Timeline data directory
+  file:
+    path: "{{ yarn_timeline_service_leveldb_timeline_store_path }}/yarn/ats/leveldb"
+    state: directory
+    owner: "{{ hadoop_os_user.yarn }}"
+    group: "{{ hadoop_os_group }}"
+    mode: '0755'
+  become: yes
+  when: >
+    inventory_hostname in groups['yarn_timelineserver']
+    
+- name: Create nodemanager container log directory
+  file:
+    path: "{{ item }}/yarn/nm/container-log"
+    state: directory
+    owner: "{{ hadoop_os_user.yarn }}"
+    group: "{{ hadoop_os_group }}"
+    mode: '0755'
+  loop: '{{ yarn_node_manager_logdir }}'
+  become: yes    
+  when: >
+    inventory_hostname in groups['hadoop']
+    
+- name: Create Systemd services
+  ansible.builtin.template:
+    src: ../templates/systemd_yarn_service.j2
+    dest: "/etc/systemd/system/yarn_{{ item }}.service"
+    mode: '0644'
+  loop:
+    - { name: 'resourcemanager', group_name: 'yarn_resource_mgr' }
+    - { name: 'nodemanager', group_name: 'hadoop' }
+    - { name: 'timelineserver', group_name: 'yarn_timelineserver' }
+  become: yes
+  when: inventory_hostname in groups[item.group_name]
+  
+- name: Systemctl Reload Daemons
+  shell: "systemctl daemon-reload"
+  become: yes
+  
+- name: Create create HDFS directory script
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.perm }}"
+    owner: root
+    group: "{{ hadoop_os_group }}"
+  loop:
+      - { name: 'create-hdfs-yarn-dir.sh.j2', dest: '{{ stack_root }}/hadoop-latest/bin/create-hdfs-yarn-dir.sh', perm: '0755', owner: "{{ hadoop_os_user.yarn }}", group: "{{ hadoop_os_group }}" }
+  become: yes
+        
+# make sure yarn container executor has correct permissions
+- name: Set correct file permissions
+  file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: '{{ stack_root }}/hadoop-latest/bin/container-executor', mode: '6050' }
+  become: yes
+  when: >
+    inventory_hostname in groups['hadoop']
+  
+# fix spark dependency on /metrics-core
+# later versions of Spark are not compatible with the metrics-core jar that comes with hadoop
+- name: Check if the metrics-core jar is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ yarn_metrics_core_download_url | basename }}"
+  register: stats_metrics_core
+  delegate_to: localhost
+  connection: local
+  when: version.hadoop | float < 3.2
+    
+- name: Download metrics-core jar
+  get_url:
+      url: "{{ yarn_metrics_core_download_url }}"
+      dest: "{{ download_root }}/{{ yarn_metrics_core_download_url | basename }}"
+  delegate_to: localhost
+  connection: local
+  when: (version.hadoop | float < 3.2) and not stats_metrics_core.stat.exists
+  
+# fix problem with older hadoop versions
+- name: Copy metrics-core jar to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ yarn_metrics_core_download_url | basename }}"
+    dest: "{{ stack_root }}/hadoop-latest/share/hadoop/yarn/lib"
+    mode: '0644'
+    owner: root
+    group: "{{ hadoop_os_group }}"
+  become: yes
+  when: version.hadoop | float < 3.2
+
+  

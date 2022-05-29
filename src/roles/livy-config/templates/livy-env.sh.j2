@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
+
+export LIVY_CONF_DIR={{ livy_etc_dir }}
+export LIVY_LOG_DIR={{ livy_log_dir }}
+export LIVY_PID_DIR=/var/run/livy
+export LIVY_SERVER_JAVA_OPTS="-Xms{{ livy_heap }} -Xmx{{ livy_heap }}"
+
+export HADOOP_HOME={{ stack_root }}/hadoop-latest
+export HADOOP_CONF_DIR={{ hadoop_etc_dir }}
+export SPARK_HOME={{ stack_root }}/apache-spark-latest
+export SPARK_CONF_DIR={{ spark_etc_dir }}
+export PATH=$PATH:{{ stack_root }}/apache-spark-latest/bin
+
+export PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.10.9.2-src.zip:$SPARK_HOME/python/:$PYTHONPATH
+
+# mitigation for: CVE-2021-44228 (Log4jShell)
+# see: https://logging.apache.org/log4j/2.x/security.html
+export LIVY_SERVER_JAVA_OPTS="-Dlog4j2.formatMsgNoLookups=true -Djava.net.preferIPv4Stack=true"

@@ -1,0 +1,44 @@
+<h1 class="display-6">Gateway</h1>
+<p>
+The purpose of a gateway is to function as an entrypoint for the cluster, from the gateway users are allowed to submit query's and tasks to be executed on the cluster.
+Normal users should not be allowed to access any of the other non-gateway cluster hosts that are running data processing services.
+<br>
+<br>
+You can have multiple gateway hosts in a cluster, during deployment only client tools and configuration are deployed to a gateway host.
+Make sure not to deploy a gateway to a data node that is also running Hadoop, Impala or Spark daemons.
+It is best to create a dedicated gateway host, the only purpose of this host should be connecting users to the services running on the cluster. 
+</p>
+<br>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['gateway'] %}
+    <tr>
+      <td>Gateway</td>
+      <td><a href="http://{{ host }}:{{ zookeeper_jvm_props['zookeeper.admin.serverPort'] }}/commands/stat" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h4>Gateway management</h4>
+To add a new gateway or to update the existing gateway configuration, you can use the deploy script using the special "host-gateway" as a service parameter.
+This will only process the gateway hosts and will be much faster compared to deploying a service to all hosts of the cluster. 
+<pre><code>
+cd hadoop-provision/src
+
+# add or update gateway nodes
+./deploy.sh host-gateway
+</code></pre>
+
+
+<h4>Clients</h4>
+On a gateway host, users have access to multiple client tools, see the specific service to find out how to use these clients.
+</p>
+<ul>
+  <li>impala-shell</li>
+  <li>spark-shell</li>
+  <li>spark-submit</li>
+  <li>hdfs</li>
+</ul>

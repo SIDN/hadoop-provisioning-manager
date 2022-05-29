@@ -1,0 +1,23 @@
+- name: Install haproxy package
+  ansible.builtin.package:
+    name:
+      - haproxy
+    state: latest
+  become: yes
+  
+- name: Create cfg directory
+  file:
+    path: /etc/haproxy/
+    state: directory
+    mode: '0755'
+  become: yes
+  
+# do not automaically start haproxy during boot.
+# let the project lifecycle scripts do this.
+- name: Disable proxy service
+  ansible.builtin.systemd:
+    name: haproxy
+    enabled: no
+  become: yes
+  when: not (inventory_hostname in groups['gateway']) 
+    

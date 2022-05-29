@@ -1,0 +1,48 @@
+# Stop failover controllers
+- hosts: hdfs_primary_nn:hdfs_secondary_nn
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: hdfs_zkfc
+  tasks:
+    - name: Stop {{ service_name }}
+      include_tasks: shutdown/tasks/generic-service.yml
+
+# stop name nodes      
+- hosts: hdfs_primary_nn:hdfs_secondary_nn
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: hdfs_namenode
+  tasks:
+    - name: Stop {{ service_name }}
+      include_tasks: shutdown/tasks/generic-service.yml
+      
+- hosts: hdfs_journalnode
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: hdfs_journalnode
+  tasks:
+    - name: Stop {{ service_name }}
+      include_tasks: shutdown/tasks/generic-service.yml
+            
+- hosts: hadoop
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: hdfs_datanode
+  tasks:
+    - name: Stop {{ service_name }}
+      include_tasks: shutdown/tasks/generic-service.yml
+  
+- hosts: hdfs_httpfs
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: hdfs_httpfs
+  tasks:
+    - name: Stop {{ service_name }}
+      include_tasks: shutdown/tasks/generic-service.yml      
+
+

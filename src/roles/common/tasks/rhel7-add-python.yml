@@ -1,0 +1,97 @@
+#
+# RHEL 7.9 uses older Python versions, install later version.
+# later version is compiled with newer gcc 
+#
+- name: Create Python directory
+  file:
+    path: '{{ stack_root }}/python'
+    state: directory
+    mode: '0755'
+  become: yes
+
+- name: Check if Python is already downloaded
+  stat:
+    path: "{{ download_root }}/python-{{ version.python }}-rhel79.tar.gz"
+  register: stat_python
+  delegate_to: localhost
+  connection: local
+
+- name: Download Python
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ repository_url }}/python/python-{{ version.python }}-rhel79.tar.gz"
+  delegate_to: localhost
+  connection: local
+  when: not stat_python.stat.exists
+
+- name: Check if Python is already on remote
+  stat:
+    path: "{{ cache_root }}/python-{{ version.python }}-rhel79.tar.gz"
+  register: stat_remote_gcc
+
+- name: Copy Python to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/python-{{ version.python }}-rhel79.tar.gz"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  when: not stat_remote_gcc.stat.exists
+
+- name: Check if Python is already extracted
+  stat:
+    path: '{{ stack_root }}/python/python-{{ version.python }}'
+  register: python_extract
+  become: yes
+
+# - name: Recursively remove directory
+#   ansible.builtin.file:
+#     path: '{{ stack_root }}/python/python-{{ version.python }}'
+#     state: absent
+#   become: yes
+
+- name: Extract Python 
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/python-{{ version.python }}-rhel79.tar.gz"
+      remote_src: true
+      dest: '{{ stack_root }}/python'
+  become: yes
+  when: not python_extract.stat.exists
+
+# The python package does not contain any of the expected links
+- name: Create a symbolic links
+  ansible.builtin.file:
+    src: '{{ stack_root }}/python/python-{{ version.python }}/bin/{{ item.src }}'
+    dest: '{{ stack_root }}/python/python-{{ version.python }}/bin/{{ item.dst }}'
+    state: link
+  loop:
+    - { src: 'python3.10', dst: 'python3' }
+    - { src: 'python3.10', dst: 'python' }
+    - { src: 'python3.10-config', dst: 'python-config' }
+    - { src: 'pydoc3.10', dst: 'pydoc' }
+    - { src: 'idle3.10', dst: 'idle' }
+    - { src: 'pip3.10', dst: 'pip3' }
+    - { src: 'pip3.10', dst: 'pip' }
+  become: yes
+  when: not python_extract.stat.exists
+  
+# The python package contains some scripts with a wrong path to the python executable
+- name: Correct Python path
+  ansible.builtin.replace:
+    path: '{{ stack_root }}/python/python-{{ version.python }}/bin/{{ item }}'
+    regexp: '/opt/python310/'
+    replace: '{{ stack_root }}/python/python-{{ version.python }}/'
+  loop:
+    - 2to3-3.10
+    - idle3.10
+    - pip3.10
+    - pydoc3.10
+    - python3.10-config
+  become: yes
+  when: not python_extract.stat.exists
+
+- name: Update pip and setuptools
+  shell: >
+       {{ stack_root }}/python/python-{{ version.python }}/bin/python3 -m pip install -U pip setuptools
+  become: yes
+    

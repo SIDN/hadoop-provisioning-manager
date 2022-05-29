@@ -1,0 +1,41 @@
+- name: Install Docker Python dependencies
+  pip:
+    name:
+      - requests
+      - docker
+  become: yes
+
+- name: Create docker cfg directory
+  file:
+    path: /etc/docker
+    state: directory
+    mode: '0755'
+  become: yes
+  
+- name: Include Docker installation (RHEL)
+  include_tasks: tasks/docker-redhat.yml
+  when: (ansible_distribution == "RedHat") 
+  
+- name: Include Docker installation (Ubuntu)
+  include_tasks: tasks/docker-ubuntu.yml
+  when: (ansible_distribution == "Ubuntu") 
+
+- name: Add user '{{ provision_user }}' to group docker
+  user:
+    name: '{{ provision_user }}'
+    groups: docker
+    append: yes
+  become: yes
+  
+- name: Reset ssh connection to allow group changes to affect 'current login user'
+  meta: reset_connection
+
+- name: Systemctl Reload Daemons
+  command: systemctl daemon-reload
+  become: yes
+  
+- name: Enable service Docker
+  ansible.builtin.systemd:
+    name: docker
+    enabled: yes
+  become: yes

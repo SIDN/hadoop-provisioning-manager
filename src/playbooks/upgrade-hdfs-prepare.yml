@@ -1,0 +1,12 @@
+- hosts: hdfs_primary_nn
+  remote_user: hadoop-mgr
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+  become: yes
+  tasks:
+    - name: Prepare HDFS upgrade
+      include_tasks: ../roles/hadoop/tasks/hdfs-upgrade-prepare.yml
+  
+        

@@ -1,0 +1,42 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# set systemwide envs
+
+#{% if ansible_distribution == "RedHat" %}
+#export PATH="/usr/lib/jvm/java-{{ version.java }}/bin:$PATH"
+#{% endif %}
+
+export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
+export HADOOP_HOME={{ stack_root }}/hadoop-latest
+export HADOOP_CONF_DIR={{ hadoop_etc_dir }}
+
+# Add bin dirs for all components to path
+
+{% if ('impala' in groups and inventory_hostname in groups['impala']) or
+   ('impala_statestore' in groups and inventory_hostname in groups['impala_statestore']) or
+   ('impala_catalog' in groups and inventory_hostname in groups['impala_catalog']) or
+   ('gateway' in groups and inventory_hostname in groups['gateway']) %}
+PATH={{ stack_root }}/hadoop-latest/bin:{{ stack_root }}/hadoop-latest/sbin:$PATH
+PATH={{ stack_root }}/apache-impala-latest/impala-shell:$PATH
+PATH={{ stack_root }}/apache-zookeeper-latest/bin:$PATH
+{% endif %}
+
+{% if 'zookeeper' in groups and inventory_hostname in groups['zookeeper'] %}
+PATH={{ stack_root }}/apache-zookeeper-latest/bin:$PATH
+{% endif %}
+
+{% if ('hadoop' in groups and inventory_hostname in groups['hadoop']) or ('gateway' in groups and inventory_hostname in groups['gateway']) %}
+PATH={{ stack_root }}/apache-spark-latest/bin:$PATH
+{% endif %}
+
+{% if ('hive' in groups and inventory_hostname in groups['hive']) or ('gateway' in groups and inventory_hostname in groups['gateway']) %}
+PATH={{ stack_root }}/apache-hive-latest/bin:$PATH
+{% endif %}  
+
+export PATH
+
+{% if ('spark' in groups and inventory_hostname in groups['spark']) or ('gateway' in groups and inventory_hostname in groups['gateway']) %}
+export SPARK_HOME={{ stack_root }}/apache-spark-latest
+export SPARK_CONF_DIR={{ spark_etc_dir }}
+{% endif %}  

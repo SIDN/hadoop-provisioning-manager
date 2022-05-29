@@ -1,0 +1,51 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+-fe_port=21000
+-be_port=22000
+-webserver_port={{ impala_web_port.impalad }}
+-llama_callback_port=28000
+-log_filename=impalad
+-log_dir={{ impala_log_dir }}
+{% if groups['impala_statestore'] | length > 0 %}
+-state_store_host={{ groups['impala_statestore'][0] }}
+{% endif %}
+-enable_rm=false
+{% if groups['impala_catalog'] | length > 0 %}
+-catalog_service_host={{ groups['impala_catalog'][0] }}
+{% endif %}
+{% if groups['impala_ha_proxy'] | length > 0 %}
+-principal=impala/{{ groups['impala_ha_proxy'][0] }}@{{ kerberos_realm }}
+{% endif %}
+-be_principal=impala/{{ inventory_hostname }}@{{ kerberos_realm }}
+-keytab_file={{ impala_etc_dir }}/impala-http.keytab
+-kerberos_reinit_interval=60
+-ssl_server_certificate={{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
+-ssl_private_key={{ tls_etc_dir }}/{{ tls_remote_priv_key }}
+-webserver_certificate_file={{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
+-webserver_private_key_file={{ tls_etc_dir }}/{{ tls_remote_priv_key }}
+
+-webserver_require_spnego=true
+
+# authorized Hue to be a proxy
+-authorized_proxy_user_config=hue=*
+-fair_scheduler_allocation_path={{ impala_etc_dir }}/fair-scheduler.xml
+-llama_site_path={{ impala_etc_dir }}/llama-site.xml
+-disable_admission_control=false
+
+-abort_on_config_error=true
+# ranger config
+-server_name=impala
+-ranger_service_type=hive
+-ranger_app_id=impala
+-authorization_provider=ranger
+-abort_on_failed_audit_event=false
+-audit_event_log_dir={{ impala_log_dir }}
+-max_audit_event_log_files=10
+
+{% for key, value in impala_impalad_options.items() %}
+-{{ key }}={{ value | string | lower }}
+{% endfor %}
+
+scratch_dirs={{ impalad_scratch_dirs | join(',') }}
+

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# mitigation for: CVE-2021-44228 (Log4jShell)
+# see: https://logging.apache.org/log4j/2.x/security.html
+
+#-Djava.security.auth.login.config={{ ranger_etc_dir }}/ranger-solr-jaas.conf
+
+export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
+
+export JAVA_OPTS="-Dlog4j2.formatMsgNoLookups=true -Djava.net.preferIPv4Stack=true"
+
+export UNIX_USERSYNC_USER={{ ranger_os_user }}
+export USERSYNC_CONF_DIR={{ ranger_etc_dir }}
+export RANGER_USERSYNC_HADOOP_CONF_DIR={{ ranger_etc_dir }}
+export logdir={{ ranger_log_dir }}

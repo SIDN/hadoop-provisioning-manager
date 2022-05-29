@@ -1,0 +1,17 @@
+# OS user to run livy process
+livy_os_user: livy
+# Group used for livy OS user
+livy_os_group: hadoop
+
+# location of livy config files
+livy_etc_dir: "{{ config_root }}/livy"
+# Location of Livy logging
+livy_log_dir: /var/log/livy
+
+# Heap size for Livy JVM
+livy_heap: 1g
+
+# additional options for file: livy.conf 
+livy_conf_options:
+    livy.server.port: 8998
+    livy.server.session.timeout: 1h

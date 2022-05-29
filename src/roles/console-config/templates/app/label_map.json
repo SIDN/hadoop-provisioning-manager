@@ -1,0 +1,29 @@
+{
+	"groups": {
+		"manager": ["Management Server"],
+		"console": ["Console"],
+		"kerberos_kdc": ["Kerberos Key Distribution Center (KDC)"],
+		"ranger": ["Ranger"],
+		"solr": ["Solr"],
+		"zookeeper": ["Zookeeper"],
+		"hdfs_primary_nn": ["HDFS Primary Name Node"],
+		"hdfs_secondary_nn": ["HDFS Secondary Name Node"],
+		"hdfs_journalnode": ["HDFS Journal Node"],
+		"hdfs_httpfs": ["HDFS HttpFs Server"],
+		"yarn_resource_mgr": ["Yarn Resource Manager"],
+		"hive": ["Hive Metastore"],
+		"impala": ["Impala Executor"],
+		"impala_statestore": ["Impala Statestore"],
+		"impala_catalog": ["Impala Catalog"],
+		"impala_ha_proxy": ["Impala Ha-Proxy"],
+		"yarn_timelineserver": ["Yarn Timeline Server"],
+		"spark_history": ["Spark History Server"],
+		"spark_thrift": ["Spark Thrift Server"],
+		"livy": ["Livy Server"],
+		"hadoop": ["HDFS Data Node", "Yarn Node Manager"],
+		"database": ["PostgreSQL Server"],
+		"hue": ["Hue Server"],
+		"gateway": ["Gateway"],
+		"monitor": ["Grafana", "Prometheus"]
+	}
+}

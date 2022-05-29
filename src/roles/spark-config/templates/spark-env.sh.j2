@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
+export HADOOP_CONF_DIR={{ hadoop_etc_dir }}
+export HADOOP_HOME={{ stack_root }}/hadoop-latest
+export YARN_CONF_DIR={{ hadoop_etc_dir }}
+
+export SPARK_CONF_DIR={{ spark_etc_dir }}
+export SPARK_HOME={{ stack_root }}/apache-spark-latest
+export SPARK_LOG_DIR={{ spark_log_dir }}
+
+export PATH={{ stack_root }}/apache-spark-latest/bin:{{ stack_root }}/apache-spark-latest/sbin:$PATH
+
+# mitigation for: CVE-2021-44228 (Log4jShell)
+# see: https://logging.apache.org/log4j/2.x/security.html
+export SPARK_DAEMON_JAVA_OPTS="-Dlog4j2.formatMsgNoLookups=true -Djava.net.preferIPv4Stack=true"
+
+# make sure to add native hadoop libs to ld path to enable short circuit reads on hdfs data node
+export LD_LIBRARY_PATH="$HADOOP_HOME/lib/native:$LD_LIBRARY_PATH"
+
+#export HADOOP_JAAS_DEBUG=true

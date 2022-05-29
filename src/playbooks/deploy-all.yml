@@ -1,0 +1,60 @@
+- name: Common
+  import_playbook: deploy-common.yml
+  
+- name: Manager
+  import_playbook: deploy-manager.yml
+  
+- name: Database
+  import_playbook: deploy-db.yml
+
+- name: Kerberos KDC
+  import_playbook: deploy-kerberos-kdc.yml
+  
+- name: Kerberos principals
+  import_playbook: deploy-krb-principal.yml
+    
+# need to deploy hadoop before tls playbook
+# tls playbooks needs hadoop util to create jcecks
+- name: Hadoop
+  import_playbook: deploy-hadoop.yml
+  
+- name: TLS
+  import_playbook: deploy-tls.yml
+      
+- name: Management Console
+  import_playbook: deploy-console.yml
+  
+- name: Zookeeper
+  import_playbook: deploy-zookeeper.yml
+  
+- name: Hive
+  import_playbook: deploy-hive.yml
+  
+- name: Impala
+  import_playbook: deploy-impala.yml
+  
+- name: Spark
+  import_playbook: deploy-spark.yml
+
+- name: Livy
+  import_playbook: deploy-livy.yml
+    
+- name: Hue
+  import_playbook: deploy-hue.yml
+  
+- name: Ranger
+  import_playbook: deploy-ranger.yml
+
+- name: Solr
+  import_playbook: deploy-solr.yml
+  
+# deploy keytabs only after all cfg dirs for services
+# have been created
+- name: Kerberos keytabs
+  import_playbook: deploy-krb-keytab.yml
+  
+- name: Monitor Server
+  import_playbook: deploy-monitor.yml
+  
+- name: Client Config
+  import_playbook: deploy-client-config.yml

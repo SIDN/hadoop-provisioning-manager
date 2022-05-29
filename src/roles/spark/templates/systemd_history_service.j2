@@ -1,0 +1,19 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Spark History Server
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=forking
+User={{ spark_os_user }}
+Group={{ spark_os_group }}
+ExecStart=/bin/bash -c 'source {{ spark_etc_dir }}/spark-history-env.sh; {{ stack_root }}/apache-spark-latest/sbin/start-history-server.sh'
+ExecStop=/bin/bash -c 'source  {{ spark_etc_dir }}/spark-history-env.sh; {{ stack_root }}/apache-spark-latest/sbin/stop-history-server.sh'
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

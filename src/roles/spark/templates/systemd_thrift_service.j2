@@ -1,0 +1,32 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Spark Thrift Server
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=forking
+User={{ spark_os_user }}
+Group={{ spark_os_group }}
+ExecStart=/bin/bash -ac '. {{ spark_etc_dir }}/spark-thrift-env.sh; \
+                           {{ stack_root }}/apache-spark-latest/sbin/start-thriftserver.sh \
+                           --master yarn \
+                           --keytab {{ spark_etc_dir }}/spark.keytab \
+                           --principal spark/{{ inventory_hostname }}@{{ kerberos_realm }} \
+                           --deploy-mode client \
+                           --conf spark.ui.port=$SPARK_MASTER_WEBUI_PORT \
+                           --driver-memory $SPARK_DRIVER_MEMORY \
+                           --num-executors $SPARK_EXECUTORS \
+                           --executor-cores $SPARK_EXECUTOR_CORES \
+                           --executor-memory $SPARK_EXECUTOR_MEMORY \
+                           --queue $SPARK_THRIFT_SERVER_QUEUE_NAME'
+                           
+ExecStop=/bin/bash -ac '. {{ spark_etc_dir }}/spark-thrift-env.sh; {{ stack_root }}/apache-spark-latest/sbin/stop-thriftserver.sh'
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
+

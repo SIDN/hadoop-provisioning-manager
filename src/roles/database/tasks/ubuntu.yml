@@ -1,0 +1,42 @@
+- name: Add Postgresql-{{ version.postgresql }} repository (Ubuntu)
+  shell: >
+        echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/postgresql.list;
+        wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -;
+        apt-get update;
+  become: yes
+     
+- name: Install required packages
+  ansible.builtin.package:
+    name:
+      - postgresql-{{ version.postgresql }}
+      - postgresql-contrib
+      - libpq-dev
+      - postgresql-server-dev-14
+      - libpostgresql-jdbc-java
+      - python3-psycopg2
+    state: latest
+  become: yes
+  
+- name: Create data directory {{ db_data_dir }}
+  file:
+    path: "{{ db_data_dir }}"
+    state: directory
+    owner: postgres
+    group: postgres
+  become: yes
+  when: not postgres_initialized.stat.exists
+  
+- name: Change datadir in service unit to {{ db_data_dir }}
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ version.postgresql }}/main/postgresql.conf"
+    regexp: "^data_directory ="
+    line: "data_directory = '{{ db_data_dir }}'"
+  become: yes
+  when: not postgres_initialized.stat.exists
+
+- name: Initialize PostgreSQL
+  shell: >
+    /usr/lib/postgresql/14/bin/initdb -D {{ db_data_dir }}
+  become: yes
+  become_user: postgres
+  when: not postgres_initialized.stat.exists

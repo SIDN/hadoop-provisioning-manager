@@ -1,0 +1,70 @@
+<h1 class="display-6">Impala</h1>
+<p>
+With <a href="https://impala.apache.org/">Impala</a>, you can query data stored in HDFS – including SELECT, JOIN, and aggregate functions – in real time.
+An Impala High Availability proxy service is available to provide high availability and load distribution over the Impala daemons in the cluster.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['impala_ha_proxy'] %}
+    <tr>
+      <td>HA-Proxy</td>
+      <td><a href="https://{{ host }}:25001/stats" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+    {% for host in groups['impala_statestore'] %}
+    <tr>
+      <td>Statestore</td>
+      <td><a href="https://{{ host }}:25010" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+    {% for host in groups['impala_catalog'] %}
+    <tr>
+      <td>Catalog</td>
+      <td><a href="https://{{ host }}:25020" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+    {% for host in groups['impala'] %}
+    <tr>
+     <td>Daemon</td>
+      <td><a href="https://{{ host }}:25000" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h4>Clients</h4>
+<p>
+Always connect to impala through the Impala HA-proxy, use any of the following methods:
+<ul>
+  <li>impala-shell command line utility</li>
+  <li><a href="https://github.com/cloudera/impyla">Impyla</a> Python library</li>
+  <li><a href="https://gethue.com/">Hue</a> SQL Assistant</li>
+</ul>
+</p>
+<p>
+To correctly start impala-shell you need to perform the following steps. 
+</p>
+<pre><code>
+# Create Kerberos session
+kinit -kt /path/to/keytab username@{{ kerberos_realm }}
+
+# Set the correct path to the required libraries, make sure to also source the environment variables.
+source {{ impala_etc_dir }}/impala-impalad-env.sh
+
+# Active the python2 venv when the default Python version is not Python2.
+source {{ python_venv_dir }}/py2-impala-shell/bin/activate
+
+# connect impala-shell to the Ha-proxy host using SSL and Kerberos
+impala-shell -i {{ groups['impala_ha_proxy'][0] }} --ssl -k
+</code></pre>
+
+<h4>Security</h4>
+<p>
+Permissions to perform actions such as SELECT and INSERT on database objects such a TABLE or COLUMN may be granted using Apache Ranger.
+After granting new permissions or modifying existing permissions on a database object, it may be necessary to invalidate the current Impala metadata before the changes are used by Impala.
+</p>
+<pre><code>
+INVALIDATE METADATA my_database.my_table;
+</code></pre>

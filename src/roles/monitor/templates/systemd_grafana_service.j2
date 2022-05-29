@@ -1,0 +1,25 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Grafana Server
+After=docker.service
+Requires=docker.service
+ 
+[Service]
+TimeoutStartSec=0
+Restart=always
+RestartSec=60
+Type=exec
+
+ExecStart=/usr/bin/docker run --rm --name grafana-server \
+-p {{ grafana_port }}:3000 \
+-v {{ grafana_etc_dir }}:/etc/grafana \
+-v {{ tls_etc_dir }}:{{ tls_etc_dir }} grafana/grafana-enterprise:{{ version.grafana }}
+
+ExecStop=/usr/bin/docker stop grafana-server
+
+[Install]
+WantedBy=multi-user.target
+
+

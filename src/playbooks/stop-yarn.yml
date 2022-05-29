@@ -1,0 +1,26 @@
+- hosts: yarn_resource_mgr
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: yarn_resourcemanager
+  tasks:
+    - name: "Stop {{ service_name }}"
+      include_tasks: shutdown/tasks/generic-service.yml      
+  
+- hosts: yarn_timelineserver
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: yarn_timelineserver
+  tasks:
+    - name: "Stop {{ service_name }}"
+      include_tasks: shutdown/tasks/generic-service.yml  
+      
+- hosts: hadoop
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: yarn_nodemanager
+  tasks:
+    - name: "Stop {{ service_name }}"
+      include_tasks: shutdown/tasks/generic-service.yml     

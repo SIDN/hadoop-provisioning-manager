@@ -1,0 +1,111 @@
+# OS user to run impala process
+impala_os_user: impala
+# Group used for impala OS user
+impala_os_group: hadoop
+
+# Location of impala cfg files
+impala_etc_dir: "{{ config_root }}/impala"
+# Location of impala logging
+impala_log_dir: /var/log/impala
+
+impala_cgroups:
+  cpu_shares:
+    impalad: 1024
+
+# port for the web (debug) interface of the different impala daemons 
+impala_web_port:
+  impalad: 25000
+  catalogd: 25020
+  statestored: 25010
+  
+# port for the different prometheus proxy servers for the impala daemons
+impala_prometheus_port:
+  impalad: 25002
+  catalogd: 25021
+  statestored: 25011
+
+# HAproxy fcg for Impala HA
+# Haporxy has a admin webpage for usage stats
+# user/pass for haproxy admin url
+# shell_port port for Haproxy loadbalancer for beeswax (port 21000)
+# Used by older beeswax clients (older impala-shell versions)
+# jcdb_port port for Haproxy loadbalancer for impala or other JDBC-enabled applications
+# change the default port when running the haproxy on a host that is alson running
+# an impala daemon.
+# /stats page will listen on stats_port
+impala_haproxy:
+  user: proxyadmin
+  password: "{{ vault_impala_haproxy_password }}"
+  jdbc_port: 21050
+  shell_port: 21000
+  stats_port: 25000
+
+# Writable scratch directories where impala
+# can write temp query data
+# format <dir>:<max_size> 
+impalad_scratch_dirs:
+  - /data/1/impala/:10G
+  - /data/2/impala/:10G
+  - /data/3/impala/:10G
+
+# additional startup options for impalad
+# will be added to file: impalad_flags
+impala_impalad_options:
+    enable_minidumps: false
+    idle_query_timeout: 600
+    idle_session_timeout: 600
+    queue_wait_timeout_ms: 300000  
+    # make sure PARQUET_FALLBACK_SCHEMA_RESOLUTION is set to name to support
+    # parquet schema evolution.
+    default_query_options: PARQUET_FALLBACK_SCHEMA_RESOLUTION=name,EXEC_TIME_LIMIT_S=3600 
+    max_log_files: 5
+    insert_inherit_permissions: true
+    umask: '022'
+
+      
+# additional startup options for statestored
+# will be added to file: statestored_flags
+impala_statestored_options:
+    enable_minidumps: false
+    max_log_files: 5
+        
+# additional startup options for catalogd
+# will be added to file:catalogd_flags
+impala_catalogd_options:
+    enable_minidumps: false
+    max_log_files: 5
+
+# Java heap size for jvm inside impala daemons
+impala_heap:
+  impalad:  4g
+  catalogd:  4g
+  
+# Create addmission queue for impala queries  
+# queue propertes for fair-scheduler.xml
+# first queue must have name "impala"
+# see: https://impala.apache.org/docs/build/html/topics/impala_admission_config.html
+impala_fair_scheduler_options:
+  - name: 'default'
+    maxResources: 737280 # mb (max mb avail to Impala, memory for all nodes combined )
+    weight: 1.0
+    schedulingPolicy: drf
+    aclSubmitApps: '*'
+    aclAdministerApps: '*'
+    
+# Create addmission queue for impala queries  
+# queue propertes for llama-site.xml
+# first queue has name "default"
+# see: https://impala.apache.org/docs/build/html/topics/impala_admission_config.html
+impala_llama_site_options:
+  llama.am.throttling.maximum.placed.reservations.root.default: 10
+  llama.am.throttling.maximum.queued.reservations.root.default: 50
+  impala.admission-control.pool-default-query-options.root.default: ''
+  impala.admission-control.pool-queue-timeout-ms.root.default: 600000
+  # set max mem allowed for impalad per host
+  impala.admission-control.max-query-mem-limit.root.default.regularPool: 80g
+  # set min mem allowed for impalad per host
+  impala.admission-control.min-query-mem-limit.root.default.regularPool: 1g
+  # if user sets mem_limit > max-query-mem-limit then mem_limit value is set to max-query-mem-limit value
+  impala.admission-control.clamp-mem-limit-query-option.root.default.regularPool: true
+
+

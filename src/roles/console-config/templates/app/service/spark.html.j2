@@ -1,0 +1,78 @@
+<h1 class="display-6">Spark</h1>
+<p>
+<a href="https://spark.apache.org/">Apache Spark</a> is a multi-language engine for executing data engineering, data science, and machine learning.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['spark_history'] %}
+    <tr>
+      <td>Spark History</td>
+      <td><a href="https://{{ host }}:{{ spark_ports.history_ui_port }}" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+  </tr>
+    {% for host in groups['spark_thrift'] %}
+    <tr>
+      <td>Spark Thrift Server</td>
+      <td><a href="http://{{ host }}:{{ spark_thrift_server_yarn.ui_port }}" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+    {% for host in groups['gateway'] %}
+    <tr>
+      <td>Spark gateway</td>
+      <td>{{ host }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h4>Clients</h4>
+<p>
+There are multiple Spark methods available for users to use connect to Spark:
+<ul>
+  <li><a href="https://spark.apache.org/docs/latest/quick-start.html">Shell</a> (pyspark and spark-shell)</li>
+  <li><a href="https://spark.apache.org/docs/latest/submitting-applications.html">spark-submit</a></li>
+  <li><a href="https://gethue.com/">Hue</a> SQL Assistant using Livy</li>
+  <li><a href="https://gethue.com/">Hue</a> SQL Assistant using Spark Thrift server</li>
+</ul>
+</p>
+
+<h4>Pyspark</h4>
+<p>
+Spark is configured to use a default Python virtual environment (venv), this venv is automatically created during Spark deployment.
+The following Python modules are available in the default venv.
+<ul>
+  <li>pyspark</li>
+  <li>pandas</li>
+</ul>
+
+The requirements file used to creat the venv can be found in the configuration directory (config/python/default-pyspark-requirements.txt).
+The venv directory is <code>{{ python_venv_dir }}/{{ spark_default_python_venv }}</code> on all cluster hosts.
+<br>
+<br>
+If you would like to use a different virtual environment, you can create a new virtual environment using the add-py-env.sh script and then use the following configuration option when starting your Spark job.
+<br>
+</p>
+<pre><code>
+pyspark --master yarn --conf spark.pyspark.python={{ python_venv_dir }}/my-other-venv
+</code></pre>
+
+<h4>Spark-submit</h4>
+<p>
+Spark is configured to use <a href="https://spark.apache.org/docs/latest/job-scheduling.html#dynamic-resource-allocation">dynamic resource allocation</a> when requesting Yarn containers, 
+you can still provide your spark-submit task with custom options for setting the specified resources. Yarn might increase the resources used for your task if the cluster has more resources available.
+See below for an example on how to start a Spark job using spark-submit.
+</p>
+<pre><code>
+spark-submit  --master yarn  \
+              --queue my-yarn-queue \
+              --deploy-mode cluster \
+              --num-executors 11 \
+              --executor-cores 5 \
+              --executor-memory "4g" \
+              --driver-memory "1g" \
+              --principal username@{{ kerberos_realm }} \
+              --keytab /path/to/my.keytab my-job.py
+</code></pre>

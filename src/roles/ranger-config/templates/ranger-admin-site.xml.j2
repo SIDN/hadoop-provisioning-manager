@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+	<property>
+		<name>ranger.jpa.jdbc.driver</name>
+		<value>org.postgresql.Driver</value>
+		<description/>
+	</property>
+	<property>
+		<name>ranger.jpa.jdbc.url</name>
+		<value>jdbc:postgresql://{{ groups['database'][0] }}/{{ ranger_db }}</value>
+		<description/>
+	</property>
+	<property>
+		<name>ranger.jpa.jdbc.user</name>
+		<value>{{ ranger_db_user }}</value>
+		<description/>
+	</property>
+	<property>
+		<name>ranger.jpa.jdbc.password</name>
+		<value>{{ ranger_db_password }}</value>
+		<description/>
+	</property>
+	<property>
+		<name>ranger.externalurl</name>
+		<value>https://{{ inventory_hostname }}:{{ ranger_admin_port }}</value>
+		<description/>
+	</property>
+	<property>
+		<name>ranger.scheduler.enabled</name>
+		<value>true</value>
+		<description/>
+	</property>
+
+	<property>
+		<name>ranger.audit.solr.urls</name>
+		<value>https://{{ groups['ranger'][0] }}:{{ solr_port }}/solr/ranger_audits</value>
+		<description/>
+	</property>
+	<property>
+		<name>ranger.audit.source.type</name>
+		<value>solr</value>
+		<description/>
+	</property>
+
+	<property>
+		<name>ranger.service.http.enabled</name>
+		<value>false</value>
+		<description/>
+	</property>
+	<property>
+		<name>ranger.authentication.method</name>
+		<value>NONE</value>
+		<description/>
+	</property>
+
+	<property>
+		<name>ranger.service.https.attrib.ssl.enabled</name>
+		<value>true</value>
+	</property>
+
+  <property>
+    <name>ranger.service.https.attrib.keystore.file</name>
+    <value>{{ tls_etc_dir }}/ranger-tls.jks</value>
+  </property>
+  
+	<property>
+		<name>ranger.service.https.attrib.keystore.keyalias</name>
+		<value>rangeradmin</value>
+	</property>
+
+	<property>
+		<name>ranger.service.https.attrib.keystore.pass</name>
+		<value>{{ tls_remote_truststore_password }}</value>
+	</property>
+
+	<property>
+		<name>ranger.service.host</name>
+		<value>{{ inventory_hostname }}</value>
+	</property>
+
+	<property>
+		<name>ranger.service.https.port</name>
+		<value>{{ ranger_admin_port }}</value>
+	</property>
+
+	<property>
+		<name>ranger.admin.kerberos.token.valid.seconds</name>
+		<value>300</value>
+	</property>
+	<property>
+		<name>ranger.admin.kerberos.cookie.domain</name>
+		<value>{{ inventory_hostname }}</value>
+	</property>
+	<property>
+		<name>ranger.admin.kerberos.cookie.path</name>
+		<value>/</value>
+	</property>
+	<property>
+		<name>ranger.admin.kerberos.principal</name>
+		<value>ranger/{{ inventory_hostname }}@{{ kerberos_realm }}</value>
+	</property>
+	<property>
+		<name>ranger.admin.kerberos.keytab</name>
+		<value>{{ ranger_etc_dir }}/ranger.keytab</value>
+	</property>
+	<property>
+		<name>ranger.spnego.kerberos.principal</name>
+		<value>HTTP/{{ inventory_hostname }}@{{ kerberos_realm }}</value>
+	</property>
+	<property>
+		<name>ranger.spnego.kerberos.keytab</name>
+		<value>{{ ranger_etc_dir }}/http.keytab</value>
+	</property>
+	<property>
+		<name>ranger.lookup.kerberos.principal</name>
+		<value>lookupranger/{{ inventory_hostname }}@{{ kerberos_realm }}</value>
+	</property>
+	<property>
+		<name>ranger.lookup.kerberos.keytab</name>
+		<value>{{ ranger_etc_dir }}/ranger-lookup.keytab</value>
+	</property>
+
+	<property>
+		<name>ranger.supportedcomponents</name>
+		<value/>
+	</property>
+	<property>
+		<name>ranger.downloadpolicy.session.log.enabled</name>
+		<value>false</value>
+	</property>
+
+      <property>
+        <name>ranger.audit.hive.query.visibility</name>
+        <value>true</value>
+        <description/>
+    </property>
+    <property>
+		<name>ranger.service.https.attrib.keystore.credential.alias</name>
+		<value>keyStoreCredentialAlias</value>
+	</property>
+
+        <property>
+                <name>ranger.audit.solr.collection.name</name>
+                <value>ranger_audits</value>
+        </property>
+        <property>
+                <name>ranger.audit.solr.config.name</name>
+                <value>ranger_audits</value>
+        </property>
+        <property>
+                <name>ranger.audit.solr.configset.location</name>
+                <value/>
+        </property>
+        <property>
+                <name>ranger.audit.solr.no.shards</name>
+                <value>1</value>
+        </property>
+        <property>
+                <name>ranger.audit.solr.max.shards.per.node</name>
+                <value>1</value>
+        </property>
+        <property>
+                <name>ranger.audit.solr.no.replica</name>
+                <value>1</value>
+        </property>
+        <property>
+                <name>ranger.audit.solr.acl.user.list.sasl</name>
+                <value>solr,infra-solr</value>
+        </property>
+        <property>
+                <name>ranger.audit.solr.bootstrap.enabled</name>
+                <value>true</value>
+        </property>
+        <property>
+				<name>ranger.audit.solr.max.retry</name>
+				<value/>
+				<description>Maximum no. of retry to setup solr</description>
+		</property>
+		<property>
+			<name>ranger.admin.cookie.name</name>
+			<value>RANGERADMINSESSIONID</value>
+		</property>
+</configuration>

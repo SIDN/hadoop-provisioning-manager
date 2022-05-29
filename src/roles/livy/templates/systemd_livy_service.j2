@@ -1,0 +1,22 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Livy service 
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=forking
+User={{ livy_os_user }}
+Group={{ livy_os_group }}
+ExecStart=/bin/bash -c 'source {{ livy_etc_dir }}/livy-env.sh; {{ stack_root }}/apache-livy-latest/bin/livy-server start'
+ExecStop=/bin/bash -c 'source {{ livy_etc_dir }}/livy-env.sh; {{ stack_root }}/apache-livy-latest/bin/livy-server stop'
+SuccessExitStatus=143
+Restart=always
+RestartSec=60
+StandardOutput=append:{{ livy_log_dir }}/livy.log
+StandardError=append:{{ livy_log_dir }}/livy.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,19 @@
+# This playbook will only run on gateway hosts
+# the deploy.sh script will start the pb using the option: "--limit gateway"
+# this prevent the playbooks included below from deploying on nodes other than
+# nodes found in the gateway section of the hosts file
+
+- name: Common
+  import_playbook: deploy-common.yml
+  
+- name: Hadoop
+  import_playbook: deploy-hadoop.yml
+      
+- name: Impala
+  import_playbook: deploy-impala.yml
+  
+- name: Spark
+  import_playbook: deploy-spark.yml
+
+- name: TLS
+  import_playbook: deploy-tls.yml  

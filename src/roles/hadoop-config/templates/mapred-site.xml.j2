@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Created on {{ ansible_date_time.iso8601 }}
+Pushed to: {{  inventory_hostname }}
+
+NOT USING MAPRED anymore, use Spark on Yarn
+
+-->
+<configuration>
+  <property>   
+     <name>mapreduce.framework.name</name>  
+     <value>yarn</value>  
+   </property>   
+   <property>
+    <name>mapreduce.job.user.classpath.first</name>
+    <value>true</value>
+    </property>
+</configuration>

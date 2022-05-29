@@ -1,0 +1,78 @@
+<h1 class="display-6">Management</h5>
+<p>
+You can use the provided management scripts to perform common cluster management tasks.
+</p>
+<h5>Preparing hosts</h5>
+<p>
+The <strong>prepare-hosts.sh</strong> script is used to add new hosts to the cluster, a new host needs to be prepared before components can be deployed.
+You must already have an existing user account on the remote host you want to add, this user must be allowed to use sudo, to create the new manager user account on the remote host.
+The script will ask for the SSH password for the existing user on the remote host and for the new password for the manager user account that is going to be created on the remote host.
+<ul>
+  <li>Create deployment manager user</li>
+  <li>Add SSH-key of the deployment manager to authorized_keys</li>
+  <li>Add sudo permissions for the deployment manager</li>
+</ul>
+<pre><code>
+cd hadoop-provision/src
+# Prepare all hosts found in hosts file
+./prepare-hosts.sh &lt;password-existing-remote-admin&gt;
+Enter password (ANSIBLE_BECOME_PASSWORD) for user {{ provision_user }} that is going to be created: &lt;new-password&gt;
+</code></pre>
+</p>
+<h5>Deploying a service</h5>
+<p>
+The <strong>deploy.sh</strong> script is used to deploy 1 or more services and their configuration to cluster hosts.
+</p>
+<pre><code>
+cd hadoop-provision/src
+# deploy zookeeper, hadoop and impala
+./deploy.sh zookeeper hadoop impala
+</code></pre>
+<h5>Deploying service configuration</h5>
+<p>
+The <strong>deploy-config.sh</strong> script is used to only deploy configuration files for 1 or more services to the relevant cluster hosts.
+Use this script after updating the Ansible YAML files containing the service configuration and the service is already installed.
+Pushing only the changed configuration files to the cluster nodes is much faster compared to updating the entire service package.
+<br>
+When changing a core service such a HDFS, make sure to also deploy the configuration for all services that depend on HDFS.
+<pre><code>
+cd hadoop-provision/src
+# deploy changed config for impala
+./deploy-config.sh impala
+</code></pre>
+</p>
+<h5>Starting a service</h5>
+<p>
+The <strong>start.sh</strong> script is used to start 1 or more services, there exists a special "all" service that can be used to start all services.
+<pre><code>
+cd hadoop-provision/src
+# start impala service
+./start.sh impala
+</code></pre>
+</p>
+<h5>Stopping a service</h5>
+<p>
+The <strong>stop.sh</strong> script is used to stop 1 or more services, there exists a special "all" service that can be used to stop all services.
+<pre><code>
+cd hadoop-provision/src
+# stop impala service
+./stop.sh impala
+</code></pre>
+</p>
+<h5>Adding a Python environment</h5>
+<p>
+Some (Spark) application may require a customized Python environment, use <strong>add-py-env.sh</strong> to create a custom Python virtual environment on every cluster host.
+The venv is created under the directory specified by the "python_venv_dir" option in the vars/all.yml configuration file.
+The script accepts 3 parameters:
+<ul>
+  <li>The name of the new virtual environment to create</li>
+  <li>The Python version to use</li>
+  <li>The path to a Python requirement.txt file</li>
+</ul>
+
+<pre><code>
+cd hadoop-provision/src
+# create new python venv
+./add-py-env.sh venv-name py-version path/to/requirements.txt
+</code></pre>
+</p>

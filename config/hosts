@@ -1,0 +1,157 @@
+# Deploy dependencies on the manager host, this host is used to run ansible playbooks.
+# only 1 host allowed in this group
+[manager]
+hadoop-dev4.sidnlabs.nl
+
+# Deploy simple webbased console with links to all the
+# web interfaces for the cluster services
+# only 1 host allowed in this group
+[console]
+hadoop-dev4.sidnlabs.nl
+
+# Deploy Zookeeper server on node in group: zookeeper
+# Have at least 3 zookeepers and always and odd number of zookeepers
+[zookeeper]
+hadoop-dev4.sidnlabs.nl
+hadoop-dev5.sidnlabs.nl
+hadoop-dev6.sidnlabs.nl
+
+# The hadoop group contains the worker/data nodes
+# Deploy 
+# hadoop hdfs datanode
+# yarn NodeManager
+# spark 
+[hadoop]
+hadoop-dev4.sidnlabs.nl
+hadoop-dev5.sidnlabs.nl
+hadoop-dev6.sidnlabs.nl
+
+# The primary hdfs namenode is deployed on 
+# host in group: hdfs_primary_nn
+# the hosts in this group may also be added to group: hadoop then they 
+# also function as a datanode
+# The ZKFC daemon (failover function) is also deployed to this node
+# only 1 host allowed and this host may also be in 
+# group: hadoop to let it also function as a datanode
+[hdfs_primary_nn]
+hadoop-dev4.sidnlabs.nl
+
+# The secondary hdfs namenode is deployed on 
+# host in group: hdfs_secondary_nn
+# the hosts in this group may also be added to group: hadoop then they 
+# also function as a datanode
+# The ZKFC daemon (failover function) is also deployed to this node
+# only 1 host allowed and this host may also be in 
+# group: hadoop to let it also function as a datanode
+[hdfs_secondary_nn]
+hadoop-dev5.sidnlabs.nl
+
+# HDFS journalnode function is deployed on hosts
+# in group: hdfs_journalnode
+# Have atleast 3 nodes and always and odd number of hosts
+[hdfs_journalnode]
+hadoop-dev4.sidnlabs.nl
+hadoop-dev5.sidnlabs.nl
+hadoop-dev6.sidnlabs.nl
+
+# deploy webhdfs/httpfs on host in group: hdfs_httpfs
+# Only 1 host allowed in this group
+[hdfs_httpfs]
+hadoop-dev4.sidnlabs.nl
+
+# deploy Yarn Resource manager on host in group: yarn_resource_mgr
+# Only 1 host allowed in this group
+[yarn_resource_mgr]
+hadoop-dev4.sidnlabs.nl
+
+# deploy Yarn Timeline server on host in group: yarn_timelineserver
+# Only 1 host allowed in this group
+[yarn_timelineserver]
+hadoop-dev4.sidnlabs.nl
+
+# deploy Spark History server on host in group: spark_history
+# Only 1 host allowed in this group
+[spark_history]
+hadoop-dev6.sidnlabs.nl
+
+# deploy Spark Thrift server on host in group: spark_thrift
+# This can be used to execute SparkSQL from Hue
+# Only 1 host allowed in this group
+[spark_thrift]
+hadoop-dev5.sidnlabs.nl
+
+# Install Hive Metastore on host
+# in group: hive
+# Only 1 host allowed in this group
+[hive]
+hadoop-dev5.sidnlabs.nl
+
+# Install Keberos KDC host in group: kerberos_kdc
+# MIT Kerberos is used for centralized usermanagement (Authentication)
+# Only 1 host allowed in this group
+[kerberos_kdc]
+hadoop-dev4.sidnlabs.nl
+
+# Deploy Ranger server on node in group: ranger
+# Ranger is used for centralized HDFS/Impala permission management ( Authorization)
+# Ranger will sync with local unix system users to get the users and groups
+# Configure Impala/HDFS permissions in Ranger Admin UI
+# Only 1 host allowed in this group
+[ranger]
+hadoop-dev6.sidnlabs.nl
+
+# Deploy SOLR server on node in group: solr
+# SOLR is used for to save Ranger audit events
+# Only 1 host allowed in this group
+[solr]
+hadoop-dev6.sidnlabs.nl
+
+# Install Postgresql database on host in group: database
+# This database is used by hadoop/hue/ranger and more to
+# persist their data. This can be an existing Postgresql database.
+# If this an existing database then Postgresql will not be installed on the host
+# Only 1 host allowed in this group
+[database]
+hadoop-dev2.sidnlabs.nl
+
+# deploy Impalad executor on nodes in group: impala
+[impala]
+hadoop-dev4.sidnlabs.nl
+hadoop-dev5.sidnlabs.nl
+hadoop-dev6.sidnlabs.nl
+
+# deploy Impala statestore server on node in group: impala_statestore
+# Only 1 host allowed in this group
+[impala_statestore]
+hadoop-dev4.sidnlabs.nl
+
+# deploy Impala Catalog server on node in group: impala_catalog
+# Only 1 host allowed in this group
+[impala_catalog]
+hadoop-dev4.sidnlabs.nl
+
+# deploy HAproxy for Impala HA, this deploys loadbalancer for the Impala executors
+# Only 1 host allowed in this group
+[impala_ha_proxy]
+hadoop-dev4.sidnlabs.nl
+
+# deploy Hue server on node in group: hue
+[hue]
+hadoop-dev6.sidnlabs.nl
+
+# Livy is used to start a Yarn PySpark job from Hue
+[livy]
+hadoop-dev6.sidnlabs.nl
+
+# Functions as a gateway (client) to the cluster, contains all software and config
+# Hadoop/Spark/Hive/Impala are deployed but no systemd services
+# use a gateway node to interact with the cluster and run job from
+# A gateway host MUST NOT be added to another group, except for the "Hue" group.
+# otherwise the deployment might be incomplete
+[gateway]
+hadoop-dev2.sidnlabs.nl
+
+# Deploy Grafana/Prometheus monitoring server to node in group: monitor
+# Use Grafana/Prometheus to monitor the state of the cluster services
+[monitor]
+hadoop-dev4.sidnlabs.nl

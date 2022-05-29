@@ -1,0 +1,13 @@
+- name: Create Livy configuration files
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "{{ livy_etc_dir }}/{{ item.dest }}"
+    mode: '{{ item.mode }}'
+  loop:
+    - { src: 'log4j.properties.j2', dest: 'log4j.properties', mode: '0644'}
+    - { src: 'livy.conf.j2', dest: 'livy.conf', mode: '0644'}
+    - { src: 'livy-env.sh.j2', dest: 'livy-env.sh', mode: '0755'}
+  become: yes
+
+    
+  

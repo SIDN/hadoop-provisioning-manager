@@ -1,0 +1,9 @@
+- name: Include Prometheus playbook
+  include_tasks: prometheus.yml
+
+- name: Include Grafana playbook
+  include_tasks: grafana.yml
+
+- name: Systemctl Reload Daemon
+  shell: systemctl daemon-reload
+  become: yes

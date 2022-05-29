@@ -1,0 +1,191 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ hue_os_group }}"
+    state: present
+  become: yes
+    
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ hue_os_user }}"
+    new_group: "{{ hue_os_group }}"
+  
+- name: Create cfg directory
+  file:
+    path: "{{ hue_etc_dir }}"
+    state: directory
+    mode: '0755'
+  become: yes
+  
+- name: Create Hue log directory
+  file:
+    path: "{{ hue_log_dir }}"
+    state: directory
+    owner: "{{ hue_os_user }}"
+    group: "{{ hue_os_group }}"
+    mode: '0777'
+  become: yes
+  
+- name: install package dependencies
+  ansible.builtin.package:
+    name:
+      - wget
+      - curl
+      - python3-psycopg2
+    state: latest
+  become: yes
+
+- name: Install required packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - libselinux-python3
+    state: latest
+  become: yes
+  when: ansible_distribution == "RedHat"
+  
+- name: Install required packages (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - python3-selinux
+    state: latest
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+  
+- name: Execute templates
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { "src": "systemd_hue_service.j2", "dest": "/etc/systemd/system/hue.service"}
+  become: yes
+  
+# - name: Set correct permissions
+#   ansible.builtin.file:
+#     path: "{{ hue_etc_dir }}"
+#     state: directory
+#     mode: '0744'
+#     recurse: yes
+#   become: yes
+
+- name: Systemctl Reload Daemons
+  command: "systemctl daemon-reload"
+  become: yes
+  
+- name: "Add  user {{ hue_os_user }} to group docker"
+  user:
+    name: "{{ hue_os_user }}"
+    groups: docker
+    append: yes
+  become: yes
+  
+- name: Add  user '{{ provision_user }}' to group docker
+  user:
+    name: '{{ provision_user }}'
+    groups: docker
+    append: yes
+  become: yes
+
+#
+# Pull remote Hue image to controller
+# add a tag and push it to local docker registry
+# from registry distribute to Hue servers.
+- name: Check if Hue docker image already exists
+  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue.*{{ version.hue }} | wc -l"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  become: yes
+  
+- name: Show Hue docker image already exists
+  ansible.builtin.debug:
+    msg: Hue image detect {{ docker_img_exists.stdout }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+
+- name: Pull Hue image to controller server
+  command: "docker pull gethue/hue:{{ version.hue }}"
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+  
+# start docker without Kerberos mappings, otherwise we cannot install krb5-user
+- name: Start Hue Docker container without Kerberos
+  shell: >
+    docker run -d --rm --name hue -p {{ hue_port }}:8888 gethue/hue:{{ version.hue }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+  
+# make sure Docker container has had time to start
+# before updating the container
+- name: Wait for Hue Docker container to become active
+  wait_for:
+    host: localhost
+    port: '{{ hue_port }}'
+    delay: 5
+    timeout: 60
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+  
+# Hue 4.10.0 has bug that no kerberos user utils have been installed.
+# fix this by adding correct packages
+# also add home dir for user hue, to store the krb cache
+# TODO: remove this when this is fixed by hue project, keep the hue home dir
+- name: Install Kerberos packages in Hue container
+  community.docker.docker_container_exec:
+    container: hue
+    argv:
+      - /bin/bash
+      - "-c"
+      - "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y krb5-user krb5-config && mkdir -p /home/hue && chown -R hue:hue /home/hue"
+    chdir: /root
+    user: root
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+  
+- name: Commit Hue docker container changes
+  command: docker commit hue gethue/hue:{{ version.hue }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+  
+- name: Stop Hue Docker container without Kerberos
+  command: docker stop hue
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+  
+- name: Tag Hue docker image
+  shell: >
+    docker image tag gethue/hue:{{ version.hue  }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+
+# deploy img to server  
+- name: Push Hue docker image to registry
+  shell: >
+    docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+
+- name: Pull Hue image to Hue server
+  shell: >
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
+  become: yes
+     
+- name: Include create database task
+  include_tasks: tasks/database.yml
+

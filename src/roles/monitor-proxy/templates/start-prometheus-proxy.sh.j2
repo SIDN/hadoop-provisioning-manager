@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+#source {{ impala_etc_dir }}/impala-impalad-env.sh
+source {{ impala_etc_dir }}/prometheus-proxy-env-{{ daemon }}.sh
+
+kinit -kt {{ impala_etc_dir }}/impala.keytab impala/{{ inventory_hostname }}@{{ kerberos_realm }}
+
+
+python3 {{ stack_root }}/apache-impala-latest/bin/impala-prometheus-exporter.py \
+  --hostname $PROM_PROXY_HOSTNAME \
+  --port $PROM_PROXY_PORT \
+  --url $PROM_PROXY_URL \
+  --tls_key $PROM_PROXY_TLS_KEY \
+  --tls_cert $PROM_PROXY_TLS_CERT
+
+# python3 {{ stack_root }}/apache-impala-latest/bin/impala-prometheus-exporter.py \
+#   --hostname {{ inventory_hostname }} \
+#   --port {{ impala_prometheus_port[daemon] }} \
+#   --url "https://{{ inventory_hostname }}:{{ impala_web_port[daemon] }}/metrics_prometheus" \
+#   --tls_key {{ tls_etc_dir }}/{{ tls_remote_priv_key }}   \
+#   --tls_cert {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}

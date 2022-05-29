@@ -1,0 +1,31 @@
+- name: Copy shared configuration files
+  ansible.builtin.copy:
+    src: "{{ cache_root }}/conf/{{ item }}"
+    dest: "{{ hue_etc_dir }}"
+    mode: '0644'
+  loop:
+    - core-site.xml
+    - hdfs-site.xml
+    - impalad_flags
+  become: yes
+  
+- name: Create Hue configuration files
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ hue_etc_dir }}/{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { name: 'hue.ini.j2', dest: 'hue.ini'}
+    - { name: 'hue-custom.ini.j2', dest: 'hue-custom.ini'}
+    - { name: 'hive-site.xml.j2', dest: 'hive-site.xml'}
+    - { name: 'log.conf.j2', dest: 'log.conf'}
+    - { name: 'log4j.properties.j2', dest: 'log4j.properties'}
+  become: yes
+
+# - name: Set correct permissions
+#   ansible.builtin.file:
+#     path: "{{ hue_etc_dir }}"
+#     state: directory
+#     mode: '0644'
+#     recurse: yes
+#   become: yes

@@ -1,0 +1,36 @@
+<h1 class="display-6">YARN</h1>
+<p>
+<a href="https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/YARN.html">YARN</a> (Yet Another Resource Negotiator) is a resource management framework for Hadoop.
+</p>
+<p>
+Every host with a Hadoop data node service, must also have a YARN node manager service co-located on that host.
+Services such as Apache Spark use YARN to request resources (CPU-cores and memory) and execute data processing tasks in containers executed by the YARN Node managers.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['yarn_resource_mgr'] %}
+    <tr>
+      <td>Resource Manager</td>
+      <td><a href="https://{{ host }}:8090" target="_blank">{{ host }}</a></td>
+    </tr>
+    <tr>
+      <td>Resource Manager (UI2)</td>
+      <td><a href="https://{{ host }}:8090/ui2" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+    {% for host in groups['yarn_timelineserver'] %}
+    <tr>
+      <td>Timeline Server</td>
+      <td><a href="https://{{ host }}:8190" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+    {% for host in groups['hadoop'] %}
+    <tr>
+      <td>Node Manager</td>
+      <td><a href="https://{{ host }}:8044" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+</table>

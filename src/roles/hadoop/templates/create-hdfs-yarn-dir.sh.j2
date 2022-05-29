@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+. {{ hadoop_etc_dir }}/hadoop-env.sh && \
+kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }}
+
+hadoop fs -test -d /user/{{ hadoop_os_user.yarn }}/log
+if [ $? != 0 ]
+then
+  echo "Create Yarn HDFS directories"
+  hdfs dfs -mkdir -p /user/{{ hadoop_os_user.yarn }}/log && \
+  hdfs dfs -chmod -R 0775 /user/{{ hadoop_os_user.yarn }} && \
+  hdfs dfs -mkdir -p /user/{{ hadoop_os_user.yarn }}/timeline/active && \
+  hdfs dfs -mkdir -p /user/{{ hadoop_os_user.yarn }}/timeline/done && \
+  hdfs dfs -chown -R {{ hadoop_os_user.yarn }}:{{ hadoop_os_group }} /user/{{ hadoop_os_user.yarn }} && \
+  hdfs dfs -chmod -R 1777 /user/{{ hadoop_os_user.yarn }}/timeline && \
+  hdfs dfs -chmod -R 0700 /user/{{ hadoop_os_user.yarn }}/timeline/done && \
+  hdfs dfs -chmod 0777 /user/{{ hadoop_os_user.yarn }}/log
+else
+  echo "Yarn HDFS directories are present"
+fi

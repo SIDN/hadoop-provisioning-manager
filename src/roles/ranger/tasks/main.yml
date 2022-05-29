@@ -1,0 +1,216 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ ranger_os_group }}"
+    state: present
+  become: yes
+  
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ ranger_os_user }}"
+    new_group: "{{ ranger_os_group }}"
+  
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ranger_os_user }}"
+    group: "{{ ranger_os_group }}"
+    mode: '0755'
+  loop:
+    - "{{ ranger_etc_dir }}"
+    - "{{ ranger_log_dir }}"
+    - /var/run/ranger/
+  become: yes
+  
+- name: Install required packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - postgresql-jdbc
+    state: latest
+  become: yes
+  when: ansible_distribution == "RedHat" 
+  
+- name: Install required packages (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - libpostgresql-jdbc-java
+    state: latest
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Create ranger Systemd services
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "/etc/systemd/system/{{ item.name }}.service"
+    mode: '0644'
+  loop:
+      - { src: 'systemd_ranger_admin_service.j2', name: 'ranger_admin'}
+      - { src: 'systemd_ranger_usersync_service.j2', name: 'ranger_usersync'}
+  become: yes
+    
+- name: Systemctl Reload Daemons
+  shell: "systemctl daemon-reload"
+  become: yes  
+  when: not (inventory_hostname in groups['gateway']) 
+  
+- name: Check if the Apache ranger src is already downloaded
+  stat:
+    path: "{{ download_root }}/ranger-{{ version.ranger  }}-admin.tar.gz"
+  register: stat_ranger_src
+  delegate_to: localhost
+  connection: local
+    
+- name: Download Apache ranger
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ repository_url }}/apache-ranger/apache-ranger-2.2.0/ranger-{{ version.ranger  }}-admin.tar.gz"
+    - "{{ repository_url }}/apache-ranger/apache-ranger-2.2.0/ranger-{{ version.ranger  }}-usersync.tar.gz"
+  delegate_to: localhost
+  connection: local
+  when: not stat_ranger_src.stat.exists
+
+- name: Check if the Apache ranger src is already on remote
+  stat:
+    path: "{{ cache_root }}/ranger-{{ version.ranger  }}-admin.tar.gz"
+  register: stat_remote_ranger_src
+
+- name: Copy Apache ranger to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ item }}"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  loop:
+    - ranger-{{ version.ranger  }}-admin.tar.gz
+    - ranger-{{ version.ranger  }}-usersync.tar.gz
+  when: not stat_remote_ranger_src.stat.exists
+    
+# remove old ranger installation
+# otherwise step "Recursively change ownership of a directory" may fail
+- name: Remove old Ranger installation ( if present)
+  ansible.builtin.file:
+    path: "{{ stack_root }}/ranger-{{ version.ranger }}-{{ item }}"
+    state: absent    
+  loop:
+    - admin
+    - usersync
+  become: yes
+
+- name: Extract ranger components
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/ranger-{{ version.ranger }}-{{ item }}.tar.gz"
+      remote_src: true
+      dest: "{{ stack_root }}"
+      creates: "{{ stack_root }}/ranger-{{ version.ranger }}-{{ item }}"
+      owner: "{{ ranger_os_user }}"
+      group: "{{ ranger_os_group }}"
+  loop:
+    - admin
+    - usersync
+  become: yes
+  
+- name: Recursively change ownership of a directory
+  ansible.builtin.file:
+    path: "{{ stack_root }}/ranger-{{ version.ranger }}-{{ item }}"
+    state: directory
+    recurse: yes
+    owner: "{{ ranger_os_user }}"
+    group: "{{ ranger_os_group }}"
+  loop:
+    - admin
+    - usersync
+  become: yes
+    
+- name: Create symlink latest ranger version
+  file:
+      src: "{{ stack_root }}/ranger-{{ version.ranger  }}-{{ item }}"
+      dest: "{{ stack_root }}/apache-ranger-{{ item }}-latest"
+      state: link
+  loop:
+    - admin
+    - usersync
+  become: yes
+  
+- name: Create symlink to Postgresql jar (RHEL)
+  file:
+      src: "/usr/share/java/postgresql-jdbc.jar"
+      dest: "{{ stack_root }}/apache-ranger-admin-latest/ews/webapp/WEB-INF/lib/postgresql.jar"
+      state: link
+  become: yes
+  when: ansible_distribution == "RedHat"
+  
+- name: Create symlink to Postgresql jar (Ubuntu)
+  file:
+      src: "/usr/share/java/postgresql.jar"
+      dest: "{{ stack_root }}/apache-ranger-admin-latest/ews/webapp/WEB-INF/lib/postgresql.jar"
+      state: link
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+    
+- name: Create db user
+  postgresql_user:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: "postgres"
+      state: present
+      name: "{{ ranger_db_user }}"
+      password: "{{ ranger_db_password }}"
+  become: yes
+
+- name: Create database
+  postgresql_db:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: "postgres"
+      owner: "{{ ranger_db_user }}"
+      state: present
+      name: "{{ ranger_db }}"
+  become: yes
+
+- name: Create symlink to configuration directory
+  file:
+      src: '{{ ranger_etc_dir }}'
+      dest: '{{ stack_root }}/apache-ranger-admin-latest/ews/webapp/WEB-INF/classes/conf'
+      state: link
+      force: yes
+  become: yes
+  
+# Different guava jar is required by ranger
+- name: Check if Guava jar is already on manager
+  stat:
+    path: "{{ download_root }}/{{ ranger_download_url.guava | basename }}"
+  register: stat_download_jar
+  delegate_to: localhost
+  connection: local
+  
+- name: Download new guava jar
+  get_url:
+      url: "{{ ranger_download_url.guava }}"
+      dest: "{{ download_root }}"
+  when: not stat_download_jar.stat.exists
+  delegate_to: localhost
+  connection: local
+  
+# configure and setup usersync
+- name: Check if usersync Guava jar is present
+  stat:
+    path: "{{ stack_root }}/apache-ranger-usersync-latest/lib/{{ ranger_download_url.guava | basename }}"
+  register: stat_jar
+
+- name: Fix missing Guava class, copy correct jar to remote
+  copy:
+      src: "{{ download_root }}/{{ ranger_download_url.guava | basename }}"
+      dest: "{{ stack_root }}/apache-ranger-usersync-latest/lib/"
+  when: not stat_jar.stat.exists
+  become: yes
+  
+- name: Create symlink for usersync configuration directory
+  file:
+      src: '{{ ranger_etc_dir }}'
+      dest: '{{ stack_root }}/apache-ranger-usersync-latest/conf'
+      state: link
+      force: yes
+  become: yes

@@ -1,0 +1,56 @@
+# delete user on worker nodes, the user to delete is found in variable {{ del_user }}
+- hosts: all
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    - name: Delete existing OS user
+      ansible.builtin.user:
+        name: "{{ del_user }}"
+        remove: yes
+        state: absent
+      become: yes
+      
+    # delete uer from Ranger Database this is not done automatically by ranger
+    - name: Delete user from Ranger database
+      shell: >
+          echo "{{ kerberos_hadoop_admin_password }}" | kinit {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }};
+          curl --negotiate -u : -v -i -s -H "Content-type: application/json"
+          -X DELETE https://{{ groups['ranger'][0] }}:{{ ranger_admin_port }}/service/xusers/users/userName/{{ del_user }}?forceDelete=true
+    
+
+- hosts: kerberos_kdc
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    - name: Delete Kerberos user
+      expect:
+        command: kadmin.local -q 'delprinc {{ del_user }}@{{ kerberos_realm }}'
+        responses:
+          Are you sure you want to delete the principal (.*): 'yes'
+      become: yes
+      
+- hosts: hdfs_primary_nn[0]
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:    
+    - name: Delete HDFS home directory for user
+      shell: >
+          source {{ hadoop_etc_dir }}/hadoop-env.sh;
+          kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
+          hdfs dfs -rm -r -f /user/{{ del_user }};
+      become: yes
+  
+  

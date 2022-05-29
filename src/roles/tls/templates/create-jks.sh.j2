@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Create jks truststore, used by hdfs namenode (ssl-server.xml)
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# make sure keytool is on the path
+export PATH="$(dirname $(dirname $(readlink -f $(which javac))))/bin:$PATH"
+
+P12_OUT_FILE="hadoop-tls.p12"
+
+cd {{ tls_etc_dir }} && rm -f "$P12_OUT_FILE" {{ tls_remote_truststore }}
+
+#1 create p12 file
+
+openssl pkcs12 \
+  -export \
+  -in {{ tls_remote_pub_chain }} \
+  -inkey {{ tls_remote_priv_key }}\
+  -out $P12_OUT_FILE \
+  -passout pass:{{ tls_remote_truststore_password }} \
+  -caname root
+  
+#2 create Java keystore (jks) file
+keytool -importkeystore \
+  -srckeystore $P12_OUT_FILE \
+  -srcstoretype PKCS12 \
+  -srcstorepass {{ tls_remote_truststore_password }} \
+  -deststorepass {{ tls_remote_truststore_password }} \
+  -destkeystore {{ tls_remote_truststore }}
+
+chmod 644 $P12_OUT_FILE
+chmod 644 {{ tls_remote_truststore }}

@@ -1,0 +1,9 @@
+Client {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  keyTab="{{ solr_etc_dir }}/http.keytab"
+  storeKey=true
+  useTicketCache=true
+  debug=false
+  principal="HTTP/{{ inventory_hostname }}@{{ kerberos_realm }}";
+};

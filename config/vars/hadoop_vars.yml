@@ -1,0 +1,173 @@
+# Hadoop (HDFS and YARN) related configuration
+
+# Set the user under which the component must run.
+hadoop_os_user:
+  hdfs: hdfs
+  httpfs: httpfs
+  yarn: yarn
+
+# The common group used for the above Hadoop users
+hadoop_os_group: hadoop
+
+# During Hadoop deploy a "hdfs" Kerberos user is created: hdfs@{{ kerberos_realm }}
+# this is the superuser for the hdfs filesystem
+# Use this option to set the password for the hdfs user.
+hadoop_hdfs_krb_password: "{{ vault_hadoop_hdfs_krb_password }}"
+
+# location of the Hadoop config files
+hadoop_etc_dir: "{{ config_root }}/hadoop"
+
+# directory for hadoop logging
+hadoop_log_dir: /var/log/hadoop
+
+# directory for yarn logging
+yarn_log_dir: /var/log/yarn
+
+# tmp directory for hadoop processes
+hadoop_tmp_dir: /tmp/hadoop
+
+# directory where hdfs metadata backup is saved
+# before the HDFS metadata is upgraded
+hadoop_backup_dir: /data/1/hadoop-backup
+
+# cluster uses HDFS HA, use hdfs://<nameservice> to access hdfs
+# Set value for nameservice, fs.defaultFS in core-site.xml
+# and dfs.nameservices in hdfs-site.xml
+hadoop_fs_nameservices: nameservice
+
+hadoop_cgroups:
+  cpu_shares:
+    hdfs_datanode: 1024
+
+hadoop_web_tls_port:
+  nodemanager: 8044
+  resourcemanager: 8090
+  timelineserver: 8190
+
+# port used by the prometheus jmx exporter attached to
+# each Hadoop java process: name node, data node, journal node ...
+hadoop_prometheus_port:
+  hdfs_namenode: 8580
+  hdfs_datanode: 8581
+  hdfs_journalnode: 8582
+  yarn_resource_manager: 8583
+  yarn_timeline_server: 8584
+  yarn_node_manager: 8585
+
+# list of disk mounts used to store hdfs namenode metadata
+# dfs.namenode.name.dir
+hadoop_dfs_namenode_name_dir: 
+  - /data/1/dfs/nn
+
+# list of disk mounts used to store hdfs data blocks
+# dfs.datanode.data.dir
+hadoop_dfs_datanode_data_dir:
+  - /data/1/dfs/dn
+  - /data/2/dfs/dn
+  - /data/3/dfs/dn
+  
+# list of disk mounts used to store hdfs checkpoints
+# on the secondarynamenode
+# dfs.namenode.checkpoint.dir
+hadoop_dfs_namenode_checkpoint_dir: 
+  - /data/1/dfs/snn
+
+# Edits dir for HDFS journalnodes
+# dfs.journalnode.edits.dir (local disk)
+# Only 1 directory is supported
+hadoop_dfs_journalnode_edits_dir: /data/1
+  
+# Where to store container logs. 
+# multiple dirs allowed
+yarn_node_manager_logdir: 
+  - /data/1  
+  - /data/2
+  
+# Data directory for yarn timeline server
+# yarn.timeline-service.leveldb-timeline-store.path (local disk)
+# Only 1 directory is supported
+yarn_timeline_service_leveldb_timeline_store_path: /data/1
+
+# Hadoop HDFS daemon Java heap sizes
+# these are used in hadoop-env.sh
+hadoop_heap:
+  namenode: 1g
+  datanode: 4g
+  journalnode: 512m
+  failover_controller: 256m
+  httpfs: 256m
+  client: 512m
+  
+# Hadoop Yarn daemon Java heap sizes
+# these are used in yarn-env.sh
+yarn_heap:
+  resourcemanager: 1g
+  nodemanager: 1g
+  proxyserver: 512m
+  timelineserver: 1g
+
+
+##
+## Add additional options to the Hadoop XML config files
+##
+
+# core-site.xml options
+# see: https://hadoop.apache.org/docs/r3.3.1/hadoop-project-dist/hadoop-common/core-default.xml
+core_site_options:
+  fs.trash.interval: 1440  
+
+# hdfs-site.xml options  
+# see: https://hadoop.apache.org/docs/r3.3.1/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml
+hdfs_site_options:
+    # set replication speed
+  dfs.namenode.replication.work.multiplier.per.iteration: 10
+  dfs.namenode.replication.max-streams: 20
+  dfs.namenode.replication.max-streams-hard-limit: 40
+  dfs.datanode.balance.max.concurrent.moves: 50
+  dfs.balancer.max-size-to-move: 21474836480
+  dfs.namenode.handler.count: 100
+  dfs.namenode.service.handler.count: 100
+  dfs.datanode.du.reserved: 10737418240
+
+    
+# yan_site.xml options
+# see: https://hadoop.apache.org/docs/r3.3.1/hadoop-yarn/hadoop-yarn-common/yarn-default.xml
+# Configuring container memory limits with cgroups
+# see: https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/NodeManagerCGroupsMemory.html
+yarn_site_options:
+  yarn.nodemanager.resource.cpu-vcores: 8 # cores available per server
+  yarn.nodemanager.resource.memory-mb: 65536 # RAM available per server
+  yarn.nodemanager.resource.percentage-physical-cpu-limit: 90
+  yarn.nodemanager.vmem-pmem-ratio: 5  # http://cloudsqale.com/2020/02/19/hadoop-yarn-container-virtual-memory-understanding-and-solving-container-is-running-beyond-virtual-memory-limits-errors/
+  yarn.scheduler.increment-allocation-mb: 512
+  yarn.scheduler.maximum-allocation-mb: 65536  
+  yarn.scheduler.maximum-allocation-vcores: 8  
+  yarn.scheduler.increment-allocation-vcores: 1
+  yarn.log-aggregation-enable: true
+  yarn.resourcemanager.max-completed-applications: 1000
+  yarn.resourcemanager.zk-timeout-ms: 60000
+  
+# yarn capacity-scheduler.xml
+# default setting is to create 1 queue that gets 100% of resources
+# see: https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/CapacityScheduler.html
+yarn_capacity_scheduler_options:
+  yarn.scheduler.capacity.root.queues: 'default'
+  yarn.scheduler.capacity.root.capacity: 100
+  yarn.scheduler.capacity.root.default.capacity: 100
+
+# queue propertes for fair-scheduler.xml
+# first queue must have name "default"
+# see: https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/FairScheduler.html
+yarn_fair_scheduler_options:
+  - name: 'default'
+    weight: 1.0
+    schedulingPolicy: drf
+    aclSubmitApps: '*'
+    aclAdministerApps: '*'
+
+# URL where to download Apache Hadoop package
+hadoop_download_url: "https://archive.apache.org/dist/hadoop/common/hadoop-{{ version.hadoop }}/hadoop-{{ version.hadoop }}.tar.gz"
+
+# URL where to get the metric-core jar that is compatible with the spark shuffle service
+# when version.hadoop < 3.2
+yarn_metrics_core_download_url: "https://repo1.maven.org/maven2/io/dropwizard/metrics/metrics-core/{{ version.spark_metrics }}/metrics-core-{{ version.spark_metrics }}.jar"

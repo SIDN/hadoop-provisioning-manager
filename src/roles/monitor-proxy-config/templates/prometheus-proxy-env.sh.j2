@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+export PROM_PROXY_HOSTNAME={{ inventory_hostname }}
+export PROM_PROXY_PORT={{ impala_prometheus_port[daemon] }}
+
+export PROM_PROXY_URL="https://{{ inventory_hostname }}:{{ impala_web_port[daemon] }}/metrics_prometheus"
+export PROM_PROXY_TLS_KEY={{ tls_etc_dir }}/{{ tls_remote_priv_key }}
+export PROM_PROXY_TLS_CERT={{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
+

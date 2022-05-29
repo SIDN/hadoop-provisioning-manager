@@ -1,0 +1,23 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Zookeeper service 
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=forking
+User={{ zookeeper_os_user }}
+Group={{ zookeeper_os_group }}
+ExecStart=/bin/bash -c 'source {{ zookeeper_etc_dir }}/zk-env.sh; {{ stack_root }}/apache-zookeeper-latest/bin/zkServer.sh start'
+ExecStop=/bin/bash -c 'source {{ zookeeper_etc_dir }}/zk-env.sh; {{ stack_root }}/apache-zookeeper-latest/bin/zkServer.sh stop'
+SuccessExitStatus=143
+Restart=always
+RestartSec=60
+#StandardOutput=append:{{ zookeeper_log_dir }}/zookeeper.log
+#StandardError=append:{{ zookeeper_log_dir }}/zookeeper.log
+
+[Install]
+WantedBy=multi-user.target
+

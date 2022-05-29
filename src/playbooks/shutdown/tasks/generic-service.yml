@@ -1,0 +1,5 @@
+- name: Stop service
+  ansible.builtin.systemd:
+      state: stopped
+      name: "{{ service_name }}"
+  become: yes  

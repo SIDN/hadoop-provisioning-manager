@@ -1,0 +1,35 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# no dynamic reconfig enabled
+reconfigEnabled=false
+
+# the directory where the snapshot is stored.
+dataDir={{ zookeeper_data_dir }}
+
+{% for key, value in zookeeper_options.items() %}
+{{ key }}={{ value }}
+{% endfor %}
+
+4lw.commands.whitelist=*
+
+{% for host in groups['zookeeper'] %}
+server.{{ loop.index }}={{ host }}:2888:3888
+{% endfor %}
+
+quorum.auth.enableSasl=true
+quorum.auth.learnerRequireSasl=true
+quorum.auth.serverRequireSasl=true
+quorum.auth.kerberos.servicePrincipal=zookeeper/_HOST
+quorum.cnxn.threads.size=20
+
+kerberos.removeHostFromPrincipal=true
+kerberos.removeRealmFromPrincipal=true
+
+{% if zookeeper_metrics_enabled %}
+
+# enable prometheus metrics exporter
+metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider 
+metricsProvider.httpPort={{ zookeeper_metrics_port }}
+
+{% endif %}

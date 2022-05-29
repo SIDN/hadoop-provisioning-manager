@@ -1,0 +1,19 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Hive {{ item }} 
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User={{ hive_os_user }}
+Group={{ hive_os_group }}
+ExecStart=/bin/bash -c 'source {{ hive_etc_dir }}/hive-env.sh; {{ stack_root }}/apache-hive-latest/bin/hive --service metastore'
+ExecStop=/bin/bash -c "ps -aux | grep metastore | grep -v grep | awk '{print $1,$2}' | awk '{print $2}' | xargs kill >/dev/null 2>&1"
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

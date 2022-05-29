@@ -1,0 +1,441 @@
+# Create keytabs voor SPNEGO HTTP/*@host principals
+- hosts: manager
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytabs (on manager)
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_fileglob:
+        - "{{ cache_root }}/krb/*-http.keytab"
+    
+    # HTTP keytabs may be used by multiple services    
+    - name: Create HTTP service keytab
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin
+        responses:
+          kadmin:
+            - "xst -k {{ cache_root }}/krb/{{ item }}-http.keytab HTTP/{{ item }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+      with_items:
+        - "{{ groups['all'] }}"
+          
+    - name: Change keytab ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        owner: "{{ provision_user }}"
+        mode: '0400'  
+      with_fileglob:
+        - "{{ cache_root }}/krb/*-http.keytab"
+      
+  # Create Hadoop keytabs        
+- hosts: hadoop:hdfs_primary_nn:hdfs_secondary_nn:hdfs_journalnode:hdfs_httpfs:yarn_resource_mgr:yarn_timelineserver
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hive_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hue_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/livy_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/spark_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/impala_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/zookeeper_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/solr_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: create remote cache directories
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - "{{ cache_root }}/krb"
+        
+    - name: Delete old keytabs (on remote)
+      ansible.builtin.file:
+        path: "{{ hadoop_etc_dir }}/{{ item }}"
+        state: absent
+      with_items:
+        - hdfs.keytab
+        - yarn.keytab
+        - http.keytab
+      
+    - name: Copy http.keytab for hadoop
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ hadoop_etc_dir }}/{{ item.dest }}"
+        owner: "{{ hadoop_os_user.hdfs }}"
+        group: "{{ hadoop_os_group }}"
+        mode: '0440'    
+      loop:
+        - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
+  
+    - name: Create Hadoop service keytab
+      expect:
+        command: kadmin -r {{ kerberos_realm }} -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }} -s {{ groups['kerberos_kdc'] }}
+        responses:
+          kadmin:
+            - "xst -k {{ hadoop_etc_dir }}/{{ item.keytab }} {{ item.service }}/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+      loop: 
+        - { service: 'hdfs', keytab: 'hdfs.keytab'}
+        - { service: 'yarn', keytab: 'yarn.keytab' }
+            
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ item.kt }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: '0440'
+      loop: 
+        - { kt: '{{ hadoop_etc_dir }}/hdfs.keytab', owner: "{{ hadoop_os_user.hdfs }}", group: "{{ hadoop_os_group }}" }
+        - { kt: '{{ hadoop_etc_dir }}/http.keytab', owner: "{{ hadoop_os_user.hdfs }}", group: "{{ hadoop_os_group }}" }
+        - { kt: '{{ hadoop_etc_dir }}/yarn.keytab', owner: "{{ hadoop_os_user.yarn }}", group: "{{ hadoop_os_group }}" }
+
+
+- hosts: spark_history:spark_thrift
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/spark_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytabs
+      ansible.builtin.file:
+        path: "{{ spark_etc_dir }}/spark.keytab"
+        state: absent
+        
+    - name: Create Spark service keytabs 
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        responses:
+          kadmin:
+            - "xst -k {{ spark_etc_dir }}/spark.keytab spark/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+                
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ spark_etc_dir }}/spark.keytab"
+        owner: "{{ spark_os_user }}"
+        group: "{{ spark_os_group }}"
+        mode: '0440'
+
+- hosts: hive
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hive_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytabs
+      ansible.builtin.file:
+        path: "{{ hive_etc_dir }}/hive.keytab"
+        state: absent
+    
+    - name: Create Hive service keytabs 
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        responses:
+          kadmin:
+            - "xst -k {{ hive_etc_dir }}/hive.keytab hive/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+            
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ hive_etc_dir }}/hive.keytab"
+        owner: "{{ hive_os_user }}"
+        group: "{{ hive_os_group }}"
+        mode: '0440'
+
+# Impala-proxy keytab needs to be added to keytab of all impala executors.
+# for this we crate proxy keytab one on mgmt node now and then copy this to 
+# the impala nodes later
+# see: https://impala.apache.org/docs/build/html/topics/impala_proxy.html#proxy
+# create all unique keytabs, create keytab for each impala host only once
+- hosts: impala:impala_statestore:impala_catalog:impala_ha_proxy
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:           
+    - name: Create Impala service keytabs 
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        responses:
+          kadmin:
+            - "xst -k {{ cache_root }}/krb/{{ inventory_hostname }}-impala.keytab impala/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"  
+      delegate_to: localhost
+          
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        owner: "{{ provision_user }}"
+        mode: '0440'  
+      with_fileglob:
+        - "{{ cache_root }}/krb/*.keytab"
+      delegate_to: localhost
+  
+
+- hosts: impala:impala_statestore:impala_catalog
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/impala_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytabs
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ impala_etc_dir }}/impala.keytab"
+        - "{{ impala_etc_dir }}/impala-proxy.keytab"
+        - "{{ impala_etc_dir }}/http.keytab"
+        - "{{ impala_etc_dir }}/impala-http.keytab"
+            
+    - name: Copy impala keytabs
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ impala_etc_dir }}/{{ item.dest }}"
+        owner: "{{ impala_os_user }}"
+        group: "{{ impala_os_group }}"
+        mode: '0440'    
+      loop:
+        - { src: "{{ cache_root }}/krb/{{ groups['impala_ha_proxy'][0] }}-impala.keytab", dest: "impala-proxy.keytab" }
+        - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
+        - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-impala.keytab", dest: "impala.keytab" }
+
+    # create key with impala and HTTP principals.
+    # reuse hadoop HTTP keytab DO NOT create new http.keytab
+    # this wil invalidate the older http.keytab used by hadoop
+    - name: create combined impala/http service keytab
+      expect:
+        command: ktutil
+        responses:
+            ktutil:
+              - "rkt {{ impala_etc_dir }}/impala.keytab"
+              - "rkt {{ impala_etc_dir }}/impala-proxy.keytab"
+              - "rkt {{ impala_etc_dir }}/http.keytab"
+              - "wkt {{ impala_etc_dir }}/impala-http.keytab"
+              - "quit"
+
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ impala_etc_dir }}/impala-http.keytab"
+        owner: "{{ impala_os_user }}"
+        group: "{{ impala_os_group }}"
+        mode: '0440'              
+
+- hosts: zookeeper
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/zookeeper_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytabs
+      ansible.builtin.file:
+        path: "{{ zookeeper_etc_dir }}/zookeeper.keytab"
+        state: absent      
+  
+    - name: Create Zookeeper service keytabs 
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        responses:
+          kadmin:
+            - "xst -k {{ zookeeper_etc_dir }}/zookeeper.keytab zookeeper/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+            
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ zookeeper_etc_dir }}/zookeeper.keytab"
+        owner: "{{ zookeeper_os_user }}"
+        group: "{{ zookeeper_os_group }}"
+        mode: '0440'  
+        
+- hosts: hue
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hue_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytabs
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ hue_etc_dir }}/hue.keytab"
+        - "{{ hue_etc_dir }}/http.keytab"
+    
+    - name: Copy http.keytab for hue web
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ hue_etc_dir }}/{{ item.dest }}"
+      loop:
+        - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
+
+    - name: Create Hue service keytabs 
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        responses:
+          kadmin:
+            - "xst -k {{ hue_etc_dir }}/hue.keytab hue/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+            
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0444'  
+      with_items:
+        - "{{ hue_etc_dir }}/hue.keytab"
+        - "{{ hue_etc_dir }}/http.keytab"
+
+
+- hosts: livy
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/livy_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytab
+      ansible.builtin.file:
+        path: "{{ livy_etc_dir }}/livy.keytab"
+        state: absent
+
+    - name: Create Livy service keytabs 
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        responses:
+          kadmin:
+            - "xst -k {{ livy_etc_dir }}/livy.keytab livy/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+
+    # livy web ui need krb keytab for HTTP principal on livy server
+    # reuse the HTTP principal created for hadoop service  
+    - name: Copy http.keytab for Livy
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ livy_etc_dir }}/{{ item.dest }}"
+      loop:
+        - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
+
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0440'  
+        owner: "{{ livy_os_user }}"
+        group: "{{ livy_os_group }}"
+      with_items:
+        - "{{ livy_etc_dir }}/http.keytab"
+        - "{{ livy_etc_dir }}/livy.keytab"
+
+
+- hosts: ranger
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytabs
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ ranger_etc_dir }}/ranger.keytab"
+        - "{{ ranger_etc_dir }}/lookupranger.keytab"
+        - "{{ ranger_etc_dir }}/rangerusersync.keytab"
+        - "{{ ranger_etc_dir }}/http.keytab"
+        
+    - name: Copy http keytab
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ ranger_etc_dir }}/{{ item.dest }}"
+      loop:
+        - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
+  
+    - name: Create Ranger service keytabs 
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        responses:
+          kadmin:
+            - "xst -k {{ ranger_etc_dir }}/{{ item }}.keytab {{ item }}/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+      loop:
+        - ranger
+        - lookupranger
+        - rangerusersync
+
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0444'  
+      with_items:
+        - "{{ ranger_etc_dir }}/ranger.keytab"
+        - "{{ ranger_etc_dir }}/lookupranger.keytab"
+        - "{{ ranger_etc_dir }}/rangerusersync.keytab"
+        - "{{ ranger_etc_dir }}/http.keytab"
+
+# solr HTTP keytab on ranger host
+- hosts: ranger
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/solr_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytab
+      ansible.builtin.file:
+        path: "{{ solr_etc_dir }}/http.keytab"
+        state: absent
+    
+    - name: Copy http keytab
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ solr_etc_dir }}/{{ item.dest }}"
+      loop:
+        - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
+        
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ solr_etc_dir }}/http.keytab"
+        mode: '0444'  
+
+       

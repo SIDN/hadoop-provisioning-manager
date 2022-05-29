@@ -1,0 +1,3 @@
+# requirements used to create the default Python venv for Pyspark
+pyspark
+pandas

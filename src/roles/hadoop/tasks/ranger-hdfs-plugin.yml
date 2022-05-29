@@ -1,0 +1,115 @@
+
+- name: Check if the plugin is already downloaded
+  stat:
+    path: "{{ download_root }}/ranger-{{ version.ranger  }}-hdfs-plugin.tar.gz"
+  register: stat_src
+  delegate_to: localhost
+  connection: local
+
+- name: Download Ranger HDFS plugin
+  get_url:
+    url: "{{ item }}"
+    dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ repository_url }}/apache-ranger/apache-ranger-2.2.0/ranger-{{ version.ranger  }}-hdfs-plugin.tar.gz"
+  delegate_to: localhost
+  connection: local
+  when: not stat_src.stat.exists
+  
+- name: Check if the Ranger HDFS plugin is already on remote
+  stat:
+    path: "{{ cache_root }}/ranger-{{ version.ranger  }}-hdfs-plugin.tar.gz"
+  register: stat_remote
+
+- name: Copy Ranger HDFS plugin to remote
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ cache_root }}"
+  loop:
+    - "{{ download_root }}/ranger-{{ version.ranger  }}-hdfs-plugin.tar.gz"
+  when: not stat_remote.stat.exists
+  
+- name: Recursively remove Ranger plugin directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/ranger-{{ version.ranger }}-hdfs-plugin'
+    state: absent
+  become: yes
+  
+- name: Extract Ranger plugin
+  ansible.builtin.unarchive:
+    src: "{{ cache_root }}/ranger-{{ version.ranger  }}-hdfs-plugin.tar.gz"
+    remote_src: true
+    dest: "{{ stack_root }}"
+    creates: "{{ stack_root }}/ranger-{{ version.ranger }}-hdfs-plugin"
+    owner: root
+    group: "{{ hadoop_os_group }}"
+  become: yes
+  
+- name: Change ownership of hdfs plugin directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/ranger-{{ version.ranger  }}-hdfs-plugin'
+    state: directory
+    group: "{{ hadoop_os_group }}"
+    recurse: yes
+  become: yes
+  
+- name: Create symlink latest Ranger plugin version
+  file:
+    src: "{{ stack_root }}/ranger-{{ version.ranger  }}-hdfs-plugin"
+    dest: "{{ stack_root }}/ranger-hdfs-plugin-latest"
+    state: link
+  become: yes  
+  
+- name: Template scripts
+  ansible.builtin.template:
+    src: "../templates/ranger-hdfs/{{ item.name }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+  loop:
+    - { name: 'install.properties.j2', dest: '{{ stack_root }}/ranger-hdfs-plugin-latest/install.properties', owner: "root", group: "hadoop" }
+    - { name: 'solr-jaas.conf.j2', dest: '{{ hadoop_etc_dir }}/solr-jaas.conf', owner: "{{ hadoop_os_user.hdfs }}", group: "{{ hadoop_os_group }}" }
+  become: yes
+  
+# fix missing guave jar
+- name: Delete old Guava jar (is missing required class/methods)
+  file:
+    path: "{{ stack_root }}/ranger-hdfs-plugin-latest/install/lib/{{ item }}"
+    state: absent
+  loop:
+    - guava-27.0-jre.jar
+  become: yes  
+  
+- name: Check if Guava jar is already on management node
+  stat:
+    path: "{{ download_root }}/{{ ranger_download_url.guava | basename }}"
+  register: stat_download_jar
+  delegate_to: localhost
+  connection: local
+  
+- name: Download new guava jar
+  get_url:
+      url: "{{ ranger_download_url.guava }}"
+      dest: "{{ download_root }}"
+  when: not stat_download_jar.stat.exists
+  delegate_to: localhost
+  connection: local
+  
+- name: Fix missing Guava class, copy correct jar to remote
+  copy:
+      src: "{{ download_root }}/{{ ranger_download_url.guava | basename }}"
+      dest: "{{ stack_root }}/ranger-hdfs-plugin-latest/install/lib/"
+  become: yes
+
+# add hadoop jars to ranger plugin dir
+- name: Copy dependencies to install lib dir
+  shell: >
+    cp -n {{ stack_root }}/hadoop-latest/share/hadoop/hdfs/lib/*.jar {{ stack_root }}/ranger-hdfs-plugin-latest/install/lib
+  become: yes  
+  
+- name: Enable Ranger for HDFS
+  shell: >
+    export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which javac))));
+    cd {{ stack_root }}/ranger-hdfs-plugin-latest/;
+    ./enable-hdfs-plugin.sh
+  become: yes

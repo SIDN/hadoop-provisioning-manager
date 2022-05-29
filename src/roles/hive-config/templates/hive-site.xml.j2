@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+Created on: {{ ansible_date_time.iso8601 }}
+Pushed to: {{  inventory_hostname }}
+ -->
+<configuration>
+  <property>
+    <name>hive.metastore.uris</name>
+    {% if groups['hive'] | length > 0 %}
+    <value>thrift://{{ groups['hive'][0] }}:{{ hive_ports.metastore }}</value>
+    {% else %}
+    <value></value>
+    {% endif %}
+  </property>
+  <property>
+    <name>hive.metastore.warehouse.dir</name>
+    <value>/user/{{ hive_os_user }}/warehouse</value>
+  </property>
+  <property>
+    <name>hive.warehouse.subdir.inherit.perms</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hive.server2.logging.operation.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hive.server2.logging.operation.log.location</name>
+    <value>{{ hive_log_dir }}</value>
+  </property>
+  <property>
+    <name>hive.support.concurrency</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hive.cluster.delegation.token.store.class</name>
+    <value>org.apache.hadoop.hive.thrift.DBTokenStore</value>
+  </property>
+  <property>
+    <name>hive.server2.enable.doAs</name>
+    <value>true</value>
+  </property>
+  
+  {% if role_name != "client-config" %}
+  {# Do not include db config in client config #}
+  
+  <property>
+    <name>javax.jdo.option.ConnectionURL</name>
+    {% if groups['database'] | length > 0 %}
+    <value>jdbc:postgresql://{{ groups['database'][0]}}:5432/{{ hive_db }}</value>
+    {% else %}
+    <value></value>
+    {% endif %}
+  </property>
+  <property>
+    <name>javax.jdo.option.ConnectionDriverName</name>
+    <value>org.postgresql.Driver</value>
+  </property>
+  <property>
+    <name>javax.jdo.option.ConnectionUserName</name>
+    <value>{{ hive_db_user }}</value>
+  </property>
+  <property>
+    <name>javax.jdo.option.ConnectionPassword</name>
+    <value>{{ hive_db_password }}</value>
+  </property>
+  <property>
+    <name>hive.metastore.try.direct.sql.ddl</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>hive.metastore.try.direct.sql</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>datanucleus.schema.autoCreateAll</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>datanucleus.metadata.xml.validate</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>hive.metastore.schema.verification</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>datanucleus.autoStartMechanism</name>
+    <value>SchemaTable</value>
+  </property>
+  
+  {% endif %}
+  
+  <property>
+    <name>hive.server2.logging.operation.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hive.server2.logging.operation.log.location</name>
+    <value>{{ hive_log_dir }}</value>
+  </property>
+  <property>
+    <name>hive.metastore.event.listeners</name>
+    <value></value>
+  </property>
+  <property>
+    <name>hive.metastore.notifications.add.thrift.objects</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>hive.metastore.sasl.enabled</name>
+    <value>true</value>
+  </property>
+  
+  {% if role_name != "client-config" %}
+  {# Do not include keytabs in client config #}
+  <property>
+    <name>hive.metastore.kerberos.keytab.file</name>
+    <value>{{ hive_etc_dir }}/hive.keytab</value>
+  </property>
+  <property>
+      <name>hive.server2.authentication.kerberos.keytab</name>
+      <value>{{ hive_etc_dir }}/hive.keytab</value>
+  </property>
+  {% endif %}
+  
+  
+<property>
+   <name>hive.server2.authentication</name>
+    <value>kerberos</value>
+</property> 
+
+<property>
+   <name>hive.server2.authentication.kerberos.principal</name>
+    <value>hive/_HOST@{{ kerberos_realm }}</value>
+</property>
+
+<property>
+  <name>hive.metastore.kerberos.principal</name>
+  <value>hive/_HOST@{{ kerberos_realm }}</value>
+</property>
+
+{% for key, value in hive_additional_options.items() %}
+<property>
+  <name>{{ key }}</name>
+  <value>{{ value | string | lower }}</value>
+</property>
+{% endfor %}
+
+</configuration>

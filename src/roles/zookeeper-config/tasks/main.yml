@@ -1,0 +1,18 @@
+- name: Create Zookeeper configuration files
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "{{ zookeeper_etc_dir }}/{{ item.dest }}"
+  loop:
+    - { src: 'zoo.cfg.j2', dest: 'zoo.cfg'}
+    - { src: 'logback.xml.j2', dest: 'logback.xml'}
+    - { src: 'zk-env.sh.j2', dest: 'zk-env.sh'}
+    - { src: 'jaas.conf.j2', dest: 'jaas.conf'}
+  become: yes
+  
+  
+# - name: Create Zookeeper env file
+#   ansible.builtin.template:
+#     src: zk-env.sh.j2
+#     dest: "{{ stack_root }}/apache-zookeeper-latest/bin/zk-env.sh"
+#     mode: '0755'
+#   become: yes

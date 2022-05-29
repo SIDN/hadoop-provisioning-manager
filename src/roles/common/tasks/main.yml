@@ -1,0 +1,52 @@
+- name: Create Hadoop users OS group
+  group:
+    name: "{{ ranger_sync_group_name }}"
+    state: present
+    gid: "{{ ranger_sync_group_uid }}"
+  become: yes
+
+- name: Create remote cache and deploy directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ provision_user }}"
+    group: "{{ provision_user }}"
+    mode: "755"
+  loop:
+    - "{{ cache_root }}"
+    - "{{ cache_root }}/conf"
+    - "{{ stack_root }}"
+  become: yes
+
+- name: Install required packages
+  ansible.builtin.package:
+    name:
+      - chrony
+      - net-tools
+    state: latest
+  become: yes
+
+- name: Make sure chronyd is automatically started
+  ansible.builtin.systemd:
+    name: chronyd
+    state: started
+    enabled: yes
+  become: yes
+
+# create a directory for all python venvs
+- name: Create venv base directory
+  file:
+    path: '{{ python_venv_dir }}'
+    state: directory
+    mode: '755'
+  become: yes  
+
+- name: Include Ubuntu specific installation
+  include_tasks: ubuntu.yml
+  when:  ansible_distribution == "Ubuntu"
+
+- name: Include RedHat specific installation
+  include_tasks: rhel.yml
+  when: ansible_distribution == "RedHat"
+  
+

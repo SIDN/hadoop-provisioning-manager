@@ -1,0 +1,23 @@
+{% include './templates/spark-env.sh.j2' %}
+
+# Options for the Spark Thrift server
+
+#export SPARK_DAEMON_MEMORY={{ spark_thrift_server_yarn.driver_memory }}
+
+export SPARK_DRIVER_MEMORY={{ spark_thrift_server_yarn.driver_memory }}
+export SPARK_EXECUTORS={{ spark_thrift_server_yarn.executors }}
+export SPARK_EXECUTOR_CORES={{ spark_thrift_server_yarn.executor_cores }}
+export SPARK_EXECUTOR_MEMORY={{ spark_thrift_server_yarn.executor_memory }}
+export SPARK_MASTER_WEBUI_PORT={{ spark_thrift_server_yarn.ui_port }}
+
+export SPARK_THRIFT_SERVER_QUEUE_NAME={{ spark_thrift_server_yarn.queue }}
+
+#export SPARK_THRIFT_SERVER_EXECUTORS={{ spark_thrift_server_yarn.executors }}
+#export HIVE_SERVER2_THRIFT_PORT={{ spark_thrift_server_yarn.port }}
+#export SPARK_THRIFT_SERVER_DRIVER_MEMORY={{ spark_thrift_server_yarn.driver_memory }}
+
+#export SPARK_THRIFT_SERVER_UI_PORT={{ spark_thrift_server_yarn.ui_port }}
+
+#export SPARK_THRIFT_SERVER_EXECUTOR_CORES={{ spark_thrift_server_yarn.executor_cores }}
+#export SPARK_THRIFT_SERVER_EXECUTOR_MEMORY={{ spark_thrift_server_yarn.executor_memory }}
+

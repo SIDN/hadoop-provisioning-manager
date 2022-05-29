@@ -1,0 +1,98 @@
+- name: Create management node local directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ download_root }}"
+    - "{{ cache_root }}/conf"
+    - "{{ cache_root }}/krb"
+  
+- name: Installing required Ansible packages
+  shell: >
+    ansible-galaxy collection install community.docker
+  become: yes
+  
+- name: Install required packages
+  ansible.builtin.package:
+    name:
+      - python3-psycopg2
+    state: latest
+  become: yes
+
+- name: Create Docker registry service
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { "src": "systemd_docker_reg_service.j2", "dest": "/etc/systemd/system/docker_reg.service"}
+  become: yes
+  
+- name: Systemctl Reload Daemons
+  shell: systemctl daemon-reload
+  become: yes
+  
+- name: Enable Docker registry service
+  ansible.builtin.systemd:
+    name: docker_reg
+    enabled: yes
+  become: yes
+
+- name: Add user '{{ provision_user }}' to group docker
+  user:
+    name: '{{ provision_user }}'
+    groups: docker
+    append: yes
+  become: yes
+  
+  # start docker and registry otherwise isnatlling other dockerized
+  # components on cluster will fail.
+  
+- name: Start service Docker
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+  become: yes
+    
+- name: Start Docker registry
+  ansible.builtin.systemd:
+    name: docker_reg
+    state: started
+  become: yes
+  
+# have ansible run in py3 venv on the manager node
+# to make sure we are only using py3
+- name: Create python venv directory
+  file:
+    path: "{{ py_env_dir }}"
+    state: directory
+
+- name: "Create python3 venv"
+  shell: >
+    python3 -m venv {{ py_env_dir }}/{{ py_env_name }}
+
+- name: Upgrade pip
+  shell: >
+    {{ py_env_dir }}/{{ py_env_name }}/bin/pip3 install --upgrade pip
+  become: yes    
+
+- name: Install Python dependencies
+  vars:
+    venv: "{{ py_env_dir }}/{{ py_env_name }}"
+  pip:
+    name: "{{ item }}"
+    virtualenv: "{{ venv }}"
+  loop:
+      - requests
+      - docker==5.0.3
+      #- psycopg2-binary
+
+# before executing ansible scripts, this python env needs to be actived    
+- name: Create symlink to python activation
+  file:
+    src: "{{ py_env_dir }}/{{ py_env_name }}/bin/activate"
+    dest: /home/{{ provision_user }}/activate-python
+    state: link
+  become: yes  
+  
+ 
+  

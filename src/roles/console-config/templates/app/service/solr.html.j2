@@ -1,0 +1,20 @@
+<h1 class="display-6">Solr</h1>
+<p>
+<a href="https://solr.apache.org/">Solr</a> is highly reliable, scalable and fault tolerant, providing distributed indexing, replication and load-balanced querying, automated failover and recovery, centralized configuration and more.
+</p>
+<p>
+Apache Ranger uses Solr to store audit events created by HDFS and Impala, an audit event is a request for access to an HDFS resource path or a request to execute an Impala SQL-query using protected databases and tables.
+The stored audit events can be analysed using the Ranger Admin interface.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['ranger'] %}
+    <tr>
+      <td>SOLR Admin</td>
+      <td><a href="https://{{ host }}:8983/solr" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,12 @@
+# Spark containers run as the krb user that started them, therefore the py env group must be ranger_sync_group_name
+# otherwize the krb user has no permission to the py env.
+- name: Create config facts
+  set_fact:
+     py_version: 3
+     py_env_name: '{{ spark_default_python_venv }}'
+     py_env_req_file: "{{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}/python/default-pyspark-requirements.txt"
+     py_env_permission: 'root:{{ ranger_sync_group_name }}'
+
+- name: Include role for Python create venv
+  include_role:
+    name: python-venv

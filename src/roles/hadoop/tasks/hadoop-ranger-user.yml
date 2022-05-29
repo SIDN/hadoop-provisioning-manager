@@ -1,0 +1,15 @@
+- name: Create OS ranger user group
+  ansible.builtin.group:
+    name: "{{ ranger_sync_group_name }}"
+    state: present
+  become: yes
+
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ item.value }}"
+    new_group: "{{ ranger_sync_group_name }}"
+  loop: "{{ hadoop_os_user | dict2items }}"
+    
+  

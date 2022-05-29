@@ -1,0 +1,160 @@
+- name: Create OS user group
+  ansible.builtin.group:
+    name: "{{ hadoop_os_group }}"
+    state: present
+  become: yes
+  
+# create hadoop cfg directory
+- name: Create cfg directory
+  file:
+    path: "{{ hadoop_etc_dir }}"
+    state: directory
+    owner: root
+    group: "{{ hadoop_os_group }}"
+    mode: '0755'
+  become: yes
+  
+# check if this is a new (fresh) install or if this is an
+# upgrade of an existing hadoop installation.
+- name: Check if Hadoop already installed
+  stat:
+    path: "{{ stack_root }}/hadoop-latest"
+  register: reg_hadoop_dir
+  
+- name: Check for existing HDFS cluster
+  shell: "source {{ hadoop_etc_dir }}/hadoop-env.sh; hadoop version | head -n 1 | cut -d' ' -f 2"
+  register: prev_hadoop_version
+  when: reg_hadoop_dir.stat.exists
+  
+- name: Show previous hadoop version
+  ansible.builtin.debug:
+    msg: Currently installed hadoop version {{ prev_hadoop_version.stdout }}
+  when: reg_hadoop_dir.stat.exists
+    
+# The UPGRADE will be used during the hdfs name node start process to determine if
+# the hdfs metadata needs to be upgraded
+- name: Create UPGRADE file ({{ prev_hadoop_version.stdout }}) when != {{ version.hadoop }}
+  copy:
+    dest: "{{ hadoop_etc_dir }}/UPGRADE"
+    content: "{{ prev_hadoop_version.stdout }}"
+  become: yes
+  when: reg_hadoop_dir.stat.exists and prev_hadoop_version.stdout and (prev_hadoop_version.stdout != version.hadoop)
+        and (('hdfs_primary_nn' in groups and inventory_hostname in groups['hdfs_primary_nn']) or ('hdfs_secondary_nn' in groups and inventory_hostname in groups['hdfs_secondary_nn']))
+
+- name: Install package dependencies (RHEL)
+  ansible.builtin.package:
+    name:
+      - snappy 
+      - snappy-devel
+      - openssl11
+      - htop
+    state: latest
+  become: yes
+  when: ansible_distribution == "RedHat"
+  
+- name: Install cgroup utils (RHEL)
+  ansible.builtin.package:
+    name:
+      - libcgroup-tools
+    state: latest
+  become: yes
+  when: (ansible_distribution == "RedHat")
+    and ('hadoop' in groups and inventory_hostname in groups['hadoop'])
+  
+- name: Install package dependencies (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - libsnappy1v5
+      - libsnappy-dev
+      - openssl
+      - htop
+    state: latest
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+  
+- name: Install cgroup utils (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - cgroup-tools
+    state: latest
+  become: yes
+  when: (ansible_distribution == "Ubuntu")
+    and ('hadoop' in groups and inventory_hostname in groups['hadoop'])
+
+- name: Check if the Apache Hadoop src is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ hadoop_download_url | basename }}"
+  register: stat_hadoop_src
+  delegate_to: localhost
+  connection: local
+
+- name: Download Apache Hadoop
+  get_url:
+    url: "{{ item }}"
+    dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ hadoop_download_url }}"
+  delegate_to: localhost
+  connection: local
+  when: not stat_hadoop_src.stat.exists
+
+- name: Check if the Apache Hadoop src is already on remote
+  stat:
+    path: "{{ cache_root }}/{{ hadoop_download_url | basename }}"
+  register: stat_remote_hadoop_src
+
+- name: Copy Apache Hadoop to remote
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ cache_root }}"
+  loop:
+    - "{{ download_root }}/{{ hadoop_download_url | basename }}"
+  when: not stat_remote_hadoop_src.stat.exists
+
+- name: Recursively remove old Hadoop directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/hadoop-{{ version.hadoop }}'
+    state: absent
+  become: yes
+
+- name: Extract Hadoop archive
+  ansible.builtin.unarchive:
+    src: "{{ cache_root }}/{{ hadoop_download_url | basename }}"
+    remote_src: true
+    dest: "{{ stack_root }}"
+    creates: "{{ stack_root }}/hadoop-{{ version.hadoop }}"
+    owner: root
+    group: "{{ hadoop_os_group }}"
+  become: yes
+
+- name: Create symlink latest Hadoop version
+  file:
+    src: "{{ stack_root }}/hadoop-{{ version.hadoop }}"
+    dest: "{{ stack_root }}/hadoop-latest"
+    state: link
+  become: yes
+
+# some components (yarn container executor) get cfg from: {{ stack_root }}/hadoop-latest/etc/hadoop.old 
+- name: Move old hadoop configuration
+  shell: >
+    mv {{ stack_root }}/hadoop-latest/etc/hadoop {{ stack_root }}/hadoop-latest/etc/hadoop.old
+  become: yes  
+
+- name: Create symlink to hadoop configuration
+  file:
+    src: "{{ hadoop_etc_dir }}"
+    dest: "{{ stack_root }}/hadoop-latest/etc/hadoop"
+    state: link
+  become: yes  
+
+- name: Hadoop templates
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.perm }}"
+    owner: root
+    group: "{{ hadoop_os_group }}"
+  loop:
+      - { name: 'start_hdfs_service.sh.j2', dest: '{{ stack_root }}/hadoop-latest/bin/start_hdfs_service.sh', perm: '0755' }
+  become: yes
+  

@@ -1,0 +1,182 @@
+- name: Create OS user group
+  ansible.builtin.group:
+    name: "{{ hive_os_group }}"
+    state: present
+  become: yes
+    
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ hive_os_user }}"
+    new_group: "{{ hive_os_group }}"
+
+- name: Create cfg directory
+  file:
+    path: "{{ hive_etc_dir }}"
+    state: directory
+    mode: '0755'
+  become: yes
+  
+- name: Create log directory
+  file:
+    path: "{{ hive_log_dir }}"
+    state: directory
+    owner: "{{ hive_os_user }}"
+    group: "{{ hive_os_group }}"
+  become: yes
+  
+- name: Create Systemd services
+  ansible.builtin.template:
+    src: "../templates/systemd_{{ item }}_service.j2"
+    dest: "/etc/systemd/system/{{ item }}.service"
+    mode: '0644'
+  loop:
+    - hive_metastore
+  become: yes
+  when: (inventory_hostname in groups['hive'])
+    and not (inventory_hostname in groups['gateway'])  
+  
+- name: Systemctl Reload Daemons
+  command: "systemctl daemon-reload"
+  become: yes
+  when: not (inventory_hostname in groups['gateway']) 
+  
+- name: Check if the Apache Hive is already downloaded
+  stat:
+    path: "{{ download_root }}/apache-hive-{{ version.hive }}-bin.tar.gz"
+  register: stat_hive_src
+  delegate_to: localhost
+  connection: local
+
+# bug in Impala 4.0.0 causes problems
+# use Impala < 4.0.0 unitil this issue is fixed 
+# see: https://issues.apache.org/jira/browse/IMPALA-10756
+- name: Download Apache Hive
+  get_url:
+      url: "{{ hive_download_url }}"
+      dest: "{{ download_root }}"
+  delegate_to: localhost
+  connection: local
+  when: not stat_hive_src.stat.exists
+
+- name: Check if the Apache Hive is already on remote
+  stat:
+    path: "{{ cache_root }}/apache-hive-{{ version.hive }}-bin.tar.gz"
+  register: stat_remote_hive_src
+
+- name: Copy Apache Hive to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/apache-hive-{{ version.hive }}-bin.tar.gz"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  when: not stat_remote_hive_src.stat.exists
+    
+- name: Recursively remove Hive directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/apache-hive-{{ version.hive }}-bin'
+    state: absent
+  become: yes
+    
+- name: Extract Hive
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/apache-hive-{{ version.hive }}-bin.tar.gz"
+      remote_src: true
+      dest: "{{ stack_root }}"
+      creates: "{{ stack_root }}/apache-hive-{{ version.hive }}-bin"
+      owner: "{{ hive_os_user }}"
+      group: "{{ hive_os_group }}"
+  become: yes
+  
+# extract somehow does not set the correct owner and permission
+# now set permissions and ownerships
+- name: Recursively change ownership of Hive directory
+  ansible.builtin.file:
+    path: "{{ stack_root }}/apache-hive-{{ version.hive }}-bin"
+    state: directory
+    recurse: yes
+    owner: "{{ hive_os_user }}"
+    group: "{{ hive_os_group }}"
+  become: yes
+
+- name: Set correct permissions for Hive directory
+  shell: chmod 755 $(find {{ stack_root }}/apache-hive-{{ version.hive }}-bin -type d)
+  become: yes
+    
+# get the old psql driver name
+- name: Get name of old Postgresql driver
+  find:
+    paths: "{{ stack_root }}/apache-hive-{{ version.hive }}-bin/lib"
+    patterns: "postgresql-[0-9\\.]+jre[0-9]+\\.jar"
+    use_regex: yes
+  register: psql_jar
+  become: yes
+    
+- name: Show name of old Postgresql driver
+  ansible.builtin.debug:
+    msg: "Old Postgresql driver: {{ item.path }}"
+  with_items: '{{ psql_jar.files }}'
+  
+# old driver does not support scram-sha-256
+- name: Remove old Postgresql driver
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent    
+  become: yes  
+  with_items: '{{ psql_jar.files }}'
+  become: yes
+  
+- name: Check if the psql jdbc driver is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
+  register: jdbc_driver
+  delegate_to: localhost
+  connection: local
+    
+- name: Download psql jdbc driver
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ db_jdbc_driver_url }}"
+  delegate_to: localhost
+  connection: local
+  when: not jdbc_driver.stat.exists
+  
+- name: Copy psql jdbc driver to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
+    dest: "{{ stack_root }}/apache-hive-{{ version.hive }}-bin/lib"
+    mode: '0644'
+    owner: "{{ hive_os_user }}"
+    group: "{{ hive_os_group }}"
+  become: yes
+
+- name: Create symlink latest Hive version
+  file:
+      src: "{{ stack_root }}/apache-hive-{{ version.hive }}-bin"
+      dest: "{{ stack_root }}/apache-hive-latest"
+      state: link
+  become: yes
+
+- name: Template bin scripts
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ stack_root }}/apache-hive-latest/bin/{{ item.dest }}"
+    mode: '0744'
+  loop:
+    - { name: 'create-warehouse.sh.j2', dest: 'create-warehouse.sh'}
+    - { name: 'create-tmp-dir.sh.j2', dest: 'create-tmp-dir.sh'}
+  become: yes
+  when: not (inventory_hostname in groups['gateway'])  
+  
+- name: Create a scratch directory if it does not exist
+  ansible.builtin.file:
+    path: /tmp/hive
+    state: directory
+    mode: '0777'
+  become: yes
+  when: not (inventory_hostname in groups['gateway'])  
+
+
+    

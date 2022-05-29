@@ -1,0 +1,34 @@
+- hosts: hive:gateway
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hive_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/db_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hue_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/livy_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/spark_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/impala_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    # shared config must always be generated before config deploy
+    - name: Include component deploy
+      include_role:
+        name: shared-config
+      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool) 
+            
+    - name: Include component deploy
+      include_role:
+        name: hive
+      when: var_deploy_comp | bool
+    
+    # do not execute config deploy here when var_deploy_comp=true
+    # the hive comp will call config deploy directly.
+    - name: Include configuration deploy
+      include_role:
+        name: hive-config
+      when: (var_deploy_cfg_only | bool)
+

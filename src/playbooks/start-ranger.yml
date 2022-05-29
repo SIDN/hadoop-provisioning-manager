@@ -1,0 +1,66 @@
+- hosts: ranger
+  remote_user: hadoop-mgr
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+  become: yes
+  tasks:
+    - name: Start Ranger service
+      include_tasks: startup/tasks/generic-service.yml    
+      loop: 
+        - ranger_admin
+        - ranger_usersync
+      loop_control:
+        loop_var: service_name  
+    
+    # make sure all the services have been created  
+    
+    # interact with kerberized ranger api using shell and not uri 
+    # because older rhel and python3 + kerberos is painful/impossible  
+    - name: Check if Impala service exists
+      shell: >
+          echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
+          curl --negotiate -u : -H "Content-type: application/json"
+          -X GET https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/name/impala
+      register: service_check  
+      retries: 5
+      delay: 30
+        
+    # - name: Impala service status
+    #   debug: 
+    #     msg: "Impala service not found!"
+    #   when: service_check.stdout.find('Not found') != -1
+      
+    - name: Create new Impala service
+      shell: >
+          echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
+          curl --negotiate -u : -H "Content-type: application/json"
+          -d '{{ lookup('file','roles/ranger/files/ranger_impala_service.json') }}'
+          --fail -X POST https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/
+      when: service_check.stdout.find('Not found') != -1
+      
+      
+    # HDFS service    
+    - name: Check if HDFS service exists
+      shell: >
+          echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
+          curl --negotiate -u : -H "Content-type: application/json"
+          -X GET https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/name/hdfs
+      register: service_check  
+    
+    - name: HDFS service status
+      debug: 
+        msg: "HDFS service not found!"
+      when: service_check.stdout.find('Not found') != -1
+          
+    - name: Create new HDFS service
+      shell: >
+          echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
+          curl --negotiate -u : -H "Content-type: application/json"
+          -d '{{ lookup('template','roles/ranger/templates/ranger_hdfs_service.json.j2') | to_json }}'
+          --fail -X POST https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/
+      when: service_check.stdout.find('Not found') != -1
+  

@@ -1,0 +1,28 @@
+# OS user to run hue docker container
+hue_os_user: hue
+hue_os_group: hue
+
+# Location of Hue configuration files
+hue_etc_dir: "{{ config_root }}/hue"
+# Location of Hue logging
+hue_log_dir: /var/log/hue
+
+# Port Hue is listening on
+hue_port: 8888
+
+# The Hue database options 
+# Database will be create automatically
+hue_db: hue
+hue_db_user: hue
+hue_db_password: "{{ vault_hue_db_password }}"
+
+# Additional options, these are merged with the mail hue.ini config file
+# contents are merged to form the Hue configuration, which can
+# can be viewed on the Hue at http://<hue_host>:<port>/dump_config
+hue_additional_cfg_block: |
+  # add additional config lines here
+  # will be added to hue.ini
+  [desktop]
+  [[custom]]
+    # Top banner HTML code
+    banner_top_html=<H4>Hue: authorized access only</H4>

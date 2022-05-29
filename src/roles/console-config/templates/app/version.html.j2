@@ -1,0 +1,14 @@
+<h1 class="display-6">Versions</h1>
+<p>An overview of all deployed components and their versions.</p>
+<table class="table table-hover">
+  <tr>
+    <th>Component</th>
+    <th>Version</th>
+  </tr>
+    {% for component, version in version.items() %}
+    <tr>
+      <td>{{ component | capitalize }}</td>
+      <td>{{ version }}</td>
+    </tr>
+    {% endfor %}
+</table>

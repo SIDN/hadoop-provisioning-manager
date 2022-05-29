@@ -1,0 +1,15 @@
+# set to true if you already have exising postgesql db server that is not part of hadoop cluster
+# set to false when new database server must be installed
+db_use_existing: false
+
+# IP-address to listen on (* == all == 0.0.0.0)
+db_server_listen: "*"
+
+# location where pgsql should store data files
+db_data_dir: /data/pgsql
+
+# set password for postgres_admin_user: postgres
+db_admin_password: "{{ vault_db_admin_password }}"
+
+# jdbc driver to use be components that need jdbc conenction to db
+db_jdbc_driver_url: https://jdbc.postgresql.org/download/postgresql-42.3.3.jar

@@ -1,0 +1,21 @@
+# Prepare for a hdfs format upgrade by creating a backup fs image
+
+- name: Create rollback image
+  shell: >
+      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
+      {{ stack_root }}/hadoop-latest/bin/hdfs dfsadmin -rollingUpgrade prepare
+  become_user: "{{ hadoop_os_user.hdfs }}"
+  become: yes
+
+- name: Wait until creating rollback image has been completed
+  shell: >
+      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
+      {{ stack_root }}/hadoop-latest/bin/hdfs dfsadmin -rollingUpgrade query
+  become_user: "{{ hadoop_os_user.hdfs }}"
+  become: yes
+  register: reg_prepare_status
+  until: reg_prepare_status.stdout.find("Proceed with rolling upgrade") != -1
+  retries: 99
+

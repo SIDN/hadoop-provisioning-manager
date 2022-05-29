@@ -1,0 +1,147 @@
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ item.value }}"
+    new_group: "{{ hadoop_os_group }}"
+  loop: "{{ hadoop_os_user | dict2items }}"
+  
+# create other required hadoop directories
+# including the /var/run/hdfs-sockets/ directory required to enable hdfs shortcircuit reads
+- name: Create directories
+  file:
+    path: "{{ item.name }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { name: "{{ hadoop_log_dir }}", owner: "{{ hadoop_os_user.hdfs }}", group: "{{ hadoop_os_group }}", mode: "0774"}
+    - { name: "/var/run/hdfs-sockets", owner: "{{ hadoop_os_user.hdfs }}", group: "root", mode: "0755"}
+    - { name: "{{ hadoop_tmp_dir }}", owner: "{{ hadoop_os_user.hdfs }}", group: "{{ hadoop_os_group }}", mode: "1777"}
+    - { name: "{{ hadoop_backup_dir }}", owner: "{{ hadoop_os_user.hdfs }}", group: "{{ hadoop_os_group }}", mode: "0755"}
+  become: yes
+  when: not (inventory_hostname in groups['gateway']) 
+
+- name: Check for existing HDFS metadata
+  ansible.builtin.stat:
+    path: "{{ hadoop_dfs_namenode_name_dir[0] }}/current/VERSION"
+  register: hdfs_metadata
+  become: yes
+  when: ('hdfs_primary_nn' in groups and (inventory_hostname in groups['hdfs_primary_nn']) or ('hdfs_secondary_nn' in groups and inventory_hostname in groups['hdfs_secondary_nn']))
+
+- name: Create NEW file, no HDFS metadata found
+  copy:
+    dest: "{{ hadoop_etc_dir }}/NEW"
+    content: "NEW"
+  become: yes
+  when: ('hdfs_primary_nn' in groups and (inventory_hostname in groups['hdfs_primary_nn']) or ('hdfs_secondary_nn' in groups and inventory_hostname in groups['hdfs_secondary_nn']))
+        and not hdfs_metadata.stat.exists
+  
+# only on data nodes (not name nodes)
+- name: Create hadoop data directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ hadoop_os_user.hdfs }}"
+    group: "{{ hadoop_os_group }}"
+  loop: "{{ hadoop_dfs_datanode_data_dir }}"
+  become: yes
+  when: >
+    ('hadoop' in groups and inventory_hostname in groups['hadoop']) and not (inventory_hostname in groups['gateway']) 
+
+# only on name nodes (this can also be a data nodes, if host is in both groups)
+- name: Create hadoop namenode metadata directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ hadoop_os_user.hdfs }}"
+    group: "{{ hadoop_os_group }}"
+  loop: "{{ hadoop_dfs_namenode_name_dir }}"
+  become: yes
+  when: >
+    (('hdfs_primary_nn' in groups and inventory_hostname in groups['hdfs_primary_nn']) or ('hdfs_secondary_nn' in groups and inventory_hostname in groups['hdfs_secondary_nn']))
+    and not (inventory_hostname in groups['gateway'])  
+
+- name: Create hadoop namenode checkpoint directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ hadoop_os_user.hdfs }}"
+    group: "{{ hadoop_os_group }}"
+  loop: "{{ hadoop_dfs_namenode_checkpoint_dir }}"
+  become: yes
+  when: >
+    (('hdfs_primary_nn' in groups and inventory_hostname in groups['hdfs_primary_nn']) or ('hdfs_secondary_nn' in groups and inventory_hostname in groups['hdfs_secondary_nn']))
+    and not (inventory_hostname in groups['gateway'])      
+      
+- name: Check if {{ cache_root }}/http_secret exists
+  stat:
+    path: "{{ cache_root }}/http_secret"
+  register: stat_http_secret
+  delegate_to: localhost
+  connection: local
+  become: yes
+  
+- name: Create secret data
+  command: "dd if=/dev/urandom of={{ cache_root }}/http_secret bs=1024 count=1"
+  delegate_to: localhost
+  connection: local
+  when: not stat_http_secret.stat.exists
+  become: yes
+    
+- name: Copy HTTP secret file
+  ansible.builtin.copy:
+    src: "{{ cache_root }}/http_secret"
+    dest: "{{ hadoop_etc_dir }}/http_secret"
+    owner: "{{ hadoop_os_user.hdfs }}"
+    group: "{{ hadoop_os_group }}"
+    mode: '0440'
+  become: yes
+  when: not (inventory_hostname in groups['gateway'])   
+  
+- name: Create HTTPFS secret file
+  shell: >
+      dd if=/dev/urandom of={{ hadoop_etc_dir }}/httpfs-signature.secret bs=1024 count=1;
+      chown {{ hadoop_os_user.httpfs }}:{{ hadoop_os_group }} {{ hadoop_etc_dir }}/httpfs-signature.secret;
+      chmod 0440 {{ hadoop_etc_dir }}/httpfs-signature.secret;
+  when: ('hdfs_httpfs' in groups and inventory_hostname in groups['hdfs_httpfs'])
+  become: yes
+    
+- name: Create journalnode data directories
+  file:
+    path: "{{ hadoop_dfs_journalnode_edits_dir }}"
+    state: directory
+    owner: "{{ hadoop_os_user.hdfs }}"
+    group: "{{ hadoop_os_group }}"
+  loop: 
+    - "{{ hadoop_dfs_journalnode_edits_dir }}"
+  become: yes
+  when: >
+    ('hdfs_journalnode' in groups and inventory_hostname in groups['hdfs_journalnode']) and not (inventory_hostname in groups['gateway'])  
+
+- name: Create HDFS Systemd services
+  ansible.builtin.template:
+    src: ../templates/systemd_hdfs_service.j2
+    dest: "/etc/systemd/system/hdfs_{{ item.name }}.service"
+    mode: '0644'
+    force: yes
+  loop:
+    - { name: 'datanode', env: 'hadoop-env.sh', group_name: 'hadoop' }
+    - { name: 'namenode', env: 'hadoop-env.sh', group_name: 'hdfs_primary_nn' }
+    - { name: 'zkfc', env: 'hadoop-env.sh', group_name: 'hdfs_primary_nn' }
+    - { name: 'secondarynamenode', env: 'hadoop-env.sh', group_name: 'hdfs_secondary_nn' }
+    - { name: 'zkfc', env: 'hadoop-env.sh', group_name: 'hdfs_secondary_nn' }
+    - { name: 'journalnode', env: 'hadoop-env.sh', group_name: 'hdfs_journalnode' }
+    - { name: 'httpfs', env: 'httpfs-env.sh', group_name: 'hdfs_httpfs' }
+  become: yes
+  tags:
+    - always
+  when: (inventory_hostname in groups[item.group_name])
+        and not (inventory_hostname in groups['gateway'])
+
+- name: Systemctl Reload Daemons
+  shell: "systemctl daemon-reload"
+  become: yes
+  when: >
+    not (inventory_hostname in groups['gateway'])

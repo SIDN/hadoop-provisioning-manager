@@ -1,0 +1,51 @@
+- name: create ranger policycache directory
+  file:
+    path: "{{ impala_etc_dir }}/policycache"
+    state: directory
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+    mode: '0755'
+  become: yes
+
+- name: Create Systemd services
+  ansible.builtin.template:
+    src: "../templates/systemd_service.j2"
+    dest: "/etc/systemd/system/impala_{{ item.name }}.service"
+    mode: '0664'
+  loop:
+    - { name: 'impalad', group_name: 'hadoop' }
+    - { name: 'catalogd', group_name: 'impala_catalog' }
+    - { name: 'statestored', group_name: 'impala_statestore' }
+  become: yes
+  when: (inventory_hostname in groups[item.group_name])
+        and not (inventory_hostname in groups['gateway'])
+  
+- name: Systemctl Reload Daemons
+  shell: systemctl daemon-reload
+  become: yes  
+  when: not (inventory_hostname in groups['gateway']) 
+
+- name: create impala directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+  loop:
+    - "{{ impala_log_dir }}"
+  become: yes
+
+- name: Create symlinks to deamons
+  file:
+      src: "{{ stack_root }}/apache-impala-rhel79-{{ version.impala }}/bin/impalad"
+      dest: "{{ stack_root }}/apache-impala-rhel79-{{ version.impala }}/bin/{{ item }}"
+      state: link
+  loop:
+    - catalogd
+    - statestored
+  become: yes
+  become_user: "{{ impala_os_user }}"
+  when: not (inventory_hostname in groups['gateway']) 
+
+
+      

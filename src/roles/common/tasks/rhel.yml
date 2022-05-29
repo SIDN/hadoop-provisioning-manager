@@ -1,0 +1,69 @@
+- name: Check if the EPEL repo is already found, adding it twice make breaks things (Puppet)
+  shell: yum repolist | grep "Extra Packages for Enterprise Linux" | wc -l
+  register: stat_epel_repo
+  become: yes
+
+- name: Enable EPEL Repository
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: latest
+    update_cache: true
+  become: yes
+  when: stat_epel_repo.stdout | int == 0
+  
+- name: Add Postgresql-14 repository
+  yum:
+    name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+  become: yes
+
+- name: Put SELinux in permissive mode, logging actions that would otherwise be blocked. (RHEL)
+  shell: /usr/sbin/setenforce 0
+  become: yes
+
+- name: Check if SELinux cfg exists
+  stat:
+    path: /etc/selinux/config
+  register: stat_selinux_cfg_result
+
+- name: Ensure SELinux is set to permissive mode (RHEL)
+  ansible.builtin.lineinfile:
+    path: /etc/selinux/config
+    regexp: '^SELINUX='
+    line: SELINUX=permissive
+  become: yes
+  when: stat_selinux_cfg_result
+
+# make sure components can talk to each other
+# TODO: create specific FW rules for all services
+- name: Stop and disable firewalld (RHEL)
+  ansible.builtin.systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+  become: yes
+
+# remove a existing java version to make sure the correct java version is enabled
+- name: Remove JDK (RHEL)
+  ansible.builtin.package:
+    name:
+      - java-{{ version.java }}-openjdk-devel
+    state: absent
+  become: yes
+
+- name: Install required packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - python-virtualenv
+      - python3-virtualenv
+      - python36-pexpect
+      - krb5-libs
+      - krb5-workstation
+      - postgresql{{ version.postgresql }}
+      - cyrus-sasl-gssapi
+      - java-{{ version.java }}-openjdk-devel
+    state: latest
+  become: yes
+
+# install newer python version on data nodes and gateways using rhel 79
+- name: Add newer Python version {{ version.python }}
+  include_tasks: rhel7-add-python.yml

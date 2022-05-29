@@ -1,0 +1,7 @@
+- name: Start service
+  ansible.builtin.systemd:
+      state: started
+      daemon_reload: yes
+      name: "{{ service_name }}"
+  become: yes
+    

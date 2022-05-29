@@ -1,0 +1,34 @@
+- hosts: kerberos_kdc
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/docker_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    - name: Include component deploy
+      include_role:
+        name: kerberos-kdc
+      when: var_deploy_comp | bool
+    
+    - name: Include configuration deploy
+      include_role:
+        name: kerberos-kdc-config
+      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
+
+
+- hosts: all:!kerberos_kdc
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/docker_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    # deploy krb cfg to all nodes except kdc server  
+    - name: Include configuration deploy
+      include_role:
+        name: kerberos-kdc-config
+      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)

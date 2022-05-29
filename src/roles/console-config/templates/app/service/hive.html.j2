@@ -1,0 +1,21 @@
+<h1 class="display-6">Hive</h1>
+<p>
+The <a href="https://hive.apache.org/">Apache Hive</a> data warehouse software facilitates reading, writing, and managing large datasets residing in distributed storage using SQL.
+Structure can be projected onto data already in storage.
+</p>
+<p>
+Apache Hive contains multiple components but only the Hive metastore component is deployed. The metastore is used to store database schema information and is used by both Impala and Spark.<br>
+During deployment an existing metastore database schema in PostgreSQL will be automatically upgraded and validated.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['hive'] %}
+    <tr>
+     <td>Metastore (no web interface)</td>
+      <td>{{ host }}</td>
+    </tr>
+    {% endfor %}
+</table>

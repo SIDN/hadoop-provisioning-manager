@@ -1,0 +1,29 @@
+# SOLR is used store Ranger audit events
+
+# OS user to run solr process
+solr_os_user: solr
+# Group used for solr OS user
+solr_os_group: solr
+
+# Solr port to listen
+solr_port: "8983"
+
+# location of config files
+solr_etc_dir: "{{ config_root }}/solr"
+# Location of solr logging
+solr_log_dir: /var/log/solr
+
+# URL where to download SOLR
+solr_download_url: https://dlcdn.apache.org/lucene/solr/{{ version.solr }}/solr-{{ version.solr }}.tgz
+
+# data dir for solr
+# This directory must have enough free space (1TB?) when deploying
+# to a production cluster
+solr_home: /data/1/solr/data
+
+# Solr server heap size.
+solr_heap: "1g"
+
+# max number of days logs are keps in solr index
+# older data is automatically deleted every day
+solr_max_log_days: 3

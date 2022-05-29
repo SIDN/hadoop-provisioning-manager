@@ -1,0 +1,5 @@
+- name: Create Proxy configuration file
+  ansible.builtin.template:
+    src: ../templates/haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  become: yes

@@ -1,0 +1,15 @@
+{
+  "description": "Impala service",
+  "isEnabled": true,
+  "name": "impala",
+  "type": "hive",
+  "version": 1,
+  "configs": {
+    "username": "admin",
+    "password": "admin",
+    "jdbc.driverClassName": "none",
+    "jdbc.url": "none",
+    "tag.download.auth.users": "impala",
+    "policy.download.auth.users": "impala"
+  }
+}

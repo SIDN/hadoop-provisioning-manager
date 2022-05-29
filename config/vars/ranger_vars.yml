@@ -1,0 +1,34 @@
+# OS user to run ranger process
+ranger_os_user: ranger
+# Group used for ranger OS user
+ranger_os_group: ranger
+
+# location of config files
+ranger_etc_dir: "{{ config_root }}/ranger"
+# Location of ranger logging
+ranger_log_dir: /var/log/ranger
+
+# port where ranger admin site will be listening
+ranger_admin_port: 6182
+
+# name of the  group who's members are automatically
+# synchronized to the ranger database
+# and can be used by services such as Hue and Spark
+ranger_sync_group_name: hadoop_users
+# only users of groups with uid > ranger_sync_group_uid
+# are synced to ranger db
+ranger_sync_group_uid: 5000
+
+# Database config, database will be created automatically
+ranger_db: ranger_db
+ranger_db_user: ranger
+# Ranger database password
+ranger_db_password: "{{ vault_ranger_db_password }}"
+
+# minutes between checks for new users
+# minumum is 60min, anything lower will be changed to 60min automatically
+ranger_usersync_interval_min: 5
+
+ranger_download_url:
+  # Different guava jar is required by ranger
+  guava: "https://repo1.maven.org/maven2/org/apache/hadoop/thirdparty/hadoop-shaded-guava/1.1.1/hadoop-shaded-guava-1.1.1.jar"

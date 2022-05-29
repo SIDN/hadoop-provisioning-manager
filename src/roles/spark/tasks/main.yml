@@ -1,0 +1,11 @@
+# make sure to crate the user on the ranger server so it is picked up by ranger
+- name: Include Spark ranger user
+  include_tasks: spark-ranger-user.yml
+  when: inventory_hostname in groups['ranger']  
+
+- name: Include Spark server
+  include_tasks: spark-server.yml
+  when: not (inventory_hostname in groups['ranger'])    
+  
+- name: Include Create default Python virtual environment
+  include_tasks: spark-default-py-venv.yml

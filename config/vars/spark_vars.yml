@@ -1,0 +1,61 @@
+# OS user to run spark process
+spark_os_user: spark
+# Group used for spark OS user
+spark_os_group: hadoop
+
+# location of config files
+spark_etc_dir: "{{ config_root }}/spark"
+
+# Location of spark logging
+spark_log_dir: /var/log/spark
+
+# Spark history server logging directory on HDFS
+# The spark jobs themselves must be configured to log events,
+spark_history_fs_logdirectory: /user/spark/history
+
+spark_heap:
+  history_server: 1g
+
+spark_ports:
+  history_ui_port: 18480
+
+# add additional default spark start options
+# file: spark-default.conf 
+spark_default_options:
+  # options for dynamicAllocation per yarn application
+  spark.dynamicAllocation.initialExecutors: 1
+  spark.dynamicAllocation.minExecutors: 1
+  spark.dynamicAllocation.maxExecutors: 2 # depends on number of nodes in cluster
+  spark.eventLog.enabled: true
+  spark.driver.log.persistToDfs.enabled: true
+  spark.history.store.maxDiskUsage: 1G
+  spark.history.fs.cleaner.maxAge: 3d
+  # Keep spark.history.fs.update.interval high to prevent Solr index filling up fast with audit events
+  spark.history.fs.update.interval: 300s
+
+# Yarn options for thrift server.
+# see: start-thriftserver.sh --help
+spark_thrift_server_yarn:
+  port: 10000
+  # name of the YARN queue used by the Spark Thift server
+  queue: 'spark-thrift-server' 
+  # memory for spark driver of thrift_server
+  driver_memory: 2g 
+  ui_port: 4049
+  executors: 1
+  #  The consensus in most Spark tuning guides is that 5 cores per executor is the optimum number
+  executor_cores: 5 
+  executor_memory: 2g 
+
+# Hive options for used by Spark
+# file:  hive-site.xml
+spark_hive_options:
+  hive.server2.thrift.port: "{{ spark_thrift_server_yarn.port }}"
+  
+# name of the default python virtual env used by spark
+# this venv will be created here: {{ python_venv_dir }}/{{ spark_default_python_venv }}
+spark_default_python_venv: 'pyspark-default-venv'
+
+# URL where to download Apache Spark
+spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ version.spark }}/spark-{{ version.spark }}-bin-hadoop{{ version.spark_hadoop }}.tgz"
+#spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ version.spark }}/spark-{{ version.spark }}-bin-hadoop3.2-{{ version.spark_scala }}.tgz"

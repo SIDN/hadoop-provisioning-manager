@@ -1,0 +1,36 @@
+<h1 class="display-6">Host Mapping</h1>
+<p>This mapping shows an overview of the service(s) that have been deployed on each host. This is based on the configuration information in the Ansible hosts file.</p>
+<br>
+
+{% set host_map = dict() %}
+  {% for host in groups['all'] %}
+    {% set _ = host_map.update({host: []} ) %}
+  {% endfor %}
+  
+  {% for gname, hosts in groups.items() %}
+      {% for host in hosts %}
+        {% if gname != 'all'%}
+          {% set _ = host_map.update({ host: host_map[host] + [gname]})  %}
+        {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+ <table class="table table-hover">
+     <tr>
+       <th>Host</th>
+       <th>Service</th>
+     </tr>
+       {% for host in host_map.keys() %}
+       <tr>
+         <td class="col-fit">{{ host }}</td>
+         {% set service_labels = [] %}
+         {% for group in host_map[host] %}
+            {% for lbl in json_label_map['groups'][group] %}
+              {% set _ = service_labels.append(lbl)  %}
+            {% endfor %}
+            
+         {% endfor %}
+         <td class="col-wrap">{{ service_labels | join(', ') }}</td>
+       </tr>
+       {% endfor %}
+   </table>

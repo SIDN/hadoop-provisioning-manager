@@ -1,0 +1,4 @@
+# Options for management node
+
+py_env_dir: /home/{{ provision_user }}/py-venv
+py_env_name: ansible-py3-venv

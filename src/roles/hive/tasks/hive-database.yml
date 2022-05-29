@@ -1,0 +1,116 @@
+- name: Check if metastore db exists
+  postgresql_query:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      query: >
+        SELECT datname 
+        FROM pg_database
+        WHERE datname = '{{ hive_db }}'
+  register: stat_metastore_db
+  delegate_to: localhost
+  connection: local
+  
+- name: Create metastore database
+  postgresql_db:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      state: present
+      name: "{{ hive_db }}"
+  delegate_to: localhost
+  connection: local
+  when: stat_metastore_db.rowcount == 0
+    
+- name: Create metastore db user
+  postgresql_user:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      state: present
+      name: "{{ hive_db_user }}"
+      password: "{{ hive_db_password }}"
+  delegate_to: localhost
+  connection: local
+  when: stat_metastore_db.rowcount == 0
+    
+- name: Grant metastore user access to metastore db
+  postgresql_privs:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      type: database
+      database: "{{ hive_db }}"
+      roles: "{{ hive_db_user }}"
+      grant_option: no
+      privs: all
+  delegate_to: localhost
+  connection: local
+  when: stat_metastore_db.rowcount == 0
+  
+# Create new Hive Metastore schema  
+- name: Initialize Hive db (CREATE)
+  shell: >
+    source {{ hive_etc_dir }}/hive-env.sh; 
+    {{ stack_root }}/apache-hive-latest/bin/schematool -dbType postgres -initSchema
+  when: stat_metastore_db.rowcount == 0
+
+# Upgrade existing Hive Metastore schema  
+
+- name: Check current metastore version
+  postgresql_query:
+      login_host: "{{ groups['database'][0] }}"
+      db: "{{ hive_db }}"
+      login_password: "{{ hive_db_password }}"
+      login_user: "{{ hive_db_user }}"
+      query: >
+        SELECT "SCHEMA_VERSION"
+        FROM "VERSION"
+  register: metastore_version
+  delegate_to: localhost
+  connection: local
+  
+- name: Show current metastore version
+  ansible.builtin.debug:
+    msg: "Current metastore version: {{ metastore_version.query_result[0]['SCHEMA_VERSION'] }}"
+
+- name: copy fixed upgrade files for hive 2.1.1
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ stack_root }}/apache-hive-latest/scripts/metastore/upgrade/postgres"
+    mode: '0644'
+  loop:
+    - ../files/upgrade_db_version_2.1.1/upgrade-2.3.0-to-3.0.0.postgres.sql
+    - ../files/upgrade_db_version_2.1.1/upgrade-3.0.0-to-3.1.0.postgres.sql
+  become: yes
+  when: metastore_version.query_result[0]['SCHEMA_VERSION'] == '2.1.1'
+  
+# cannot upgrade 2.1.1, set the version to 2.1.0 which can be upgraded
+- name: Set metastore version to 2.1.0
+  postgresql_query:
+      login_host: "{{ groups['database'][0] }}"
+      db: "{{ hive_db }}"
+      login_password: "{{ hive_db_password }}"
+      login_user: "{{ hive_db_user }}"
+      query: >
+        UPDATE "VERSION"
+        SET "SCHEMA_VERSION" = '2.1.0'
+  delegate_to: localhost
+  connection: local
+  when: metastore_version.query_result[0]['SCHEMA_VERSION'] == '2.1.1'
+
+- name: Upgrade existing Hive db (UPDATE)
+  shell: >
+    source {{ hive_etc_dir }}/hive-env.sh; 
+    {{ stack_root }}/apache-hive-latest/bin/schematool -dbType postgres -upgradeSchema
+  become: yes  
+  when: stat_metastore_db.rowcount == 1
+
+# Validate if current schema is correct
+- name: Validate Hive db
+  shell: >
+    source {{ hive_etc_dir }}/hive-env.sh; 
+    {{ stack_root }}/apache-hive-latest/bin/schematool -dbType postgres -validate
+  become: yes 
+
+  

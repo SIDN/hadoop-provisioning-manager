@@ -1,0 +1,25 @@
+- name: Check if solr core dir exists
+  stat: 
+    path: "{{ solr_home }}/ranger_audit_server/conf/managed-schema"
+  register: core_dir
+
+- name: Copy solr cfg files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    remote_src: true
+    dest: '{{ solr_home }}/ranger_audit_server/conf'
+    owner: "{{ solr_os_user }}"
+    group: "{{ solr_os_group }}"
+  loop:
+    - "{{ stack_root }}/apache-ranger-admin-latest/contrib/solr_for_audit_setup/conf/managed-schema"
+    - "{{ stack_root }}/apache-ranger-admin-latest/contrib/solr_for_audit_setup/conf/solrconfig.xml"
+  become: yes
+  when: not core_dir.stat.exists
+
+- name: Create solr core for ranger
+  shell: >
+      echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
+      curl --negotiate -u : -H "Content-type: application/json"
+      -X GET "https://{{ inventory_hostname }}:{{ solr_port }}/solr/admin/cores?action=CREATE&name=ranger_audits&instanceDir={{ solr_home }}/ranger_audit_server&dataDir=data&config=solrconfig.xml&schema=managed-schema"
+  when: not core_dir.stat.exists
+

@@ -1,0 +1,32 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[logging]
+    default = FILE:{{ kerberos_log_dir }}/krb5kdc.log
+    kdc = FILE:{{ kerberos_log_dir }}/krb5kdc.log
+    admin_server = FILE:{{ kerberos_log_dir }}/kadmind.log
+
+[kdcdefaults]
+    kdc_ports = 750,88
+    #impala uses TCP!!!
+    kdc_tcp_ports = 750,88
+    default_realm = {{ kerberos_realm }}
+
+[realms]
+    {{ kerberos_realm }} = {
+        database_name = {{ fact_kdc_db_dir }}/principal
+        admin_keytab = {{ fact_kdc_cfg_dir }}/kadm5.keytab
+        acl_file = {{ fact_kdc_cfg_dir }}/kadm5.acl
+        key_stash_file = {{ fact_kdc_cfg_dir }}/stash
+        max_life = 24h 0m 0s
+        max_renewable_life = 7d 0h 0m 0s
+        master_key_type = aes256-cts
+        {% if ansible_distribution == "Redhat" %}
+        supported_enctypes = aes256-cts:normal arcfour-hmac:normal des3-hmac-sha1:normal des-cbc-crc:normal des:normal des:v4 des:norealm des:onlyrealm des:afs3
+        # do not add default_principal_expiration for Ubuntu, will cause errors
+        default_principal_expiration = 0
+        {% endif %}
+        {% if ansible_distribution == "Ubuntu" %}
+        supported_enctypes = aes256-cts-hmac-sha1-96:normal aes128-cts-hmac-sha1-96:normal
+        {% endif %}
+    }

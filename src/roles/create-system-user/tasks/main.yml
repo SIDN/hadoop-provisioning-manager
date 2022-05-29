@@ -1,0 +1,17 @@
+- name: Determine OS specific config (RHEL)
+  set_fact:
+     fact_login_shell: /sbin/nologin
+  when: ansible_distribution == 'RedHat'
+     
+- name: Determine OS specific config (Ubuntu)
+  set_fact:
+     fact_login_shell: /usr/sbin/nologin
+  when: ansible_distribution == 'Ubuntu'
+  
+- name: Create OS user
+  ansible.builtin.user:
+    name: "{{ new_user }}"
+    group: "{{ new_group }}"
+    shell: "{{ fact_login_shell }}"
+    system: yes
+  become: yes

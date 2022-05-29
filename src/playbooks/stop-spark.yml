@@ -1,0 +1,19 @@
+- hosts: spark_history
+  remote_user: hadoop-mgr
+  become: yes
+  
+  tasks:
+    - name: "Stop {{ service_name }}"
+      vars:
+        service_name: spark_historyserver
+      include_tasks: shutdown/tasks/generic-service.yml
+
+- hosts: spark_thrift
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:    
+    - name: "Stop {{ service_name }}"
+      vars:
+        service_name: spark_thrift
+      include_tasks: shutdown/tasks/generic-service.yml    
+      

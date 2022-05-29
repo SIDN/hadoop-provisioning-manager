@@ -1,0 +1,53 @@
+# deploy prometheus end proxy on each impala node 
+- hosts: impala
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/monitor_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/impala_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    - name: Include component deploy
+      include_role:
+        name: monitor-proxy
+      when: var_deploy_comp | bool
+    
+    - name: Include configuration deploy
+      include_role:
+        name: monitor-proxy-config
+      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
+    
+- hosts: monitor
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/monitor_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/db_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/docker_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/zookeeper_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/impala_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    - name: Include component deploy
+      include_role:
+        name: docker
+      when: var_deploy_comp | bool
+    
+    - name: Include configuration deploy
+      include_role:
+        name: docker-config
+      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
+      
+    - name: Include component deploy
+      include_role:
+        name: monitor
+      when: var_deploy_comp | bool
+    
+    - name: Include configuration deploy
+      include_role:
+        name: monitor-config
+      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
+

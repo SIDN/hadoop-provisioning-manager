@@ -1,0 +1,118 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ zookeeper_os_group }}"
+    state: present
+  become: yes
+  
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ zookeeper_os_user }}"
+    new_group: "{{ zookeeper_os_group }}"
+            
+- name: create cfg directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ zookeeper_etc_dir }}"
+  become: yes
+  
+- name: create log directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ zookeeper_os_user }}"
+    group: "{{ zookeeper_os_group }}"
+  loop:
+    - "{{ zookeeper_log_dir }}"
+    - "{{ zookeeper_data_dir }}"
+  become: yes
+
+- name: Create Systemd services
+  ansible.builtin.template:
+    src: ../templates/systemd_zookeeper_service.j2
+    dest: /etc/systemd/system/zookeeper.service
+    mode: '0644'
+  become: yes
+  when: not (inventory_hostname in groups['gateway']) 
+  
+- name: Systemctl Reload Daemons
+  command: "systemctl daemon-reload"
+  become: yes
+  when: not (inventory_hostname in groups['gateway']) 
+  
+- name: create myid files
+  copy:
+    dest: "{{ zookeeper_data_dir }}/myid"
+    content: "{{ groups['zookeeper'].index(inventory_hostname) +1 }}"
+    owner: "{{ zookeeper_os_user }}"
+    group: "{{ zookeeper_os_group }}"
+  become: yes
+  
+- name: Check if the Apache Zookeeper src is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ zookeeper_download_url | basename }}"
+  register: stat_zkpr_src
+  delegate_to: localhost
+  connection: local  
+  
+- name: Download Apache Zookeeper
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}"
+  loop:
+    - "{{ zookeeper_download_url }}"
+  delegate_to: localhost
+  connection: local
+  when: not stat_zkpr_src.stat.exists
+  
+- name: Check if the Apache Zookeeper src is already on remote
+  stat:
+    path: "{{ cache_root }}/{{ zookeeper_download_url | basename }}"
+  register: stat_remote_zkpr_src
+
+- name: Copy Apache Zookeeper to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ zookeeper_download_url | basename }}"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  when: not stat_remote_zkpr_src.stat.exists
+  
+- name: Recursively remove Zookeeper directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/apache-zookeeper-{{ version.zookeeper }}-bin'
+    state: absent
+  become: yes
+      
+- name: Extract Zookeeper
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/{{ zookeeper_download_url | basename }}"
+      remote_src: true
+      dest: "{{ stack_root }}"
+      creates: "{{ stack_root }}/apache-zookeeper-{{ version.zookeeper }}-bin"
+      #mode: '0755'
+  become: yes
+
+# extract somehow does not set the correct owner and permission
+# now set permissions and ownerships
+- name: Recursively change ownership of Zookeeper directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/apache-zookeeper-{{ version.zookeeper }}-bin'
+    state: directory
+    recurse: yes
+    owner: "{{ zookeeper_os_user }}"
+    group: "{{ zookeeper_os_group }}"
+    #mode: '0755'
+  become: yes
+
+- name: Create symlink latest Zookeeper version
+  file:
+      src: "{{ stack_root }}/apache-zookeeper-{{ version.zookeeper }}-bin"
+      dest: "{{ stack_root }}/apache-zookeeper-latest"
+      state: link
+  become: yes
+
+  

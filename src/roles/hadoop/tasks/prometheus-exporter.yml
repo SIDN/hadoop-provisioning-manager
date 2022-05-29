@@ -1,0 +1,43 @@
+- name: Check if the Prometheus exporter src is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ prometheus_jmx_exporter_url | basename }}"
+  register: exporter_downloaded
+  delegate_to: localhost
+  connection: local
+    
+- name: Download Prometheus exporter
+  get_url:
+      url: "{{ prometheus_jmx_exporter_url }}"
+      dest: "{{ download_root }}/{{ prometheus_jmx_exporter_url | basename }}"
+  delegate_to: localhost
+  connection: local
+  when: not exporter_downloaded.stat.exists
+
+- name: Check if the Prometheus exporter src is already on remote
+  stat:
+    path: "{{ cache_root }}/{{ prometheus_jmx_exporter_url | basename }}"
+  register: remote_exporter_downloaded
+
+- name: Copy Prometheus exporter to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ prometheus_jmx_exporter_url | basename }}"
+    dest: "{{ cache_root }}"
+  when: not remote_exporter_downloaded.stat.exists
+  
+- name: Copy Prometheus exporter to Hadoop directory
+  ansible.builtin.copy:
+    src: "{{ cache_root }}/{{ prometheus_jmx_exporter_url | basename }}"
+    dest: "{{ stack_root }}/hadoop-latest/lib"
+    remote_src: true
+    owner: root
+    group: "{{ hadoop_os_group }}"
+  become: yes 
+
+- name: Create symlink to latest exporter jar
+  file:
+    src: "{{ stack_root }}/hadoop-latest/lib/{{ prometheus_jmx_exporter_url | basename }}"
+    dest: "{{ stack_root }}/hadoop-latest/lib/prometheus-exporter-latest.jar"
+    state: link
+    owner: root
+    group: "{{ hadoop_os_group }}"
+  become: yes  

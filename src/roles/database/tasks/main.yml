@@ -1,0 +1,53 @@
+- name: Find out if PostgreSQL is initialized
+  ansible.builtin.stat:
+    path: "{{ db_data_dir }}/pg_hba.conf"
+  register: postgres_initialized
+  
+- name: Include Ubuntu specific installation
+  include_tasks: ubuntu.yml
+  when: ansible_distribution == "Ubuntu"
+
+- name: Include RedHat specific installation
+  include_tasks: rhel.yml
+  when: ansible_distribution == "RedHat"
+
+- name: Allow md5 connection for the all users
+  postgresql_pg_hba:
+    dest: "{{ db_data_dir }}/pg_hba.conf"
+    contype: host
+    databases: all
+    method: md5
+    users: all
+    address: all
+    create: true
+  become: yes
+  become_user: postgres
+  
+- name: Listen on {{ db_server_listen }}
+  ansible.builtin.lineinfile:
+    path: "{{ db_data_dir }}/postgresql.conf"
+    regexp: '^#listen_addresses ='
+    line: "listen_addresses = '{{ db_server_listen }}'"
+  
+- name: Start and enable postgresql
+  ansible.builtin.systemd: 
+    name: postgresql-{{ version.postgresql }}
+    state: started
+    enabled: yes
+  when: ansible_distribution == "RedHat"
+  
+- name: Start and enable postgresql
+  ansible.builtin.systemd: 
+    name: postgresql
+    state: started
+    enabled: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Set postgres password
+  postgresql_user:
+      state: present
+      name: postgres
+      password: "{{ db_admin_password }}"
+  become: yes
+  become_user: postgres
+

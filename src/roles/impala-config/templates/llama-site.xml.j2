@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+{% for key, value in impala_llama_site_options.items() %}
+<property>
+  <name>{{ key }}</name>
+  <value>{{ value }}</value>
+</property>
+{% endfor %}
+</configuration>

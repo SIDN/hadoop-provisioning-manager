@@ -1,0 +1,21 @@
+<h1 class="display-6">Ranger</h1>
+<p>
+<a href="https://ranger.apache.org/">Apache Ranger</a> is a framework to enable, monitor and manage comprehensive data security across the Hadoop platform.
+</p>
+<br>
+<p>
+You are automatically logged-in if an active Kerberos session is detected. Kerberos principal admin@{{ kerberos_realm }} is the default administrator.
+A default "HDFS" and "Impala" policy is automatically created during deployment.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['ranger'] %}
+    <tr>
+      <td>Ranger Admin</td>
+      <td><a href="https://{{ host }}:{{ ranger_admin_port }}" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+</table>

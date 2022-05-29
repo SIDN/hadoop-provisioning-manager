@@ -1,0 +1,8 @@
+ranger.logger=INFO,console,RANGERAUDIT
+log4j.logger.xaaudit=${ranger.logger}
+log4j.appender.RANGERAUDIT=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.RANGERAUDIT.File={{ impala_log_dir }}/impala_ranger_audit.log
+log4j.appender.RANGERAUDIT.layout=org.apache.log4j.PatternLayout
+log4j.appender.RANGERAUDIT.layout.ConversionPattern=%d{ISO8601} %p %c{2}: %L %m%n
+log4j.appender.RANGERAUDIT.DatePattern=.yyyy-MM-dd
+log4j.appender.rollingFile.MaxBackupIndex=5

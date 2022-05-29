@@ -1,0 +1,87 @@
+      <h1 class="display-6">HDFS</h1>
+      <p>
+      The <a href="https://hadoop.apache.org/hdfs/">Hadoop Distributed File System (HDFS)</a> is highly fault-tolerant and is designed to be deployed on low-cost hardware. HDFS provides high throughput access to application data and is suitable for applications that have large data sets.
+      <br>
+      </p>
+      <p>
+      High availability and security are automatically enabled for the HDFS service, You can find more details about HDFS HA <a href="https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html">here</a>.<br>
+      </p>
+      
+        <div class="col">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Service</th>
+                <th scope="col">Host</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for host in groups['hdfs_primary_nn'] | union(groups['hdfs_secondary_nn']) %}
+              <tr scope="row">
+                <td>Name Node</td>
+                <td><a href="https://{{ host }}:50071" target="_blank">{{ host }}</a></td>
+              </tr>
+              <tr scope="row">
+                <td>ZKFailoverController</td>
+                <td>{{ host }} (no web interface)</td>
+              </tr>
+              {% endfor %}
+              {% for host in groups['hadoop'] %}
+              <tr>
+                <td>Data Node</td>
+                <td><a href="https://{{ host }}:10023/index.html" target="_blank">{{ host }}</a></td>
+              </tr>
+              {% endfor %}
+              {% for host in groups['hdfs_journalnode'] %}
+              <tr>
+                <td>Journal Manager</td>
+                <td><a href="https://{{ host }}:8481" target="_blank">{{ host }}</a></td>
+              </tr>
+              {% endfor %}
+              {% for host in groups['hdfs_httpfs'] %}
+              <tr>
+                <td>HttpFS/webhdfs</td>
+                <td><a href="https://{{ host }}:14000/static/index.html" target="_blank">{{ host }}</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      
+        <h4>Clients</h4>
+        <p>
+        To be able to perform HDFS operations using the command line you need to perform the following steps. 
+        </p>
+        <pre><code>
+        # Create Kerberos session as hdfs user (root user for HDFS)
+        kinit -kt /path/to/keytab hdfs@REALM_NAME
+
+        # Set the correct path to the required libraries, make sure to also source the environment variables.
+        source /etc/hadoop-conf-dir/hadoop-env.sh
+
+        # use the hdfs utility
+        hdfs dfs -ls /user/
+        </code></pre>
+        
+        
+        <h4>Upgrading</h4>
+        Upgrading an existing HDFS cluster is only supported with downtime.
+        The scripts used to start HDFS will detect if a newer version of Hadoop is deployed and will auto upgrade the HDFS metadata during name node start.
+
+        Use the following process when upgrading:<br><br>
+        
+        <ol>
+          <li>Prepare for the upgrade while the current older Hadoop version is still running: hdfs-upgrade.sh prepare</li>
+          <li>Stop HDFS and Yarn: <code>stop.sh hdfs yarn</code></li>
+          <li>Update the hadoop version in: vars/all/vars.yml</li>
+          <li>Deploy new version of Hadoop: <code>deploy.sh hadoop</code></li>
+          <li>Start HDFS and Yarn: <code>start.sh hdfs yarn</code></li>
+          <li>Is everything working ok? then finalize the upgrade: <code>hdfs-upgrade.sh finalize</code></li>
+        </ol>
+        <br>
+        Starting HDFS will upgrade the HDFS meta data during the start of the name node. Before the upgrade it will create a backup of the name node metadata.
+        Executing the last step may be done at any time.<br>
+        <br>
+        <strong>When migrating from an older Hadoop distribution such as Cloudera Hadoop</strong>, it is advisable to first deploy a version of Apache Hadoop that matches the version used by your current Cloudera deployment.
+        When deploying a newer version of Hadoop, the HDFS metadata can be be upgraded, this may not be what you want.<br>
+        Only upgrade to a newer Hadoop version when the deployment of a Hadoop version matching the currently used CDH Hadoop version was successful and you have been using it for some time without issues.
+          

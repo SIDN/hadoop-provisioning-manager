@@ -1,0 +1,153 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[desktop]    
+    app_blacklist=oozie,security,hbase,pig,sqoop,search
+    audit_event_log_dir=/var/log/hue/hue-audit.log
+    audit_log_max_file_size=100MB
+    
+    ssl_certificate=/home/hue/{{ tls_remote_pub_chain }}
+    ssl_private_key=/home/hue/{{ tls_remote_priv_key }}
+    
+    secret_key={{ lookup('community.general.random_string', length=20) }}
+    
+    time_zone={{ timezone }}
+
+    [[database]]
+    engine=postgresql_psycopg2
+    host={{ groups['database'][0] }}
+    port=5432
+    user={{ hue_db_user }}
+    password={{ hue_db_password }}
+    name={{ hue_db }}
+    
+    [[kerberos]]
+    hue_keytab=/home/hue/hue.keytab
+    hue_principal=hue/{{ inventory_hostname }}@{{ kerberos_realm }}
+    #ccache_path=/home/hue/hue_krb5_ccache
+    ccache_path=/tmp/krb5cc_1001
+    kinit_path=/usr/bin/kinit
+    reinit_frequency=3600
+
+[[auth]]
+backend=desktop.auth.backend.SpnegoDjangoBackend
+
+[notebook]
+
+[[interpreters]]
+      
+[[[impala]]]
+   name=Impala
+   interface=hiveserver2
+ 
+[[[sparksql]]]
+   # Must be named 'sparksql', hostname and more options are
+   # in the 'spark' section
+   name=SparkSql (via HiveServer2)
+   interface=hiveserver2
+
+[[[pyspark]]]
+   name=PySpark (via Livy)
+   interface=livy
+
+[dashboard]
+is_enabled=false
+
+[[engines]]
+
+[hadoop]
+
+# Configuration for HDFS NameNode
+# ------------------------------------------------------------------------
+[[hdfs_clusters]]
+
+[[[default]]]
+
+security_enabled=True
+mechanism=GSSAPI
+
+fs_defaultfs=hdfs://{{ hadoop_fs_nameservices }}:8020
+webhdfs_url=https://{{ groups['hdfs_httpfs'][0] }}:14000/webhdfs/v1
+
+[[yarn_clusters]]
+
+[[[default]]]
+
+security_enabled=true
+
+resourcemanager_host={{ groups['yarn_resource_mgr'][0] }}
+resourcemanager_api_url=https://{{ groups['yarn_resource_mgr'][0] }}:{{ hadoop_web_tls_port.resourcemanager }}/
+
+# URL of the Spark History Server
+spark_history_server_url={{ groups['spark_history'][0] }}:18480
+
+# Change this if your Spark History Server is Kerberos-secured
+spark_history_server_security_enabled=true
+    
+[impala]
+#let Hue connect to impala executor through haproxy
+server_host={{ groups['impala_ha_proxy'][0] }}
+server_port={{ impala_haproxy.jdbc_port }}
+
+# make sure hue send login username and not hue kerberos identity to impala
+impersonation_enabled=True
+# hue needs impalad_flags cfg file
+impala_conf_dir=/home/hue
+
+# Hue must use pricipal of haproxy
+impala_principal=impala/{{ groups['impala_ha_proxy'][0] }}@{{ kerberos_realm }}
+use_sasl=true
+
+[[ssl]]
+# SSL communication enabled for this server.
+# disabled for now, due to impala issue
+# see: https://issues.apache.org/jira/browse/IMPALA-10392
+enabled=true
+cacerts=/home/hue/{{ tls_remote_pub_chain }}
+
+[beeswax]
+  server_conn_timeout=60
+  hive_conf_dir=/home/hue/
+  
+  hive_server_host={{ groups['spark_thrift'][0] }}
+  hive_server_port={{ spark_hive_options['hive.server2.thrift.port'] }}
+  
+  hive_metastore_host={{ groups['hive'][0] }}
+  hive_metastore_port={{ hive_ports.metastore }}
+  
+  # A limit to the number of rows that can be downloaded from a query before it is truncated.
+  # A value of -1 means there will be no limit.
+  download_row_limit=-1
+
+  # A limit to the number of bytes that can be downloaded from a query before it is truncated.
+  # A value of -1 means there will be no limit.
+  download_bytes_limit=-1
+
+[metastore]
+    enable_new_create_table=true
+    show_table_erd=true
+    
+[spark]
+# The Livy Server URL.
+livy_server_url=https://{{ groups['livy'][0] }}:8998
+livy_server_host={{ groups['livy'][0] }}
+livy_server_port=8998
+csrf_enabled=true
+
+# use Keberos 
+security_enabled=true
+use_sasl=true
+
+# Host of the Spark Thrift Server
+# https://spark.apache.org/docs/latest/sql-distributed-sql-engine.html
+sql_server_host={{ groups['spark_thrift'][0] }}
+
+# Port of the Spark Thrift Server
+sql_server_port={{ spark_hive_options['hive.server2.thrift.port'] }}
+
+# Choose whether Hue should validate certificates received from the server.
+ssl_cert_ca_verify=false
+
+[jobbrowser]
+ enable_queries_list=True
+

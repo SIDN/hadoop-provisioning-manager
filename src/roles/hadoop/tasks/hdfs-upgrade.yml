@@ -1,0 +1,55 @@
+# check if the software layout and file layut versions are diferent
+# if there is a new version then the name node must start with the
+# upgrade option. this is done by the startup script: start_hdfs_service.sh
+#
+# see: https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsRollingUpgrade.html#Upgrading_Non-HA_Clusters
+
+- name: (Update HDFS cluster) Check file layout versions
+  shell: >
+      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      {{ stack_root }}/hadoop-latest/bin/hdfs namenode -metadataVersion | grep "ersion: "
+  become_user: "{{ hadoop_os_user.hdfs }}"
+  become: yes
+  register: reg_layout
+
+- name: (Update HDFS cluster) Create facts for file layout version numbers
+  set_fact:
+      file_layout_version: "{{ reg_layout.stdout_lines[0].split(': ')[1] | trim }}"
+      software_layout_version: "{{ reg_layout.stdout_lines[1].split(': ')[1] | trim }}"
+    
+- name: (Update HDFS cluster) Show layout versions
+  ansible.builtin.debug:
+    msg: |
+      Metadata details:
+      File version: {{ file_layout_version }} 
+      Software version: {{ software_layout_version }}
+      Upgrade: {{ file_layout_version != software_layout_version }} 
+  
+# make backup of metadata even if the layout version has not changed
+- name: (Update HDFS cluster) Create HDFS metadata backup on NN  
+  community.general.archive:
+    path: "{{ hadoop_dfs_namenode_name_dir[0] }}"
+    dest: "{{ hadoop_backup_dir }}/hdfs-metadata-backup-{{ ansible_date_time.iso8601 }}.tar.gz"
+  become: yes
+  when: (file_layout_version != software_layout_version) 
+        and (inventory_hostname in groups['hdfs_primary_nn'])
+  
+# if the layout versions have not changed then metadata upgrade is not required.
+# delete the UPGRADE file and then the namenode will be started normally by start_hdfs_service.sh
+# also see: start_hdfs_service.sh
+- name: (Update HDFS cluster) Remove HDFS UPGRADE file (if layout version has not changed)
+  ansible.builtin.file:
+    path: "{{ hadoop_etc_dir }}/UPGRADE"
+    state: absent
+  when: file_layout_version == software_layout_version
+
+# start both primary name node and secondary name node 
+# if upgrade was required due to metadata version change then:
+# the systemd service will detect any UPGRADE file and start HDFS primary name node accordingly.
+- name: (Update HDFS cluster) Start name node
+  ansible.builtin.systemd:
+      state: started
+      daemon_reload: yes
+      name: hdfs_namenode
+
+ 

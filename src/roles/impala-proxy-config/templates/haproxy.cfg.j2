@@ -1,0 +1,102 @@
+#---------------------------------------------------------------------
+# Config for Impala loadbalancer, tcp port 21000 and 21050
+# see: https://impala.apache.org/docs/build/html/topics/impala_proxy.html#
+# see: https://www.digitalocean.com/community/tutorials/how-to-configure-haproxy-logging-with-rsyslog-on-centos-8-quickstart
+#
+# after cfg update do: systemctl restart haproxy.service
+#
+#---------------------------------------------------------------------
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+#---------------------------------------------------------------------
+# Global settings
+#---------------------------------------------------------------------
+global
+    # to have these messages end up in /var/log/haproxy.log you will
+    # need to:
+    #
+    # 1) configure syslog to accept network log events.  This is done
+    #    by adding the '-r' option to the SYSLOGD_OPTIONS in
+    #    /etc/sysconfig/syslog
+    #
+    # 2) configure local2 events to go to the /var/log/haproxy.log
+    #   file. A line like the following can be added to
+    #   /etc/sysconfig/syslog
+    #
+    #    local2.*                       /var/log/haproxy.log
+    #
+    #log         127.0.0.1 local2
+    log         /dev/log local0
+
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         5000
+    timeout client          3600s
+    timeout server          3600s
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+
+#
+# This sets up the admin page for HA Proxy at port 25002.
+#
+listen stats
+    bind *:{{ impala_haproxy.stats_port }} ssl crt {{ tls_etc_dir }}/haproxy_tls_pub_chain.pem
+    mode http
+    stats enable
+    stats refresh 10se
+    stats auth {{ impala_haproxy.user }}:{{ impala_haproxy.password }}
+    stats uri /stats
+
+# This is the setup for Impala. Impala-shell client connect to load_balancer_host:21000.
+# HAProxy will balance connections among the list of servers listed below.
+# The list of Impalad is listening at port 21000 for beeswax (impala-shell) or original ODBC driver.
+# For JDBC or ODBC version 2.x driver, use port 21050 instead of 21000.
+listen impala_shell
+    bind *:{{ impala_haproxy.shell_port }}
+    mode tcp
+    option tcplog
+    balance leastconn
+    
+    {% for host in groups['impala'] %}
+    server {{ host }} {{ host }}:21000 check
+    {% endfor %}
+
+# Setup for Hue or other JDBC-enabled applications.
+# In particular, Hue requires sticky sessions.
+# The application connects to load_balancer_host:{{ impala_haproxy.jdbc_port  }}, and HAProxy balances
+# connections to the associated hosts, where Impala listens for JDBC
+# requests on port 21050.
+listen impala_jdbc 
+    bind *:{{ impala_haproxy.jdbc_port }}
+    mode tcp
+    option tcplog
+    balance source
+    
+    {% for host in groups['impala'] %}
+    server {{ host }} {{ host }}:21050 check
+    {% endfor %}
+

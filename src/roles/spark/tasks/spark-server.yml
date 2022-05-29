@@ -1,0 +1,140 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ spark_os_group }}"
+    state: present
+  become: yes
+    
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ spark_os_user }}"
+    new_group: "{{ spark_os_group }}"
+    
+- name: Create cfg directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ spark_etc_dir }}"
+  become: yes
+  
+- name: Create log directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ spark_os_user }}"
+    group: "{{ spark_os_group }}"
+  loop:
+    - "{{ spark_log_dir }}"
+  become: yes
+
+- name: Create Spark Systemd services
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "/etc/systemd/system/spark_{{ item.name }}.service"
+    mode: '0644'
+  loop:
+      - { src: 'systemd_history_service.j2', name: 'historyserver'}
+      - { src: 'systemd_thrift_service.j2', name: 'thrift'}
+  become: yes
+  when: ((inventory_hostname in groups['spark_history']) or (inventory_hostname in groups['spark_thrift']))
+    and not (inventory_hostname in groups['gateway']) 
+  
+- name: Systemctl Reload Daemons
+  command: "systemctl daemon-reload"
+  become: yes
+  when: not (inventory_hostname in groups['gateway']) 
+  
+- name: Check if the Apache Spark src is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ spark_download_url | basename }}"
+  register: stat_spark_src
+  delegate_to: localhost
+  connection: local
+    
+- name: Download Apache Spark
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ spark_download_url }}"
+  delegate_to: localhost
+  connection: local
+  when: not stat_spark_src.stat.exists
+
+- name: Check if the Apache Spark src is already on remote
+  stat:
+    path: "{{ cache_root }}/{{ spark_download_url | basename }}"
+  register: stat_remote_spark_src
+
+- name: Copy Apache Spark to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ spark_download_url | basename }}"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  when: not stat_remote_spark_src.stat.exists
+  
+- name: Recursively remove Spark directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/spark-{{ version.spark }}'
+    state: absent
+  become: yes
+    
+- name: Extract Spark
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/{{ spark_download_url | basename }}"
+      remote_src: true
+      dest: "{{ stack_root }}"
+      creates: "{{ stack_root }}/spark-{{ version.spark }}"
+      owner: "{{ spark_os_user }}"
+      group: "{{ spark_os_group }}"
+  become: yes
+
+- name: Create symlink latest Spark version
+  file:
+      src: "{{ stack_root }}/spark-{{ version.spark }}-bin-hadoop{{ version.spark_hadoop }}"
+      dest: "{{ stack_root }}/apache-spark-latest"
+      state: link
+  become: yes
+  
+# fetch psql jdbc driver
+- name: Check if the psql jdbc driver is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
+  register: jdbc_driver
+  delegate_to: localhost
+  connection: local
+    
+- name: Download psql jdbc driver
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ db_jdbc_driver_url }}"
+  delegate_to: localhost
+  connection: local
+  when: not jdbc_driver.stat.exists
+  
+- name: Copy psql jdbc driver to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
+    dest: "{{ stack_root }}/apache-spark-latest/jars"
+    mode: '0644'
+    owner: "{{ spark_os_user }}"
+    group: "{{ spark_os_group }}"
+  become: yes
+  
+- name: Template bin scripts
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ stack_root }}/apache-spark-latest/bin/{{ item.dest }}"
+    mode: '0774'
+    owner: "{{ spark_os_user }}"
+    group: "{{ spark_os_group }}"
+  loop:
+    - { name: 'create-hdfs-dir.sh.j2', dest: 'create-hdfs-dir.sh'}
+    - { name: 'upload-spark-jars.sh.j2', dest: 'upload-spark-jars.sh'}
+  become: yes  
+  when: not (inventory_hostname in groups['gateway']) 

@@ -1,0 +1,50 @@
+- name: Create cfg directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ hive_etc_dir }}"
+  become: yes
+  
+- name: Create Hive shared templates
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.perm }}"
+  loop:
+    - { name: 'hive-site.xml.j2', dest: '{{ cache_root }}/conf/hive-site.xml', perm: '0644' }
+  become: yes
+  delegate_to: localhost
+  connection: local
+
+- name: Create Hive Configuration files
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ hive_etc_dir }}/{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { name: 'hive-site.xml.j2', dest: 'hive-site.xml'}
+    - { name: 'log4j2.properties.j2', dest: 'log4j2.properties'}
+    #- { name: 'hive-env.sh.j2', dest: 'hive-env.sh'}
+  become: yes
+  
+- name: Create Hive env file
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ hive_etc_dir }}/{{ item.dest }}"
+    mode: '0755'
+  loop:
+    - { name: 'hive-env.sh.j2', dest: 'hive-env.sh'}
+  become: yes
+
+- name: Copy Hadoop conf files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ hive_etc_dir }}"
+    mode: '0644'
+  loop:
+    - "{{ cache_root }}/conf/hdfs-site.xml"
+    - "{{ cache_root }}/conf/core-site.xml"
+  become: yes
+    

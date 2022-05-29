@@ -1,0 +1,18 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Apache SOLR
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+User={{ solr_os_user }}
+WorkingDirectory={{ stack_root }}/apache-solr-latest/example
+ExecStart=/bin/bash -c 'SOLR_INCLUDE=/etc/default/solr.in.sh {{ stack_root }}/apache-solr-latest/bin/solr start -p {{ solr_port }}'
+ExecStop={{ stack_root }}/apache-solr-latest/bin/solr stop
+
+[Install]
+WantedBy=multi-user.target
+
+

@@ -1,0 +1,196 @@
+<h1 class="display-6">Tools</h1>
+<p>An overview of the available tools and a short description of their use.</p>
+<table class="table table-hover">
+  <tr>
+    <th>Name</th>
+    <th>Script</th>
+    <th>Description</th>
+  </tr>
+    <tr>
+      <td>Prepare host</td>
+      <td>prepare-hosts.sh</td>
+      <td>Prepare all the hosts in the Ansible "hosts" config file for use by Ansible</td>
+    </tr>
+    <tr>
+      <td>Deploy</td>
+      <td>deploy.sh</td>
+      <td>Deployment of component software package and configuration</td>
+    </tr>
+    <tr>
+      <td>Deploy Config</td>
+      <td>deploy-config.sh</td>
+      <td>Deployment of component configuration only</td>
+    </tr>
+    <tr>
+      <td>Start</td>
+      <td>start.sh</td>
+      <td>Start 1 or more components</td>
+    </tr>
+    <tr>
+      <td>Stop</td>
+      <td>stop.sh</td>
+      <td>Stop  1 or more components</td>
+    </tr>
+    <tr>
+      <td>Add user</td>
+      <td>add-user.sh</td>
+      <td>Create a new cluster user, adds the user to all cluster hosts and Kerberos</td>
+    </tr>
+    <tr>
+      <td>Remove user</td>
+      <td>del-user.sh</td>
+      <td>Delete a cluster user</td>
+    </tr>
+    <tr>
+      <td>Add Python</td>
+      <td>add-py-env.sh</td>
+      <td>Create a new Python virtual environment on every cluster host</td>
+    </tr>
+    <tr>
+      <td>Remove Python</td>
+      <td>del-py-env.sh</td>
+      <td>Remove an existing Python virtual environment</td>
+    </tr>
+    <tr>
+      <td>HDFS Upgrade</td>
+      <td>hdfs-upgrade.sh</td>
+      <td>Prepare or finalize an HDFS upgrade</td>
+    </tr>
+</table>
+<br>
+<h5>1 Prepare host</h5>
+<p>
+A new host needs to be prepared before components can be deployed, you must already have an existing user account on the remote host you want to add.
+This user must be allowed to use sudo to be able to create the new manager user account on the remote host.
+The script will ask for the SSH password for the existing user on the remote host and for the new password for the manager user account that is going to be created on the remote host.
+The prepare host process will do the following:
+<ul>
+  <li>Create deployment manager user</li>
+  <li>Add SSH-key of the deployment manager to authorized_keys</li>
+  <li>Add sudo permissions for the deployment manager</li>
+</ul>
+<pre><code>
+cd hadoop-provision/src
+# Prepare all hosts found in hosts file
+./prepare-hosts.sh &lt;password-existing-remote-admin&gt;
+Enter password (ANSIBLE_BECOME_PASSWORD) for user {{ provision_user }} that is going to be created: &lt;new-password&gt;
+</code></pre>
+</p>
+<h5>2 Deploy a service</h5>
+<p>
+Deploy 1 or more services including their configuration to cluster hosts. Deployment will also create required directories and may change other OS configuration items.
+</p>
+<pre><code>
+cd hadoop-provision/src
+# deploy zookeeper, hadoop and impala
+./deploy.sh zookeeper hadoop impala
+</code></pre>
+
+<h5>3 Deploying service configuration</h5>
+<p>
+Deploy only the configuration files for 1 or more services to the relevant cluster hosts.
+Use this script after updating the service configuration (Ansible YAML files) and the service is already installed.
+Pushing only the configuration files to the cluster nodes is much faster compared to deploying the whole service package.
+<br>
+There exists a special "all" service that can be used to deploy all services.
+When changing a core service such a HDFS, make sure to also deploy the configuration for all services that depend on HDFS.
+<pre><code>
+cd hadoop-provision/src
+# deploy changed config for impala
+./deploy-config.sh impala
+</code></pre>
+</p>
+<h5>4 Start a service</h5>
+<p>
+Start 1 or more services, there exists a special "all" service that can be used to start all services.
+<pre><code>
+cd hadoop-provision/src
+# start impala service
+./start.sh impala
+</code></pre>
+</p>
+<h5>5 Stop a service</h5>
+<p>
+Stop 1 or more services, there exists a special "all" service that can be used to stop all services.
+<pre><code>
+cd hadoop-provision/src
+# stop impala service
+./stop.sh impala
+</code></pre>
+</p>
+
+<h5>6 Add a new user</h5>
+<p>
+The cluster uses Kerberos and security is enabled for all services. A new user must be created in the Kerberos KDC and on every cluster host.
+There are 2 types of users.
+<ul>
+  <li>normal: A normal user with accounts on all servers and gateways</li>
+  <li>system: Only has accounts on non gateway hosts</li>
+</ul>
+Use the system user to authenticate applications and the "normal" user to authenticate real users. 
+Adding a new "normal" user with this script results in:
+<ul>
+  <li>A user account with a home directory on all gateway hosts</li>
+  <li>A nologin user account on all non-gateway hosts</li>
+  <li>A home directory on HDFS</li>
+  <li>A Kerberos principal</li>
+</ul>
+</p>
+<pre><code>
+cd hadoop-provision/src
+# Add user test1
+add-user.sh test1 normal
+</code></pre>
+
+<h5>7 Remove a user</h5>
+<p>
+Remove a user from every cluster host and also remove the Kerberos user.
+</p>
+<pre><code>
+cd hadoop-provision/src
+# Delete user test1
+del-user.sh test1
+</code></pre>
+
+<h5>8 Add a Python environment</h5>
+<p>
+Some (Spark) applications may require a customized Python environment to be present on every cluster host.
+The environment is created under the directory specified by the "python_venv_dir" option in the vars/all.yml configuration file.
+The script accepts 3 parameters:
+<ul>
+  <li>The name of the new virtual environment to create</li>
+  <li>The Python version to use</li>
+  <li>The path to a Python requirement.txt file (optional)</li>
+</ul>
+
+<pre><code>
+cd hadoop-provision/src
+# create new python venv
+./add-py-env.sh venv-name py-version path/to/requirements.txt
+</code></pre>
+</p>
+
+<h5>9 Remove a Python environment</h5>
+<p>
+Remove a Python virtual environment from all cluster hosts.
+</p>
+
+<h5>10 HDFS upgrade</h5>
+<p>
+Upgrading an existing HDFS cluster is only supported with downtime.
+The scripts used to start HDFS will detect if a newer version of Hadoop is deployed and will auto upgrade the HDFS metadata during name node start.
+
+Use the following process when upgrading:
+
+<ol>
+  <li>Prepare for upgrade while the current Hadoop version is still running: "hdfs-upgrade.sh prepare"</li>
+  <li>Stop hdfs and yarn services: "stop.sh hdfs yarn"</li>
+  <li>Update the Hadoop version in "vars/all/vars.yml"</li>
+  <li>Deploy new version of Hadoop package with "deploy.sh hadoop"</li>
+  <li>Start HDFS with: "start.sh hdfs yarn"</li>
+  <li>Run your workload jobs for a period of time and check if everything is working ok</li>
+  <li>If everything is working ok finalize the upgrade with: "hdfs-upgrade.sh finalize"</li>
+</ol>
+
+Step 5 will upgrade the HDFS meta data during the start of the name node, it will also create a backup of the name node metadata.
+</p>

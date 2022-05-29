@@ -1,0 +1,12 @@
+{
+  "ipv6": false,
+  "insecure-registries": ["{{ groups['manager'][0] }}:{{ docker_registry_port }}"],
+  "log-opts": {
+    "cache-disabled": "false",
+    "cache-max-file": "5",
+    "cache-max-size": "20m",
+    "cache-compress": "true",
+    "max-file": "5",
+    "max-size": "10m"
+  }
+}

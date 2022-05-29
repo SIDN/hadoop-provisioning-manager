@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# Create the directories for Spark on HDFS
+
+source {{ hadoop_etc_dir }}/hadoop-env.sh
+kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }}
+
+hadoop fs -test -d /user/{{ spark_os_user }}/{{ spark_history_fs_logdirectory }}
+if [ $? != 0 ]
+then
+  echo "Create Spark HDFS directories"
+  hdfs dfs -mkdir -p /user/{{ spark_os_user }} && \
+  hdfs dfs -chmod 755 /user/{{ spark_os_user }} && \
+  hdfs dfs -mkdir -p {{ spark_history_fs_logdirectory }} && \
+  hdfs dfs -chown -R {{ spark_os_user }}:{{ spark_os_group }} /user/{{ spark_os_user }} && \
+  hdfs dfs -chown -R {{ spark_os_user }}:{{ spark_os_group }} {{ spark_history_fs_logdirectory }} && \
+  hdfs dfs -chmod -R 777 {{ spark_history_fs_logdirectory }}
+else
+  echo "Spark HDFS directories are present"
+fi
+
+

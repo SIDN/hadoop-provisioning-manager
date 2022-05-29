@@ -1,0 +1,50 @@
+- name: Copy shared cfg files
+  ansible.builtin.copy:
+    src: "{{ cache_root }}/conf/{{ item }}"
+    dest: "{{ ranger_etc_dir }}"
+    owner: "{{ ranger_os_user }}"
+    group: "{{ ranger_os_group }}"
+  loop:
+    - core-site.xml
+    - hdfs-site.xml
+  become: yes
+
+- name: Create configuration files
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+    owner: "{{ ranger_os_user }}"
+    group: "{{ ranger_os_group }}"
+  loop:
+    - { name: 'ranger-admin-env.sh.j2', dest: '{{ ranger_etc_dir }}/ranger-admin-env.sh' }
+    - { name: 'ranger-jaas.conf.j2', dest: '{{ ranger_etc_dir }}/ranger-jaas.conf' }
+    - { name: 'ranger-admin-log4j.properties.j2', dest: '{{ ranger_etc_dir }}/ranger-admin-log4j.properties' }
+    - { name: 'ranger-admin-default-site.xml.j2', dest: '{{ ranger_etc_dir }}/ranger-admin-default-site.xml' }
+    - { name: 'ranger-admin-site.xml.j2', dest: '{{ ranger_etc_dir }}/ranger-admin-site.xml' }
+    - { name: 'ranger-usersync-env.sh.j2', dest: '{{ ranger_etc_dir }}/ranger-usersync-env.sh' }
+    - { name: 'ranger-ugsync-site.xml.j2', dest: '{{ ranger_etc_dir }}/ranger-ugsync-site.xml' }
+    - { name: 'ranger-ugsync-default.xml.j2', dest: '{{ ranger_etc_dir }}/ranger-ugsync-default.xml' }
+    - { name: 'log4j.properties.j2', dest: '{{ ranger_etc_dir }}/log4j.properties' }
+  become: yes
+  
+- name: Copy default security-applicationContext.xml
+  ansible.builtin.copy:
+    src: '{{ stack_root }}/apache-ranger-admin-latest/ews/webapp/WEB-INF/classes/conf.dist/security-applicationContext.xml'
+    dest: '{{ ranger_etc_dir }}/security-applicationContext.xml'
+    remote_src: yes
+    mode: '0644'
+    owner: "{{ ranger_os_user }}"
+    group: "{{ ranger_os_group }}"
+  become: yes
+  
+# we do not want to use the ranger Unix auth service, we use kerberos
+# it seems the only way to disable the Unix auth service is to remove the enableUnixAuth flag 
+# in the startupscript
+- name: Disable Unix auth service
+  ansible.builtin.replace:
+    path: '{{ stack_root }}/apache-ranger-usersync-latest/ranger-usersync-services.sh'
+    regexp: '-enableUnixAuth'
+    replace: ''
+  become: yes
+    

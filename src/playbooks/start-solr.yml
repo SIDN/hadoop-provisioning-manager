@@ -1,0 +1,18 @@
+- hosts: ranger
+  remote_user: hadoop-mgr
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/solr_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+  become: yes
+  vars:
+    service_name: solr
+  tasks:      
+    - name: Start {{ service_name }}
+      include_tasks: startup/tasks/generic-service.yml     
+      
+    - name: Initialize SOLR if this is first start
+      include_tasks: roles/solr/tasks/initialize-solr.yml          
+
+ 

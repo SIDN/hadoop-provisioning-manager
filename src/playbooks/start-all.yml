@@ -1,0 +1,54 @@
+# cannot access variables at the import_playbook level.
+# us trick below to read the db_use_existing variable anyway 
+- hosts: manager
+  remote_user: hadoop-mgr
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/db_vars.yml"
+  tasks:
+   - set_fact:
+        should_start_db: '{{ not db_use_existing }}'
+     delegate_to: localhost
+     delegate_facts: yes
+     
+- name: Database
+  import_playbook: start-db.yml
+  when: hostvars.localhost.should_start_db
+  
+- name: Kerberos KDC
+  import_playbook: start-krb-kdc.yml
+  
+- name: MGMT Console
+  import_playbook: start-console.yml
+  
+- name: Zookeeper
+  import_playbook: start-zookeeper.yml
+  
+- name: Solr
+  import_playbook: start-solr.yml
+  
+- name: Ranger
+  import_playbook: start-ranger.yml
+  
+- name: HDFS
+  import_playbook: start-hdfs.yml
+  
+- name: Yarn
+  import_playbook: start-yarn.yml
+
+- name: Hive
+  import_playbook: start-hive.yml
+  
+- name: Spark
+  import_playbook: start-spark.yml
+
+- name: Impala
+  import_playbook: start-impala.yml
+
+- name: Livy
+  import_playbook: start-livy.yml
+
+- name: Hue
+  import_playbook: start-hue.yml
+
+- name: Monitor
+  import_playbook: start-monitor.yml

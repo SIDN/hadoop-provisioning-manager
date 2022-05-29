@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+Created on: {{ ansible_date_time.iso8601 }}
+Pushed to: {{  inventory_hostname }}
+ -->
+<configuration>
+
+  <property>
+       <name>hive.server2.authentication</name>
+       <value>kerberos</value>
+  </property>
+  <property>
+        <name>hive.server2.authentication.kerberos.principal</name>
+        {% if groups['spark_thrift'] | length > 0 %}
+        <value>spark/{{ groups['spark_thrift'][0] }}@{{ kerberos_realm }}</value>
+        {% else %}
+        <value></value>
+        {% endif %}
+        <description>Spark Thrift server principal. This MUST match the pricipal
+          used to start the spark thriftserver
+        </description>
+  </property>
+
+  <property>
+       <name>hive.server2.enable.doAs</name>
+       <value>true</value>
+  </property>  
+  
+  {% for key, value in spark_hive_options.items() %}
+  <property>
+    <name>{{ key }}</name>
+    <value>{{ value }}</value>
+  </property>
+  {% endfor %}
+  
+</configuration>

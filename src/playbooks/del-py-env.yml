@@ -1,0 +1,13 @@
+# create py-env on all worker nodes
+- hosts: gateway:hadoop
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    - name: Recursively remove virtualenv directory
+      ansible.builtin.file:
+        path: '{{ python_venv_dir }}/{{ py_env_name }}'
+        state: absent
+      become: yes

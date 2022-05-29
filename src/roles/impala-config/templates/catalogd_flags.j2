@@ -1,0 +1,28 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+-load_catalog_in_background=true
+-webserver_port={{ impala_web_port.catalogd }}
+-log_dir={{ impala_log_dir }}
+-log_filename=catalogd
+-state_store_host={{ groups['impala_statestore'][0] }}
+-disable_kudu=true
+-principal=impala/{{ inventory_hostname }}@{{ kerberos_realm }}
+-keytab_file={{ impala_etc_dir }}/impala-http.keytab
+-ssl_server_certificate={{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
+-ssl_private_key={{ tls_etc_dir }}/{{ tls_remote_priv_key }}
+-webserver_certificate_file={{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
+-webserver_private_key_file={{ tls_etc_dir }}/{{ tls_remote_priv_key }}
+
+-webserver_require_spnego=true
+
+# ranger config
+-server_name=impala
+-ranger_service_type=hive
+-ranger_app_id=impala
+-authorization_provider=ranger
+-abort_on_failed_audit_event=false
+
+{% for key, value in impala_catalogd_options.items() %}
+-{{ key }}={{ value | string | lower }}
+{% endfor %}

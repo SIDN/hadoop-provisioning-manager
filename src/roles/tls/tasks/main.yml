@@ -1,0 +1,33 @@
+- name: create TLS directory
+  file:
+    path: "{{ tls_etc_dir }}"
+    state: directory
+    mode: '0755'
+  become: yes
+  
+- name: Copy TLS cert & key
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ tls_etc_dir }}/{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { "src": "{{ tls_cert.crt }}", dest: "{{ tls_remote_pub_chain }}"}
+    - { "src": "{{ tls_cert.key }}", dest: "{{ tls_remote_priv_key }}"}
+  become: yes
+  
+- name: Generate jks script
+  ansible.builtin.template:
+    src: ../templates/create-jks.sh.j2
+    dest: "{{ tls_etc_dir }}/create-jks.sh"
+    mode: '0744'
+  loop:
+    - { src: 'create-jks.sh.j2', dest: '{{ tls_etc_dir }}'}
+  become: yes
+
+# create jks truststore, used by hdfs namenode (ssl-server.xml)
+- name: Run JKS script
+  shell: "{{ tls_etc_dir }}/create-jks.sh"
+  become: yes
+
+
+

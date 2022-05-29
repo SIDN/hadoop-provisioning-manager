@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
+limitations under the License. -->
+
+<!-- 
+ Created on {{ ansible_date_time.iso8601 }}
+ Pushed to: {{ inventory_hostname }}
+-->
+<configuration>
+
+  <property>
+    <name>httpfs.proxyuser.{{ hue_os_user }}.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>httpfs.proxyuser.{{ hue_os_group }}.groups</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.http.temp.dir</name>
+    <value>/tmp/webhdfs</value>
+  </property>
+  <property>
+    <name>kerberos.realm</name>
+    <value>{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>httpfs.authentication.type</name>
+    <value>kerberos</value>
+  </property>
+  <property>
+    <name>httpfs.authentication.kerberos.principal</name>
+    <value>HTTP/{{ inventory_hostname }}@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>httpfs.authentication.kerberos.keytab</name>
+    <value>{{ hadoop_etc_dir }}/http.keytab</value>
+  </property>
+  <property>
+    <name>httpfs.hadoop.authentication.type</name>
+    <value>kerberos</value>
+  </property>
+  <property>
+    <name>httpfs.ssl.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>httpfs.authentication.signature.secret.file</name>
+    <value>{{ hadoop_etc_dir }}/httpfs-signature.secret</value>
+  </property>
+  <property>
+    <name>httpfs.hadoop.authentication.kerberos.keytab</name>
+    <value>{{ hadoop_etc_dir }}/hdfs.keytab</value>
+  </property>
+  <property>
+    <name>httpfs.hadoop.authentication.kerberos.principal</name>
+    <value>hdfs/{{ inventory_hostname }}@{{ kerberos_realm }}</value>
+  </property>
+</configuration>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
+limitations under the License. See accompanying LICENSE file. -->
+
+<!--
+Created on {{ ansible_date_time.iso8601 }}
+Pushed to: {{  inventory_hostname }}
+-->
+
+<configuration>
+  <property>
+    <name>dfs.nameservices</name>
+    <value>{{ hadoop_fs_nameservices }}</value>
+  </property>
+  <property>
+    <name>dfs.client.failover.proxy.provider.{{ hadoop_fs_nameservices }}</name>
+    <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+  </property>
+  <property>
+    <name>dfs.ha.namenodes.{{ hadoop_fs_nameservices }}</name>
+    <value>{{ groups['hdfs_primary_nn'] | union(groups['hdfs_secondary_nn']) | join(',') }}</value>
+  </property>
+  {% for host in groups['hdfs_primary_nn'] | union(groups['hdfs_secondary_nn']) %}
+    <property>
+      <name>dfs.namenode.rpc-address.{{ hadoop_fs_nameservices }}.{{ host }}</name>
+      <value>{{ host }}:8020</value>
+    </property>
+    <property>
+      <name>dfs.namenode.http-address.{{ hadoop_fs_nameservices }}.{{ host }}</name>
+      <value>{{ host }}:50070</value>
+    </property>
+    <property>
+      <name>dfs.namenode.https-address.{{ hadoop_fs_nameservices }}.{{ host }}</name>
+      <value>{{ host }}:50071</value>
+    </property>
+  {% endfor %}
+  <property>
+    <name>dfs.namenode.shared.edits.dir</name>
+    <value>qjournal://{{ groups['hdfs_journalnode'] | map('regex_replace', '$', ':8485') | join(';') }}/{{ hadoop_fs_nameservices }}</value>
+  </property>
+  <property>
+    <name>dfs.ha.fencing.methods</name>
+    <value>shell(true)</value>
+  </property>
+  <property>
+    <name>dfs.journalnode.edits.dir</name>
+    <value>{{ hadoop_dfs_journalnode_edits_dir }}/hdfs/journalnode/edits</value>
+  </property>
+  <property>
+    <name>dfs.ha.automatic-failover.enabled.{{ hadoop_fs_nameservices }}</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.datanode.hdfs-blocks-metadata.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.permissions.supergroup</name>
+    <value>hdfs</value>
+  </property>
+  <property>
+    <name>dfs.namenode.acls.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.client.file-block-storage-locations.timeout.millis</name>
+    <value>10000</value>
+  </property>
+  <!-- Enabled client shortcircuit reads, this increases read performance -->
+  <property>
+    <name>dfs.client.read.shortcircuit</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.domain.socket.path</name>
+    <value>/var/run/hdfs-sockets/dn</value>
+  </property>
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>{{ hadoop_dfs_datanode_data_dir | map('regex_replace', '^', 'file://') | join(',') }}</value>
+  </property>
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>{{ hadoop_dfs_namenode_name_dir | map('regex_replace', '^', 'file://') | join(',') }}</value>
+  </property>
+  <property>
+    <name>dfs.namenode.checkpoint.dir</name>
+    <value>{{ hadoop_dfs_namenode_checkpoint_dir | map('regex_replace', '^', 'file://') | join(',') }}</value>
+  </property>
+  <property>
+    <name>dfs.webhdfs.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.block.access.token.enable</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.namenode.kerberos.principal</name>
+    <value>hdfs/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>dfs.secondary.namenode.kerberos.principal</name>
+    <value>hdfs/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>dfs.datanode.kerberos.principal</name>
+    <value>hdfs/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>dfs.namenode.kerberos.internal.spnego.principal</name>
+    <value>HTTP/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>dfs.secondary.namenode.kerberos.internal.spnego.principal</name>
+    <value>HTTP/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>dfs.web.authentication.kerberos.principal</name>
+    <value>HTTP/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>dfs.journalnode.kerberos.principal</name>
+    <value>hdfs/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>dfs.journalnode.kerberos.internal.spnego.principal</name>
+    <value>HTTP/_HOST@{{ kerberos_realm }}</value>
+  </property>
+  <property>
+    <name>dfs.data.transfer.protection</name>
+    <value>integrity</value>
+  </property>
+  <property>
+    <name>dfs.http.policy</name>
+    <value>HTTPS_ONLY</value>
+  </property>
+  <property>
+    <name>dfs.datanode.address</name>
+    <value>{{ inventory_hostname }}:10019</value>
+  </property>
+  <property>
+    <name>dfs.datanode.http.address</name>
+    <value>{{ inventory_hostname }}:10022</value>
+  </property>
+  <property>
+    <name>dfs.datanode.https.address</name>
+    <value>{{ inventory_hostname }}:10023</value>
+  </property>
+  <property>
+    <name>dfs.https.server.keystore.resource</name>
+    <value>ssl-server.xml</value>
+  </property>
+  
+  {% if role_name != "client-config" %}
+  {# Do not include keytab in client config #}
+  
+  <property>
+    <name>dfs.namenode.keytab.file</name>
+    <value>{{ hadoop_etc_dir }}/hdfs.keytab</value>
+  </property>
+  <property>
+    <name>dfs.secondary.namenode.keytab.file</name>
+    <value>{{ hadoop_etc_dir }}/hdfs.keytab</value>
+  </property>
+  <property>
+    <name>dfs.datanode.keytab.file</name>
+    <value>{{ hadoop_etc_dir }}/hdfs.keytab</value>
+  </property>
+  <property>
+    <name>dfs.web.authentication.kerberos.keytab</name>
+    <value>{{ hadoop_etc_dir }}/http.keytab</value>
+  </property>
+  <property>
+    <name>dfs.journalnode.keytab.file</name>
+    <value>{{ hadoop_etc_dir }}/hdfs.keytab</value>
+  </property>
+  
+  {% endif %}
+  
+  {% for key, value in hdfs_site_options.items() %}
+  <property>
+    <name>{{ key }}</name>
+    <value>{{ value | string | lower }}</value>
+  </property>
+  {% endfor %}
+  
+</configuration>

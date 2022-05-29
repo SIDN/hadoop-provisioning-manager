@@ -1,0 +1,113 @@
+- hosts: kerberos_kdc
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    # Create admin principals  
+    - name: Create Kerberos admin/admin principal
+      shell: > 
+          /usr/sbin/kadmin.local -q 'addprinc -requires_preauth -pw {{ kerberos_hadoop_admin_password }} {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}'
+      become: yes
+      
+    - name: Create Hadoop admin principal
+      shell: > 
+          /usr/sbin/kadmin.local -q 'addprinc -requires_preauth -pw {{ kerberos_hadoop_admin_password }} {{ kerberos_hadoop_admin_user }}@{{ kerberos_realm }}'
+      become: yes
+
+    - name: Create Hadoop HDFS principal
+      shell: > 
+          /usr/sbin/kadmin.local -q 'addprinc -requires_preauth -pw {{ hadoop_hdfs_krb_password }} hdfs@{{ kerberos_realm }}'
+      become: yes      
+
+    # Create service principals
+
+    - name: Create hdfs service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey hdfs/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['all'] }}"
+      loop: "{{ query('inventory_hostnames', 'all:!gateway:!manager') }}"
+
+    - name: Create httpfs service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey httpfs/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['hdfs_httpfs'] }}"
+
+    - name: Create yarn service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey yarn/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ query('inventory_hostnames', 'all:!gateway:!manager') }}"
+      
+    - name: Create spark service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey spark/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ query('inventory_hostnames', 'spark_history:spark_thrift') }}"
+      
+    - name: Create HTTP service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey HTTP/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['all'] }}"    
+
+    - name: Create hive service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey hive/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['hive'] }}"    
+
+    - name: Create impala service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey impala/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ query('inventory_hostnames', 'impala:impala_statestore:impala_catalog:impala_ha_proxy') }}"
+      
+    - name: Create zookeeper service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey zookeeper/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['zookeeper'] }}"    
+  
+    - name: Create hue service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey hue/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['hue'] }}"        
+
+    - name: Create livy service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey livy/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['livy'] }}"        
+      
+    - name: Create ranger service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey ranger/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['ranger'] }}"       
+      
+    - name: Create ranger-lookup service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey lookupranger/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['ranger'] }}"       
+
+    - name: Create ranger-usersync service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey rangerusersync/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['ranger'] }}"    
+      
+    - name: Create solr service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey solr/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['ranger'] }}"      
+
+  

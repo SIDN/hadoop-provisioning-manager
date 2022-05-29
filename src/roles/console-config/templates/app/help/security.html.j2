@@ -1,0 +1,108 @@
+<h1 class="display-6">Security</h1>
+<p>
+All services have security (authentication) enabled using Kerberos, Impala and Hadoop HDFS also have authorization enabled using Apache Ranger. 
+Accessing a service web interfaces is only possible with an active Kerberos session and a properly configured web browser.
+configure your web browser to support SPNEGO, which is required to be able to access a web server that requires Kerberos authentication.
+</p>
+<br>
+<h5>Web browser SPNEGO configuration</h5>
+<p>
+  <h6>Firefox</h6>
+  To enable SPNEGO for Firefox, set the configuration options as shown below.
+</p>
+<pre><code>
+network.negotiate-auth.delegation-uris = .{{ dns_domainname | lower }}
+network.negotiate-auth.trusted-uris = .{{ dns_domainname | lower }}
+</code></pre>
+
+<p>
+  <h6>Chrome</h6>
+  To enable SPNEGO for Google Chrome on MacOs, open a terminal and enter the command as shown below.
+</p>
+<pre><code>
+sudo defaults write com.google.Chrome AuthServerWhitelist *.{{ dns_domainname | lower }}
+</code></pre>
+
+<h5>Default users</h5>
+<p>
+During deployment of the cluster the following default admin users are created.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>User</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>admin@{{ kerberos_realm }}</td>
+    <td>Admin user for Hadoop services such as Hue and Impala</td>
+  </tr>
+  <tr>
+    <td>admin/admin@{{ kerberos_realm }}</td>
+    <td>Kerberos admin user</td>
+  </tr>
+  <tr>
+    <td>hdfs@{{ kerberos_realm }}</td>
+    <td>Hadoop HDFS admin user</td>
+  </tr>
+</table>
+
+<h5>Passwords</h5>
+<p>
+Sensitive variables such as passwords are not directly configured in the configuration file of a service.
+These variables are saved in an <a href="https://docs.ansible.com/ansible/latest/user_guide/vault.html">Ansible vault</a> file.
+You can create a new vault file like this:
+
+<pre><code>
+# Create new unencrypted vault file based on the default template
+cp &lt;config_dir&gt;/vars/vault_password_vars.template &lt;config_dir&gt;/vars/vault_password_vars.yml
+
+# Encrypt the vault file
+ansible-vault encrypt &lt;config_dir&gt;/vars/vault_password_vars.yml
+
+# Edit the vault file to set the password
+ansible-vault edit &lt;config_dir&gt;/vars/vault_password_vars.yml
+</code></pre>
+
+The contents of the vault file can be viewed using the "ansible-vault view" command and edited by using the "ansible-vault edit" command.
+All variables in the service configuration files that have a "vault_" prefix, are references to a variable in your encrypted `vault_password_vars.yml` file.
+Ansible must have permission to read your encrypted vault file, and needs to know the password for this file.
+<br>
+Create a password file that can be used by Ansible to read the vault, this file must be named ".vault_pass" and placed in your custom configuration directory.
+
+<pre><code>
+# Create a new .vault_pass file, like this for the example password "my_password"
+echo "my_password" &gt; &lt;config_dir&gt;/.vault_pass
+</code></pre>
+
+<strong>MAKE SURE THE .vault_pass IS NOT SAVED IN VERSION CONTROL, when using Git(Hub/Lab) add the .vault_pass to .gitignore.</strong>
+</p>
+
+<h5>Creating a Kerberos session</h5>
+Use the kinit command line utility on a gateway host or your workstation to create Kerberos session using a password or keytab.
+If you are your are using MacOs, then you cal also use the Mac Client TicketViewer application (/System/Library/CoreServices/Applications/Ticket\ Viewer.app/)
+<br>
+The Kerberos client configuration (krb5.conf) file on your client before must have the correct settings before you can create a Kerberos session.
+A correct Kerberos krb5.conf file is part of the client configuration package, which is available for download on this console website.
+</p>
+<pre><code>
+# create session using a password
+kinit username@{{ kerberos_realm }}
+
+# Create session using a keytab
+kinit -kt /path/to/my.keytab username@{{ kerberos_realm }}
+</code></pre>
+
+<h5>Creating a Kerberos keytab file</h5>
+<p>
+Use the ktutil on a cluster host to create a new keytab file, this keytab can be used from scripts to create a Kerberos session without having to interactively provide a password.
+Make sure to protect your keytab files, attackers can use this file to login using your credentials.
+</p>
+
+<pre><code>
+ktutil
+ktutil: clear
+ktutil: addent -password -p username@{{ kerberos_realm }} -k 1 -e aes256-cts
+Password for username@{{ kerberos_realm }}: [enter your password]
+ktutil: wkt /path/to/my.keytab
+ktutil: quit
+</code></pre>

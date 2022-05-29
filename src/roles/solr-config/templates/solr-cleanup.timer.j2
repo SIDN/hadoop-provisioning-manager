@@ -1,0 +1,17 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# use timer to start cleanup script the solr user has en nologin shell
+# and cannot use cron job
+# do cleanup every day at 01:00AM
+
+[Unit]
+Description=Cleanup older Solr data
+Requires=solr-cleanup.service
+
+[Timer]
+Unit=solr-cleanup.service
+OnCalendar=*-*-* 01:00:00
+
+[Install]
+WantedBy=timers.target

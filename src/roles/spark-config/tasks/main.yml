@@ -1,0 +1,62 @@
+- name: Create cfg directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ spark_etc_dir }}"
+  become: yes
+  
+# - name: Get path for python3 executable (Ubuntu)
+#   shell: which python3
+#   register: reg_py3_path_ubuntu
+#   when: ansible_distribution == "Ubuntu"
+# 
+# - name: Get path for python3 executable (Ubuntu)
+#   set_fact: 
+#     reg_py3_path: "{{ reg_py3_path_ubuntu.stdout }}"
+#   when: ansible_distribution == "Ubuntu"
+# 
+# - name: Get path for python3 executable (RHEL)
+#   set_fact: 
+#     reg_py3_path: "{{ stack_root }}/python/{{ version.spark_python }}/bin/python3"
+#   when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") 
+  
+- name: Create Spark configuration files
+  #vars: 
+  #  py3_path: "{{ reg_py3_path }}"
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ spark_etc_dir }}/{{ item.name | basename | replace('.j2', '') }}"
+    owner: "{{ spark_os_user }}"
+    group: "{{ spark_os_group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { name: 'spark-defaults.conf.j2', mode: '0644' }
+    - { name: 'log4j.properties.j2', mode: '0644' }
+    - { name: 'hive-site.xml.j2', mode: '0644' }
+  become: yes
+  
+- name: Create Spark environment files
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ spark_etc_dir }}/{{ item.name | basename | replace('.j2', '') }}"
+    owner: "{{ spark_os_user }}"
+    group: "{{ spark_os_group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { name: 'spark-env.sh.j2', mode: '0755', group_name: 'all' }
+    - { name: 'spark-history-env.sh.j2', mode: '0755', group_name: 'spark_history' }
+    - { name: 'spark-thrift-env.sh.j2', mode: '0755', group_name: 'spark_thrift' }
+  become: yes
+  when: inventory_hostname in groups[item.group_name]
+  
+- name: Copy shared configuration files
+  ansible.builtin.copy:
+    src: "{{ cache_root }}/conf/{{ item }}"
+    dest: "{{ spark_etc_dir }}"
+    mode: '0644'
+  loop:
+    - core-site.xml
+    - hdfs-site.xml
+  become: yes

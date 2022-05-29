@@ -1,0 +1,80 @@
+- name: Create configuration directory
+  file:
+    path: "{{ impala_etc_dir }}"
+    state: directory
+    mode: '0755'
+  become: yes  
+  
+- name: Set Impala executor cgroup cpu-shares
+  shell: >
+      systemctl set-property impala_impalad.service CPUShares={{ impala_cgroups.cpu_shares.impalad }}
+  when: ('hadoop' in groups and inventory_hostname in groups['hadoop'])
+  become: yes
+  
+- name: Copy shared configuration files
+  ansible.builtin.copy:
+    src: "{{ cache_root }}/conf/{{ item }}"
+    dest: "{{ impala_etc_dir }}"
+    mode: '0644'
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+  loop:
+    - core-site.xml
+    - hdfs-site.xml
+    - hive-site.xml
+  become: yes
+        
+- name: Create symlink for metastore-site.xml
+  file:
+      src: "{{ impala_etc_dir }}/hive-site.xml"
+      dest: "{{ impala_etc_dir }}/metastore-site.xml"
+      state: link
+  become: yes
+  
+# create cached config, shared between hosts
+- name: Create shared configuration files
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.perm }}"
+  loop:
+    - { name: 'impalad_flags.j2', dest: '{{ cache_root }}/conf/impalad_flags', perm: '0644' }
+  become: yes
+  delegate_to: localhost
+  connection: local
+  
+- name: Create configuration files
+  ansible.builtin.template:
+    src: "./templates/{{ item }}"
+    dest: "{{ impala_etc_dir }}/{{ item | basename | replace('.j2', '') }}"
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+    mode: '0644'
+  loop:
+    - impalad_flags.j2
+    - catalogd_flags.j2
+    - statestored_flags.j2
+    - fair-scheduler.xml.j2
+    - llama-site.xml.j2
+    - ranger-hive-audit.xml.j2
+    - ranger-hive-policymgr-ssl.xml.j2
+    - ranger-hive-security.xml.j2
+    - ranger-security.xml.j2    
+    - log4j.properties.j2
+    - solr-jaas.conf.j2
+  become: yes
+  
+- name: Create environment files
+  ansible.builtin.template:
+    src: ../templates/impala-env.sh.j2
+    dest: "{{ impala_etc_dir }}/impala-{{ daemon }}-env.sh"
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+    mode: '0755'
+  loop:
+    - statestored
+    - impalad
+    - catalogd
+  loop_control:
+    loop_var: daemon
+  become: yes

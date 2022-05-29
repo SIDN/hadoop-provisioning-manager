@@ -1,0 +1,22 @@
+- hosts: hive
+  remote_user: hadoop-mgr
+  become: yes
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+  tasks:
+    - name: "Create hdfs warehouse"
+      shell: >
+        {{ stack_root }}/apache-hive-latest/bin/create-warehouse.sh
+      become: yes
+      register: created_wh
+
+    - name: "Create hdfs /tmp/hive"
+      shell: >
+        {{ stack_root }}/apache-hive-latest/bin/create-tmp-dir.sh
+      become: yes
+    
+    - name: "Start {{ service_name }}"
+      vars:
+        service_name: hive_metastore
+      include_tasks: startup/tasks/generic-service.yml

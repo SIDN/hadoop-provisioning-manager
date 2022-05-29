@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# Upload the Spark libraries to HDFS, this allows for faster starting of jobs and sharing of resources
+
+source {{ spark_etc_dir }}/spark-env.sh
+source {{ hadoop_etc_dir }}/hadoop-env.sh
+kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }}
+
+JARS_BASE_DIR="/user/{{ spark_os_user }}/jars"
+JARS_DIR="$JARS_BASE_DIR/{{ version.spark }}"
+
+hadoop fs -test -d $JARS_DIR
+if [ $? != 0 ]
+then
+  echo "Upload Spark libraries"
+  hdfs dfs -mkdir -p $JARS_DIR
+  hdfs dfs -copyFromLocal $SPARK_HOME/jars/*.jar $JARS_DIR
+  hdfs dfs -chown -R {{ spark_os_user }}:{{ spark_os_group }} $JARS_BASE_DIR
+  hdfs dfs -chmod -R 755 $JARS_BASE_DIR  
+else
+  echo "Spark libraries are present"
+fi
+
+

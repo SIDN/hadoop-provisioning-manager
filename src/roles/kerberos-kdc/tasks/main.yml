@@ -1,0 +1,87 @@
+- name: Determine OS specific config (RHEL)
+  set_fact:
+     fact_kdc_cfg_dir: /var/kerberos/krb5kdc
+     fact_kdc_db_dir: /var/kerberos/krb5kdc
+     fact_kdc_service_name: krb5kdc
+     fact_admin_service_name: kadmin
+  when: ansible_distribution == 'RedHat'
+     
+- name: Determine OS specific config (Ubuntu)
+  set_fact:
+     fact_kdc_cfg_dir: /etc/krb5kdc
+     fact_kdc_db_dir: /var/lib/krb5kdc
+     fact_kdc_service_name: krb5-kdc
+     fact_admin_service_name: krb5-admin-server
+  when: ansible_distribution == 'Ubuntu'
+  
+- name: Print KDC cfg
+  debug:
+    msg: The Kerberos config directory is {{ fact_kdc_cfg_dir }} and db dir is {{ fact_kdc_db_dir }}
+ 
+- name: Create Kerberos cfg directory
+  file:
+    path: "{{ fact_kdc_cfg_dir }}"
+    state: directory
+    mode: '0755' 
+  become: yes
+  
+- name: Create Kerberos directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - '{{ fact_kdc_db_dir }}'
+    - "{{ kerberos_log_dir }}"
+  become: yes
+  
+- name: install Kerberos packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - krb5-server
+      - krb5-libs
+      - krb5-workstation
+    state: latest
+  become: yes
+  when: ansible_distribution == 'RedHat'
+  
+- name: install Kerberos packages (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - krb5-kdc
+      - krb5-admin-server
+      - krb5-config
+    state: latest
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+
+# need to have the config now otherwise generating the KRB database will fail.  
+- name: Include Keberos configuration
+  include_tasks: ../kerberos-kdc-config/tasks/main.yml
+           
+- name: Check if Kerberos database needs to be created
+  ansible.builtin.stat:
+    path: '{{ fact_kdc_db_dir }}/principal'
+  register: kdc_data
+  become: yes
+  
+- name: Create Kerberos database 
+  expect:
+    command: /usr/sbin/kdb5_util create -s 
+    responses:
+        Enter KDC database master key: "{{ kerberos_kdc_master_key }}"
+        Re-enter KDC database master key: "{{ kerberos_kdc_master_key }}"
+  become: yes
+  when: 
+    - not kdc_data.stat.exists    
+    
+- name: Enable and Start Kerberos services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  loop:
+    - '{{ fact_kdc_service_name }}'
+    - '{{ fact_admin_service_name }}'
+  become: yes
+
+  

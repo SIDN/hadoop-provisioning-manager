@@ -1,0 +1,32 @@
+- name: Hadoop shared config
+  ansible.builtin.template:
+    src: "{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.perm }}"
+  loop:
+    - { name: '../../hadoop-config/templates/hdfs-site.xml.j2', dest: '{{ cache_root }}/conf/hdfs-site.xml', perm: '0644' }
+    - { name: '../../hadoop-config/templates/core-site.xml.j2', dest: '{{ cache_root }}/conf/core-site.xml', perm: '0644' }
+    - { name: '../../hadoop-config/templates/mapred-site.xml.j2', dest: '{{ cache_root }}/conf/mapred-site.xml', perm: '0644' }
+  become: yes
+  delegate_to: localhost
+  connection: local
+  
+- name: Impala shared config
+  ansible.builtin.template:
+    src: "{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.perm }}"
+  loop:
+    - { name: '../../impala-config/templates/impalad_flags.j2', dest: '{{ cache_root }}/conf/impalad_flags', perm: '0644' }
+  become: yes
+  delegate_to: localhost
+  connection: local
+  
+- name: Hive shared config
+  ansible.builtin.template:
+    src: ../../hive-config/templates/hive-site.xml.j2
+    dest: '{{ cache_root }}/conf/hive-site.xml'
+    mode: '0644'
+  become: yes
+  delegate_to: localhost
+  connection: local

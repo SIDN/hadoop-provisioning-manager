@@ -1,0 +1,84 @@
+# create hadoop manager ser on new nodes
+- hosts: all:!manager
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+  tasks:
+    - name: Get all user info
+      getent:
+        database: passwd
+    
+    - name: Create new manager user
+      ansible.builtin.user:
+        name: '{{ provision_user }}'
+        password: "{{ provision_user_passwd | password_hash('sha512') }}"
+        create_home: true
+      become: yes
+      when: provision_user not in ansible_facts.getent_passwd
+      
+    - name: Update password
+      ansible.builtin.user:
+        name: '{{ provision_user }}'
+        password: "{{ provision_user_passwd | password_hash('sha512') }}"
+      become: yes
+      
+    - name: Determine OS specific config (RHEL)
+      set_fact:
+         fact_group_name: wheel
+      when: (provision_user not in ansible_facts.getent_passwd) and (ansible_distribution == 'RedHat')
+         
+    - name: Determine OS specific config (Ubuntu)
+      set_fact:
+         fact_group_name: sudo
+      when: (provision_user not in ansible_facts.getent_passwd) and (ansible_distribution == 'Ubuntu')
+      
+    - name: Add user to group 
+      user:
+        name: '{{ provision_user }}'
+        groups: '{{ fact_group_name }}'
+        append: yes
+      become: yes
+      when: provision_user not in ansible_facts.getent_passwd
+        
+    - name: Create .ssh folder
+      file:
+        path: ~{{ provision_user }}/.ssh
+        state: directory
+        owner: '{{ provision_user }}'
+        group: '{{ provision_user }}'
+        mode: 0700
+      become: yes
+      when: provision_user not in ansible_facts.getent_passwd
+      
+    - name: Copy SSH key to remote host
+      ansible.builtin.copy:
+        src: ~/.ssh/id_rsa.pub
+        dest: /tmp/hadoop-mgr-key.pub
+      when: provision_user not in ansible_facts.getent_passwd
+      
+    - name: Add SSH key to remote user authorized keys
+      shell: 
+          cat /tmp/hadoop-mgr-key.pub >> /home/{{ provision_user }}/.ssh/authorized_keys;
+          chown {{ provision_user }}:{{ provision_user }} /home/{{ provision_user }}/.ssh/authorized_keys;
+          chmod 600 /home/{{ provision_user }}/.ssh/authorized_keys;
+          rm -f /tmp/hadoop-mgr-key.pub;
+      become: yes
+      when: provision_user not in ansible_facts.getent_passwd
+      
+    - name: Add provision user to the sudoers list
+      copy:
+        dest: '/etc/sudoers.d/91_hadoop-mgr-sudo'
+        content: |
+          # This file is managed by SIDN HADOOP PROVISION; changes may be overwritten
+          # Created on {{ ansible_date_time.iso8601 }}
+          # Pushed to: {{  inventory_hostname }}
+          
+          {{ provision_user }} ALL=(ALL) NOPASSWD:ALL
+      become: yes
+      
+    - name: Install Python3
+      ansible.builtin.package:
+        name:
+          - python{{ version.python }}
+          - python3-pip
+        state: latest
+      become: yes

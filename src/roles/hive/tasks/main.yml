@@ -1,0 +1,14 @@
+# only install db when installed hive 1st time
+- name: Include Hive server installation
+  include_tasks: hive-server.yml
+  
+# need Hive config before installation of database  
+- name: Include Hive configuration
+  include_tasks: ../hive-config/tasks/main.yml
+  
+# only install db when installed hive 1st time
+- name: Create database
+  include_tasks: hive-database.yml
+  when: not (inventory_hostname in groups['gateway'])  
+
+    

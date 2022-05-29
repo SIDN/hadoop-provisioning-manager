@@ -1,0 +1,147 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ impala_os_group }}"
+    state: present
+  become: yes
+
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ impala_os_user }}"
+    new_group: "{{ impala_os_group }}"
+
+- name: Create configuration directory
+  file:
+    path: "{{ impala_etc_dir }}"
+    state: directory
+    mode: '0755'
+  become: yes  
+
+- name: Create scratch directories for Impalad
+  file:
+    path: "{{ item.split(':')[0] }}"
+    state: directory
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+    mode: '0755'
+  loop: '{{ impalad_scratch_dirs }}'
+  become: yes  
+  when: inventory_hostname in groups['impala']
+
+# onyl install gcc 7.5.0 deployment target is RHEL 7.x
+- name: Add RHEL native gcc 7.5.0 compiler/libs
+  include_tasks: rhel7-add-gcc-7.5.0.yml
+  when: >
+   (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") 
+
+# Ubuntu 18 is missing required gcc libs, install gcc 9 libs
+- name: Add Ubuntu native gcc 9 libs repository
+  apt_repository: 
+    repo: 'ppa:ubuntu-toolchain-r/test'
+    state: present
+  become: yes  
+  when: >
+   (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
+
+- name: Install Ubuntu native gcc 9 libs
+  ansible.builtin.package:
+    name:
+      - libstdc++-9-dev
+  become: yes  
+  when: >
+   (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
+
+# need different binaries for rhel and ubuntu   
+# fact_os_package is used to determine which package to download
+- name: Determine OS package (RHEL)
+  set_fact:
+     fact_os_package: rhel79
+  when: ansible_distribution == 'RedHat'
+
+- name: Determine OS package (Ubuntu)
+  set_fact:
+     fact_os_package: ubuntu
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Check if the Apache Impala src is already downloaded
+  stat:
+    path: "{{ download_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+  register: stat_impala_src
+  delegate_to: localhost
+  connection: local
+
+- name: Download Apache Impala
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ repository_url }}/impala/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+  delegate_to: localhost
+  connection: local
+  when: not stat_impala_src.stat.exists
+
+- name: Check if the Apache Impala src is already on remote
+  stat:
+    path: "{{ cache_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+  register: stat_remote_impala_src
+
+- name: Copy Apache Impala to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  when: not stat_remote_impala_src.stat.exists
+
+- name: Recursively remove Impala directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}'
+    state: absent
+  become: yes
+
+- name: Extract Impala 
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+      remote_src: true
+      creates: "{{ stack_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}"
+      dest: "{{ stack_root }}"
+      owner: "{{ impala_os_user }}"
+      group: "{{ impala_os_group }}"
+  become: yes
+
+- name: Create symlink latest Impala version
+  file:
+      src: "{{ stack_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}"
+      dest: "{{ stack_root }}/apache-impala-latest"
+      state: link
+  become: yes
+
+# somehow /usr/lib/x86_64-linux-gnu/libsasl2.so.3 is not available
+# on Ubunut. And impala-shell will crash without it.
+# Creating symlink to libsasl2.so.2 fixes the problem
+- name: Fix missing SASL so file (Ubuntu)
+  file:
+      src: /usr/lib/x86_64-linux-gnu/libsasl2.so.2
+      dest: /usr/lib/x86_64-linux-gnu/libsasl2.so.3
+      state: link
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Create venv base directory
+  file:
+    path: '{{ python_venv_dir }}'
+    state: directory
+  become: yes
+    
+# impala-shell only works with py2, create venv for impala-shell
+# all users in group ranger_sync_group_name (hadoop_users) must have access to the venv    
+- name: Create py env config facts
+  set_fact:
+     py_version: 2
+     py_env_name: py2-impala-shell
+     py_env_permission: 'root:{{ ranger_sync_group_name }}'
+    
+- name: Include role for Python create venv
+  include_role:
+    name: python-venv
+  

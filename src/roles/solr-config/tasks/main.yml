@@ -1,0 +1,37 @@
+- name: Create SOLR configuration files
+  ansible.builtin.template:
+    src: ../templates/{{ item.src }}
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { src: 'solr.in.sh.j2', dest: '/etc/default/solr.in.sh', mode: '0755'}
+    - { src: 'jaas-client.conf.j2', dest: '{{ solr_etc_dir }}/jaas-client.conf', mode: '0644'}
+    - { src: 'solr-clean-env.sh.j2', dest: '{{ solr_etc_dir }}/solr-clean-env.sh', mode: '0755'}
+    
+- name: Copy cfg files
+  ansible.builtin.copy:
+    src: ../files/{{ item.src }}
+    dest: "{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { src: 'solr.xml', dest: '{{ solr_home }}/solr.xml'}
+    - { src: 'log4j2.xml', dest: '{{ solr_home }}/log4j2.xml'}
+    - { src: 'security.json', dest: '{{ solr_home }}/security.json'}
+    
+- name: Create cleanup timer and service
+  ansible.builtin.template:
+    src: ../templates/{{ item }}
+    dest: /etc/systemd/system/{{ item | replace('.j2','') }}
+  loop:
+    - solr-cleanup.service.j2
+    - solr-cleanup.timer.j2
+  become: yes
+  
+- name: Systemctl Reload Daemons
+  shell: systemctl daemon-reload
+  
+- name: Enable cleanup timer
+  ansible.builtin.systemd:
+    name: solr-cleanup.timer
+    enabled: yes
+  become: yes

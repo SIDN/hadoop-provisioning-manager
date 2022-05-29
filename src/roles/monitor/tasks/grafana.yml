@@ -1,0 +1,98 @@
+- name: create Grafana config directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ grafana_etc_dir }}"
+  become: yes
+
+- name: create Grafana cfg directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ grafana_etc_dir }}/provisioning/datasources"
+    - "{{ grafana_etc_dir }}/provisioning/dashboards"
+  become: yes
+  
+# Pull remote image to controller
+# add a tag and push it to local docker registry
+# from registry distribute to servers.
+- name: Check if Grafana docker image already exists
+  shell: "docker images | grep {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }} | wc -l"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  
+- name: Show Grafana docker image already exists
+  ansible.builtin.debug:
+    msg: Grafana image detect {{ docker_img_exists.stdout }}
+  delegate_to: localhost
+  connection: local
+  
+- name: Pull Grafana server image to Manager
+  command: "docker pull grafana/grafana-enterprise:{{ version.grafana }}"
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+
+- name: Tag Grafana server docker image
+  command: "docker image tag grafana/grafana-enterprise:{{ version.grafana }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}"
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+
+- name: Push Grafana server docker image to registry
+  command: "docker push {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}"
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+
+- name: Pull Grafana image to monitor server
+  command: "docker pull {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}"
+  
+- name: Create Grafana systemd unit
+  ansible.builtin.template:
+    src: ../templates/systemd_grafana_service.j2
+    dest: /etc/systemd/system/grafana.service
+    mode: '0644'
+  become: yes
+
+# 
+# create grafana database
+- name: Check if Grafana db exists
+  postgresql_query:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      query: >
+        SELECT datname 
+        FROM pg_database
+        WHERE datname = '{{ grafana_db_name }}'
+  delegate_to: localhost
+  connection: local
+  
+- name: Create Grafana db user
+  postgresql_user:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      state: present
+      name: "{{ grafana_db_user }}"
+      password: "{{ grafana_db_password }}"
+  delegate_to: localhost
+  connection: local
+
+- name: Create Grafana database
+  postgresql_db:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      owner: "{{ grafana_db_user }}"
+      state: present
+      name: "{{ grafana_db_name }}"
+  delegate_to: localhost
+  connection: local
+
+

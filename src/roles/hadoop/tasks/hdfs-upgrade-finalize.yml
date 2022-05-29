@@ -1,0 +1,34 @@
+# Finalize a hdfs format upgrade
+
+
+# check if upgrade is completed
+
+- name: Check if upgrade is completed
+  shell: >
+      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
+      {{ stack_root }}/hadoop-latest/bin/hdfs dfsadmin -rollingUpgrade query
+  become_user: "{{ hadoop_os_user.hdfs }}"
+  become: yes
+  register: reg_upgrade_status
+
+- name: Show check result
+  debug:
+    msg: "result for 0rollingUpgrade query: {{ reg_upgrade_status.stdout }}"
+    
+- name: Check if HDFS upgrade can be finalized
+  fail:
+    msg: HDFS not ready to be finalized
+  when: reg_upgrade_status.stdout.find("Proceed with rolling upgrade") == -1
+
+# finalize only when upgrade has completed
+- name: Finalize upgrade
+  shell: >
+      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
+      {{ stack_root }}/hadoop-latest/bin/hdfs dfsadmin -rollingUpgrade finalize
+  become_user: "{{ hadoop_os_user.hdfs }}"
+  become: yes
+  when: reg_upgrade_status.stdout.find("Proceed with rolling upgrade") != -1
+
+

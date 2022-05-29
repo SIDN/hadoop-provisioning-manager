@@ -1,0 +1,18 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Impala Prometheus Proxy service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User={{ impala_os_user }}
+Group={{ impala_os_group }}
+ExecStart=/bin/bash -c '{{ stack_root }}/apache-impala-latest/bin/start-prometheus-proxy-{{ daemon }}.sh'
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,16 @@
+- name: Instal nginx
+  ansible.builtin.package:
+    name:
+      - nginx 
+    state: latest
+  become: yes
+
+- name: Create www directory
+  file:
+    path: "{{ mgtm_console_content_dir }}"
+    state: directory
+    mode: '0775'
+
+- name: Install required python packages
+  pip:
+    name: passlib

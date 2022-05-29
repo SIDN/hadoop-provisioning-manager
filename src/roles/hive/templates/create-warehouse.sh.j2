@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+HIVE_HOME_DIR=/user/{{ hive_os_user }}
+
+source {{ hadoop_etc_dir }}/hadoop-env.sh
+
+kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }} 
+hdfs dfs -test -d $HIVE_HOME_DIR/warehouse
+
+if [ $? != 0 ]; then
+    echo "$HIVE_HOME_DIR/warehouse does not exist yet, create now"
+    
+    hdfs dfs -mkdir -p $HIVE_HOME_DIR/warehouse && \
+    hdfs dfs -chown -R {{ hive_os_user }}:{{ hive_os_group }} $HIVE_HOME_DIR && \
+    hdfs dfs -chmod 755 $HIVE_HOME_DIR && \
+    hdfs dfs -chmod 775 $HIVE_HOME_DIR/warehouse 
+else
+    echo "Hive warehouse directory $HIVE_HOME_DIR/warehouse is present"
+fi
+
+
+

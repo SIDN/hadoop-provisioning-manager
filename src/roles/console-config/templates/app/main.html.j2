@@ -1,0 +1,110 @@
+<div class="row">
+<h1 class="display-6">Welcome!</h1>  
+<p>
+The SIDN Labs Hadoop Provisioning tools makes it easier to deploy and maintain a Hadoop based big data cluster.
+The Hadoop ecosystem contains many different components, this informational website provides you with information about deployed components and the tooling you can use to manage the component services.
+The following components are supported.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Component</th>
+    <th>Description</th>
+  </tr>
+    <tr>
+      <td>common</td>
+      <td>Dependencies required by all hosts</td>
+    </tr>
+    <tr>
+      <td>manager</td>
+      <td>Management server requirements</td>
+    </tr>
+    <tr>
+      <td>console</td>
+      <td>This web based management onsole</td>
+    </tr>
+    <tr>
+      <td>monitor</td>
+      <td>Prometheus and Grafana monitoring</td>
+    </tr>
+    <tr>
+      <td>monitor-proxy </td>
+      <td>Prometheus proxies to enable access to Kerberos protected web interface</td>
+    </tr>
+    <tr>
+      <td>db</td>
+      <td>Postgresql database (optional) for Hive, Ranger and Hue schemas</td>
+    </tr>
+    <tr>
+      <td>zookeeper</td>
+      <td>Zookeeper service</td>
+    </tr>
+    <tr>
+      <td>hadoop</td>
+      <td>Hadoop HDFS and Yarn services</td>
+    </tr>
+    <tr>
+      <td>spark</td>
+      <td>Spark service</td>
+    </tr>
+    <tr>
+      <td>hive</td>
+      <td>Hive metastore</td>
+    </tr>
+    <tr>
+      <td>impala</td>
+      <td>Impala service</td>
+    </tr>
+    <tr>
+      <td>hue</td>
+      <td>Hue service (Docker)</td>
+    </tr>
+    <tr>
+      <td>livy</td>
+      <td>Livy service for Yarn</td>
+    </tr>
+    <tr>
+      <td>ranger</td>
+      <td>Ranger security service</td>
+    </tr>
+    <tr>
+      <td>solr</td>
+      <td>Solr service</td>
+    </tr>
+    <tr>
+      <td>tls</td>
+      <td>TLS-certificates and configuration to all hosts</td>
+    </tr>
+    <tr>
+      <td>krb-kdc</td>
+      <td>Kerberos Key Distribution Center (KDC)</td>
+    </tr>
+    <tr>
+      <td>krb-principal </td>
+      <td>Kerberos service principals</td>
+    </tr>
+    <tr>
+      <td>krb-keytab</td>
+      <td>Kerberos service keytabs</td>
+    </tr>
+    <tr>
+      <td>client-config</td>
+      <td>Client configuration package builder</td>
+    </tr>
+    <tr>
+      <td>host-gateway</td>
+      <td>configuration and tools (no service daemons) for gateway hosts</td>
+    </tr>
+    
+</table>
+<br>
+<h1 class="display-6">Note</h1>  
+<p>
+The content of the console website is static and is generated using the deploy script.
+For this website to display the correct information, after changing the configuration of any of the services, you should re-deploy the console service configuration (this website).
+</p>
+<pre><code>
+cd hadoop-provision/src
+# deploy config foor console website
+./deploy-config.sh console
+</code></pre>
+</div>

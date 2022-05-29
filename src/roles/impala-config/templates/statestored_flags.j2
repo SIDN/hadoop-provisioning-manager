@@ -1,0 +1,22 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+-state_store_pending_task_count_max=0
+-webserver_port={{ impala_web_port.statestored }}
+-state_store_num_server_worker_threads=4
+-log_dir={{ impala_log_dir }}
+-log_filename=statestored
+-webserver_doc_root={{ stack_root }}/apache-impala-latest
+-kerberos_reinit_interval=60
+-principal=impala/{{ inventory_hostname }}@{{ kerberos_realm }}
+-keytab_file={{ impala_etc_dir }}/impala-http.keytab
+-ssl_server_certificate={{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
+-ssl_private_key={{ tls_etc_dir }}/{{ tls_remote_priv_key }}
+-webserver_certificate_file={{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
+-webserver_private_key_file={{ tls_etc_dir }}/{{ tls_remote_priv_key }}
+
+-webserver_require_spnego=true
+
+{% for key, value in impala_statestored_options.items() %}
+-{{ key }}={{ value | string | lower }}
+{% endfor %}

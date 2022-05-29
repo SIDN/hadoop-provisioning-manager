@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# Config vars for Script for deleting older(er) SOLR data
+
+export SOLR_CLEANUP_CFG_DIR={{ solr_etc_dir }}
+export SOLR_CLEANUP_KRB_PRINCIPAL=HTTP/{{ inventory_hostname }}@{{ kerberos_realm }}
+export SOLR_CLEANUP_KRB_KEYTAB={{ solr_etc_dir }}/http.keytab 
+export SOLR_CLEANUP_HOST={{ inventory_hostname }}
+export SOLR_CLEANUP_PORT={{ solr_port }}
+export SOLR_CLEANUP_MAX_DAY={{ solr_max_log_days }}
+
+kinit -kt {{ solr_etc_dir }}/http.keytab  HTTP/{{ inventory_hostname }}@{{ kerberos_realm }}

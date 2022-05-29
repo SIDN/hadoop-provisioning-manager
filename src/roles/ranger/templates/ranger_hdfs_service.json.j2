@@ -1,0 +1,22 @@
+{
+  "description": "HDFS service",
+  "isEnabled": "true",
+  "name": "hdfs",
+  "type": "hdfs",
+  "version": 1,
+  "configs": {
+    "username": "hdfs",
+    "password": "hdfs",
+    "fs.default.name": "hdfs://{{ hadoop_fs_nameservices }}:8020",
+    "hadoop.security.authorization": "true",
+    "hadoop.security.authentication": "kerberos",
+    "hadoop.security.auth_to_local": "DEFAULT",
+    "dfs.datanode.kerberos.principal": "hdfs/_HOST@{{ kerberos_realm }}",
+    "dfs.namenode.kerberos.principal": "hdfs/_HOST@{{ kerberos_realm }}",
+    "dfs.secondary.namenode.kerberos.principal": "hdfs/_HOST@{{ kerberos_realm }}",
+    "hadoop.rpc.protection": "authentication",
+    "commonNameForCertificate": "*.{{ dns_domainname }}",
+    "tag.download.auth.users": "hdfs",
+    "policy.download.auth.users": "hdfs"
+  }
+}

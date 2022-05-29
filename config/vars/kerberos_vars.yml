@@ -1,0 +1,18 @@
+# Config options for MIT Keberos server
+
+# log directory
+kerberos_log_dir: /var/log/krb
+
+# KDC master-key
+kerberos_kdc_master_key: "{{ vault_kerberos_kdc_master_key }}"
+# Kerbeos REALM name
+kerberos_realm: CLUSTER1.HADOOP
+
+# admin username to use:
+# will create a Kerberos KDC admin: {{kerberos_hadoop_admin_user}}/admin@{{ kerberos_realm }}
+# and "normal" admin user for Hadoop related services: {{kerberos_hadoop_admin_user}}@{{ kerberos_realm }}
+# NO NEED TO CHANGE THIS.
+kerberos_hadoop_admin_user: admin
+# password for the Kerberos KDC admin and "normal" Kerberos user 
+kerberos_hadoop_admin_password: "{{ vault_kerberos_hadoop_admin_password }}"
+# admin login: kinit {{ kerberos_hadoop_admin_name }}/admin@{{ kerberos_realm }}

@@ -1,0 +1,15 @@
+- name: Create Proxy configuration files
+  ansible.builtin.template:
+    src: "../templates/prometheus-proxy-env.sh.j2"
+    dest: "{{ impala_etc_dir }}/prometheus-proxy-env-{{ daemon }}.sh"
+    mode: '0755'
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+  loop:
+    - impalad
+    - catalogd
+    - statestored
+  loop_control:
+    loop_var: daemon
+  become: yes
+  when: not (inventory_hostname in groups['gateway']) 

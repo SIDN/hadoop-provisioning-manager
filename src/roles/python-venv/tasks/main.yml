@@ -1,0 +1,68 @@
+- name: Create venv base directory
+  file:
+    path: '{{ python_venv_dir }}'
+    state: directory
+    mode: '755'
+  become: yes  
+    
+- name: Get path for python2 executable
+  set_fact: 
+    py_path: "/usr/bin/python2"
+  when: py_version|int == 2
+    
+- name: Get path for python3 executable (RHEL)
+  set_fact: 
+    py_path: "{{ stack_root }}/python/python-{{ version.python }}/bin/python{{ version.python }}"
+  when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") 
+      and py_version|int == 3
+          
+- name: Get path for python3 executable (Ubuntu)
+  set_fact: 
+    py_path: "/usr/bin/python{{ version.python }}"
+  when: (ansible_distribution == "Ubuntu") and (py_version|int == 3)
+  
+- name: Check if virtual env already exists
+  ansible.builtin.stat:
+    path: "{{ python_venv_dir }}/{{ py_env_name }}"
+  register: py_venv_dir
+  
+- name: Copy requirements file
+  ansible.builtin.copy:
+    src: '{{ py_env_req_file }}'
+    dest: '{{ cache_root }}'
+  when: not py_venv_dir.stat.exists and py_env_req_file is defined
+    
+- name: Create new py2 virtualenv
+  shell: >
+    {{ py_path }} -m virtualenv {{ python_venv_dir }}/{{ py_env_name }};
+  become: yes
+  when: not py_venv_dir.stat.exists and py_version|int == 2
+  
+- name: Create new py3 virtualenv
+  shell: >
+    {{ py_path }} -m venv {{ python_venv_dir }}/{{ py_env_name }};
+  become: yes
+  when: not py_venv_dir.stat.exists and py_version|int == 3
+  
+- name: Install modules in new virtualenv
+  shell: >
+    . {{ python_venv_dir }}/{{ py_env_name }}/bin/activate;
+    python -m pip install -r {{ cache_root }}/{{ py_env_req_file | basename }}
+  become: yes
+  when: not py_venv_dir.stat.exists and py_env_req_file is defined
+
+- name: Use given permissions for env
+  set_fact:
+     fact_py_env_permission: '{{ py_env_permission }}'
+  when: py_env_permission is defined
+  
+- name: Use default permissions for env
+  set_fact:
+     fact_py_env_permission: 'root:{{ hadoop_os_group }}'
+  when: py_env_permission is not defined
+    
+# always set permission, always us to change perms of existings venvs
+- name: Set permissions for new virtualenv
+  shell: >
+    chown -R {{ fact_py_env_permission }} {{ python_venv_dir }}/{{ py_env_name }}
+  become: yes

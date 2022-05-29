@@ -1,0 +1,19 @@
+<h1 class="display-6">Zookeeper</h1>
+<p>
+<a href="https://zookeeper.apache.org/">Apache ZooKeeper</a> is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services. All of these kinds of services are used in some form or another by distributed applications. 
+</p>
+<p>
+The HDFS High Availability functionality requires at least 3 active Zookeeper nodes (Quorum) to be available.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['zookeeper'] %}
+    <tr>
+      <td>Zookeeper</td>
+      <td><a href="http://{{ host }}:{{ zookeeper_jvm_props['zookeeper.admin.serverPort'] }}/commands/stat" target="_blank">{{ host }}</a> (TLS not supported)</td>
+    </tr>
+    {% endfor %}
+</table>

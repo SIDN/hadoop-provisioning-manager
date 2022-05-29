@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
+export HADOOP_HOME={{ stack_root }}/hadoop-latest
+
+export ZOOKEEPER_HOME={{ stack_root }}/apache-zookeeper-latest
+export ZOOCFGDIR={{ zookeeper_etc_dir }}
+export ZOO_LOG_DIR={{ zookeeper_log_dir }}
+export ZOO_LOG4J_PROP=INFO,ROLLINGFILE
+export PATH=$PATH:{{ stack_root }}/apache-zookeeper-latest/bin
+export CLASSPATH=$CLASSPATH:{{ stack_root }}/apache-zookeeper-latest/lib/*.jar
+export ZOOKEEPER_CLASSPATH={{ stack_root }}/apache-zookeeper-latest/lib/*.jar
+export ZK_SERVER_HEAP={{ zookeeper_heap_size_mb }}
+
+# mitigation for: CVE-2021-44228 (Log4jShell)
+# see: https://logging.apache.org/log4j/2.x/security.html
+SERVER_JVMFLAGS="-Dlog4j2.formatMsgNoLookups=true -Djava.net.preferIPv4Stack=true -Djava.security.auth.login.config={{ zookeeper_etc_dir }}/jaas.conf"
+{% for key, value in zookeeper_jvm_props.items() %}
+SERVER_JVMFLAGS+=" -D{{ key }}={{ value | string | lower }}"
+{% endfor %}
+export SERVER_JVMFLAGS

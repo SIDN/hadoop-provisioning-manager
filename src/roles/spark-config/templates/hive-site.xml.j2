@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+Created on: {{ ansible_date_time.iso8601 }}
+Pushed to: {{  inventory_hostname }}
+ -->
+<configuration>
+
+  <property>
+       <name>hive.server2.authentication</name>
+       <value>kerberos</value>
+  </property>
+  <property>
+        <name>hive.server2.authentication.kerberos.principal</name>
+        <value>spark/_HOST@{{ kerberos_realm }}</value>
+        <description>Spark Thrift server principal. If _HOST is used as the FQDN portion, 
+        it will be replaced with the actual hostname of the running instance.
+        </description>
+  </property>
+  <property>
+       <name>hive.server2.authentication.kerberos.keytab</name>
+       <value>{{ spark_etc_dir }}/spark.keytab</value>
+  </property>
+  <property>
+       <name>hive.server2.enable.doAs</name>
+       <value>true</value>
+  </property>  
+  
+  <!-- use exising metastore -->
+  
+  <property>
+    <name>hive.metastore.warehouse.dir</name>
+    <value>/user/{{ hive_os_user }}/warehouse</value>
+  </property>
+
+<property>
+  <name>javax.jdo.option.ConnectionURL</name>
+  <value>jdbc:postgresql://{{ groups['database'][0]}}:5432/{{ hive_db }}</value>
+</property>
+<property>
+  <name>javax.jdo.option.ConnectionDriverName</name>
+  <value>org.postgresql.Driver</value>
+</property>
+<property>
+  <name>javax.jdo.option.ConnectionUserName</name>
+  <value>{{ hive_db_user }}</value>
+</property>
+<property>
+  <name>javax.jdo.option.ConnectionPassword</name>
+  <value>{{ hive_db_password }}</value>
+</property>
+<property>
+<name>datanucleus.autoCreateSchema</name>
+<value>false</value>
+</property>
+                
+<property>
+<name>datanucleus.fixedDatastore</name>
+<value>true</value>
+</property>
+                        
+<property>
+<name>datanucleus.autoStartMechanism</name> 
+<value>SchemaTable</value>
+</property> 
+                                              
+<property>
+<name>hive.metastore.schema.verification</name>
+<value>true</value>
+</property>              
+
+{% for key, value in spark_hive_options.items() %}
+<property>
+  <name>{{ key }}</name>
+  <value>{{ value }}</value>
+</property>
+{% endfor %}
+  
+</configuration>

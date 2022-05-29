@@ -1,0 +1,25 @@
+- hosts: monitor
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: "Stop {{ service_name }}"
+      include_tasks: shutdown/tasks/generic-service.yml    
+      loop: 
+        - prometheus
+        - grafana
+      loop_control:
+        loop_var: service_name
+
+
+- hosts: impala
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: "Stop {{ service_name }}"
+      include_tasks: shutdown/tasks/generic-service.yml    
+      loop: 
+        - impala_prometheus_proxy_impalad
+        - impala_prometheus_proxy_statestored
+        - impala_prometheus_proxy_catalogd
+      loop_control:
+        loop_var: service_name      

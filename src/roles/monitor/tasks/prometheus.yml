@@ -1,0 +1,81 @@
+- name: create Prometheus config directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ prometheus_etc_dir }}"
+  become: yes
+
+# prometheus data dir must be owned by nobody so docker container has access
+- name: create Prometheus data directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "65534"
+    group: "65534"
+  loop:
+    - "{{ prometheus_data_dir }}"
+  become: yes
+  
+- name: install required packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - httpd-tools
+    state: latest
+  become: yes
+  when: ansible_distribution == 'RedHat'
+  
+  
+- name: install required packages (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - apache2-utils
+    state: latest
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+  
+# 
+# Pull remote image to controller
+# add a tag and push it to local docker registry
+# from registry distribute to servers.
+- name: Check if Prometheus docker image already exists
+  shell: "docker images | grep {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }} | wc -l"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  
+- name: Show Prometheus docker image already exists
+  ansible.builtin.debug:
+    msg: Prometheus image detect {{ docker_img_exists.stdout }}
+  delegate_to: localhost
+  connection: local
+  
+- name: Pull Prometheus server image to Manager
+  command: "docker pull prom/prometheus:v{{ version.prometheus }}"
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+
+- name: Tag Prometheus server docker image
+  command: "docker image tag prom/prometheus:v{{ version.prometheus }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+
+- name: Push Prometheus server docker image to registry
+  command: "docker push {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+
+- name: Pull Prometheus image to monitor server
+  command: "docker pull {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
+    
+- name: Create Prometheus systemd unit
+  ansible.builtin.template:
+    src: ../templates/systemd_prometheus_service.j2
+    dest: /etc/systemd/system/prometheus.service
+    mode: '0644'
+  become: yes
+  

@@ -1,0 +1,40 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+{% if (ansible_distribution == "RedHat") and (inventory_hostname in groups['kerberos_kdc']) %}
+[logging]
+ default = FILE:{{ kerberos_log_dir }}/krb5libs.log
+ kdc = FILE:{{ kerberos_log_dir }}/krb5kdc.log
+ admin_server = FILE:{{ kerberos_log_dir }}/kadmind.log
+{% endif %}
+ 
+[libdefaults]
+default_realm = {{ kerberos_realm }}
+dns_lookup_kdc = false
+dns_lookup_realm = false
+ticket_lifetime = 24h
+renew_lifetime = 7d
+forwardable = true
+default_tgs_enctypes = aes256-cts aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc
+default_tkt_enctypes = aes256-cts aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc
+permitted_enctypes = aes256-cts aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc
+udp_preference_limit = 1
+kdc_timeout=10s
+default_realm = {{ kerberos_realm }}
+
+
+[realms]
+{{ kerberos_realm }} = {
+kdc = {{ groups['kerberos_kdc'][0] }}
+admin_server = {{ groups['kerberos_kdc'][0] }}
+default_domain = {{ dns_domainname }}
+}
+
+[domain_realm]
+.{{ dns_domainname }} = {{ kerberos_realm }} 
+{{ dns_domainname }} = {{ kerberos_realm }} 
+
+
+
+
+ 

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
+
+export HADOOP_HOME={{ stack_root }}/hadoop-latest
+
+export HADOOP_USER_NAME={{ hive_os_user }}
+export HIVE_HOME={{ stack_root }}/apache-hive-latest
+export HIVE_CONF_DIR={{ hive_etc_dir }}
+export PATH=$PATH:{{ stack_root }}/hadoop-latest/bin
+export PATH=$PATH:{{ stack_root }}/hadoop-latest/sbin
+export PATH=$PATH:{{ stack_root }}/apache-hive-latest/bin
+
+export HADOOP_CONF_DIR={{ hadoop_etc_dir }}
+
+# mitigation for: CVE-2021-44228 (Log4jShell)
+# see: https://logging.apache.org/log4j/2.x/security.html
+export HADOOP_OPTS="-Dlog4j2.formatMsgNoLookups=true -Xms{{ hive_heap.metastore }} -Xmx{{ hive_heap.metastore }} ${HADOOP_OPTS}"
+export HADOOP_CLIENT_OPTS="-Dlog4j2.formatMsgNoLookups=true -Djava.net.preferIPv4Stack=true $HADOOP_CLIENT_OPTS"

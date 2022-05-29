@@ -1,0 +1,10 @@
+# only start db that is part of the cluster
+# an existing external db must be started out of bounds
+- hosts: database
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: postgresql-{{ version.postgresql }}
+  tasks:
+    - name: "Start {{ service_name }}"
+      include_tasks: startup/tasks/generic-service.yml    

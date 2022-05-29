@@ -1,0 +1,6 @@
+- name: Create Impala common config
+  include_tasks: impala-common.yml
+
+- name: Create Impala server config
+  include_tasks: impala-server.yml
+  when: not (inventory_hostname in groups['gateway'])    

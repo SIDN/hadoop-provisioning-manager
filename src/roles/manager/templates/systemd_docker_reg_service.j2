@@ -1,0 +1,22 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Docker registry
+After=docker.service
+Requires=docker.service
+ 
+[Service]
+TimeoutStartSec=0
+Restart=always
+RestartSec=60
+Type=exec
+
+ExecStart=/usr/bin/docker run --rm -p {{ docker_registry_port }}:5000 \
+-v {{ tls_etc_dir }}:/certs \
+-e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/{{ tls_remote_pub_chain }} \
+-e REGISTRY_HTTP_TLS_KEY=/certs/{{ tls_remote_priv_key }} --name registry registry:2
+ExecStop=/usr/bin/docker container stop registry
+ 
+[Install]
+WantedBy=multi-user.target

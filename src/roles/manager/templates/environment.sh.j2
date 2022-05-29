@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# set systemwide envs
+
+export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
+export HADOOP_HOME={{ stack_root }}/hadoop-latest
+
+# Add bin dirs for all components to path
+export PATH=$PATH:{{ stack_root }}/hadoop-latest/bin:{{ stack_root }}/hadoop-latest/sbin
+export PATH=$PATH:{{ stack_root }}/apache-hive-latest/bin
+export PATH=$PATH:{{ stack_root }}/apache-zookeeper-latest/bin
+export PATH=$PATH:{{ stack_root }}/apache-impala-latest/impala-shell
+export PATH=$PATH:{{ stack_root }}/apache-spark-latest/bin
