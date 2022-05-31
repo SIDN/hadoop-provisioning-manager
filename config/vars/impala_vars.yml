@@ -101,10 +101,10 @@ impala_llama_site_options:
   llama.am.throttling.maximum.queued.reservations.root.default: 50
   impala.admission-control.pool-default-query-options.root.default: ''
   impala.admission-control.pool-queue-timeout-ms.root.default: 600000
-  # set max mem allowed for impalad per host
-  impala.admission-control.max-query-mem-limit.root.default.regularPool: 80g
-  # set min mem allowed for impalad per host
-  impala.admission-control.min-query-mem-limit.root.default.regularPool: 1g
+  # set max mem allowed for impalad per host  (USE BYTES only) # 64g
+  impala.admission-control.max-query-mem-limit.root.default.regularPool: 68719476736
+  # set min mem allowed for impalad per host  (USE BYTES only) # 1g
+  impala.admission-control.min-query-mem-limit.root.default.regularPool: 1073741824
   # if user sets mem_limit > max-query-mem-limit then mem_limit value is set to max-query-mem-limit value
   impala.admission-control.clamp-mem-limit-query-option.root.default.regularPool: true
 
