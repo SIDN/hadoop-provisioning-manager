@@ -5,7 +5,7 @@ Accessing a service web interfaces is only possible with an active Kerberos sess
 configure your web browser to support SPNEGO, which is required to be able to access a web server that requires Kerberos authentication.
 </p>
 <br>
-<h5>Web browser SPNEGO configuration</h5>
+<h5>1 Web browser SPNEGO configuration</h5>
 <p>
   <h6>Firefox</h6>
   To enable SPNEGO for Firefox, set the configuration options as shown below.
@@ -23,7 +23,15 @@ network.negotiate-auth.trusted-uris = .{{ dns_domainname | lower }}
 sudo defaults write com.google.Chrome AuthServerWhitelist *.{{ dns_domainname | lower }}
 </code></pre>
 
-<h5>Default users</h5>
+<h5>2 Kerberos client configuration</h5>
+<p>
+Every client needs to configure the correct Kerberos setting, how this is done may depend on the 
+operating system you are using. A valid krb5.conf file can be downloaded from this manager console website.
+<a href="https://hadoop-mgmt-02.sidnlabs.nl:5000/client-config/client-config.tar.gz">Download</a> the configuration using the "Download Client Configuration" button in the top-right corner.
+is  
+</p>
+
+<h5>3 Default users</h5>
 <p>
 During deployment of the cluster the following default admin users are created.
 </p>
@@ -46,7 +54,7 @@ During deployment of the cluster the following default admin users are created.
   </tr>
 </table>
 
-<h5>Passwords</h5>
+<h5>4 Passwords</h5>
 <p>
 Sensitive variables such as passwords are not directly configured in the configuration file of a service.
 These variables are saved in an <a href="https://docs.ansible.com/ansible/latest/user_guide/vault.html">Ansible vault</a> file.
@@ -77,7 +85,22 @@ echo "my_password" &gt; &lt;config_dir&gt;/.vault_pass
 <strong>MAKE SURE THE .vault_pass IS NOT SAVED IN VERSION CONTROL, when using Git(Hub/Lab) add the .vault_pass to .gitignore.</strong>
 </p>
 
-<h5>Creating a Kerberos session</h5>
+<h5>5 Creating a Kerberos keytab file</h5>
+<p>
+Use the ktutil on a cluster host to create a new keytab file, this keytab can be used from scripts to create a Kerberos session without having to interactively provide a password.
+Make sure to protect your keytab files, attackers can use this file to login using your credentials.
+</p>
+
+<pre><code>
+ktutil
+ktutil: clear
+ktutil: addent -password -p username@{{ kerberos_realm }} -k 1 -e aes256-cts
+Password for username@{{ kerberos_realm }}: [enter your password]
+ktutil: wkt /path/to/my.keytab
+ktutil: quit
+</code></pre>
+
+<h5>6 Creating a Kerberos session</h5>
 Use the kinit command line utility on a gateway host or your workstation to create Kerberos session using a password or keytab.
 If you are your are using MacOs, then you cal also use the Mac Client TicketViewer application (/System/Library/CoreServices/Applications/Ticket\ Viewer.app/)
 <br>
@@ -92,17 +115,3 @@ kinit username@{{ kerberos_realm }}
 kinit -kt /path/to/my.keytab username@{{ kerberos_realm }}
 </code></pre>
 
-<h5>Creating a Kerberos keytab file</h5>
-<p>
-Use the ktutil on a cluster host to create a new keytab file, this keytab can be used from scripts to create a Kerberos session without having to interactively provide a password.
-Make sure to protect your keytab files, attackers can use this file to login using your credentials.
-</p>
-
-<pre><code>
-ktutil
-ktutil: clear
-ktutil: addent -password -p username@{{ kerberos_realm }} -k 1 -e aes256-cts
-Password for username@{{ kerberos_realm }}: [enter your password]
-ktutil: wkt /path/to/my.keytab
-ktutil: quit
-</code></pre>
