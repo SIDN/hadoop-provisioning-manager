@@ -22,14 +22,14 @@ network.negotiate-auth.trusted-uris = .{{ dns_domainname | lower }}
 <pre><code>
 sudo defaults write com.google.Chrome AuthServerWhitelist *.{{ dns_domainname | lower }}
 </code></pre>
-
+<br>
 <h5>2 Kerberos client configuration</h5>
 <p>
 Every client needs to configure the correct Kerberos setting, how this is done may depend on the 
 operating system you are using. A valid krb5.conf file can be downloaded from this manager console website.
 <a href="https://hadoop-mgmt-02.sidnlabs.nl:5000/client-config/client-config.tar.gz" download>Download</a> the configuration using the "Download Client Configuration" button in the top-right corner.
 </p>
-
+<br>
 <h5>3 Default users</h5>
 <p>
 During deployment of the cluster the following default admin users are created.
@@ -52,7 +52,7 @@ During deployment of the cluster the following default admin users are created.
     <td>Hadoop HDFS admin user</td>
   </tr>
 </table>
-
+<br>
 <h5>4 Passwords</h5>
 <p>
 Sensitive variables such as passwords are not directly configured in the configuration file of a service.
@@ -83,10 +83,10 @@ echo "my_password" &gt; &lt;config_dir&gt;/.vault_pass
 
 <strong>MAKE SURE THE .vault_pass IS NOT SAVED IN VERSION CONTROL, when using Git(Hub/Lab) add the .vault_pass to .gitignore.</strong>
 </p>
-
+<br>
 <h5>5 Creating a Kerberos keytab file</h5>
 <p>
-Use the ktutil on a cluster host to create a new keytab file, this keytab can be used from scripts to create a Kerberos session without having to interactively provide a password.
+Use the ktutil to create a new keytab file, this keytab can be used from scripts to create a Kerberos session without having to interactively provide your password.
 Make sure to protect your keytab files, attackers can use this file to login using your credentials.
 </p>
 
@@ -98,13 +98,13 @@ Password for username@{{ kerberos_realm }}: [enter your password]
 ktutil: wkt /path/to/my.keytab
 ktutil: quit
 </code></pre>
-
+<br>
 <h5>6 Creating a Kerberos session</h5>
 Use the kinit command line utility on a gateway host or your workstation to create Kerberos session using a password or keytab.
-If you are your are using MacOs, then you cal also use the Mac Client TicketViewer application (/System/Library/CoreServices/Applications/Ticket\ Viewer.app/)
+If you are your are using MacOs, then you cal also use the Mac Client TicketViewer (/System/Library/CoreServices/Applications/Ticket\ Viewer.app/)
 <br>
 The Kerberos client configuration (krb5.conf) file on your client before must have the correct settings before you can create a Kerberos session.
-A correct Kerberos krb5.conf file is part of the client configuration package, which is available for download on this console website.
+A correct Kerberos krb5.conf file is part of the client configuration package, which is available for download from this console website.
 </p>
 <pre><code>
 # create session using a password
