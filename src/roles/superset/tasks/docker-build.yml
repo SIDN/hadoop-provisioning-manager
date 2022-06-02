@@ -1,10 +1,15 @@
 # Update the ss repo
-
+- name: Check for Git repo
+  ansible.builtin.stat:
+    path: '{{ superset_download_url }} {{ download_root }}/superset'
+  register: git_repo
+  become: yes
+  
 - name: Fech Git repository
   shell: git clone {{ superset_download_url }} {{ download_root }}/superset
   become: yes
+  when: not git_repo.stat exists
 
-    
 # build docker image with kerberos support
 - name: Check if Superset docker image already exists
   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset.*{{ version.superset }} | wc -l"
