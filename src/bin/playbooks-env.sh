@@ -16,6 +16,7 @@ export PB_RANGER=ranger.yml
 export PB_HIVE=hive.yml
 export PB_IMPALA=impala.yml
 export PB_HUE=hue.yml
+export PB_SUPERSET=superset.yml
 export PB_LIVY=livy.yml
 export PB_ALL=all.yml
 export PB_MONITOR=monitor.yml
@@ -135,6 +136,9 @@ function run_playbooks()
         ;;
         hue)
           run_playbook "$PB_PREFIX-$PB_HUE"
+        ;;
+        superset)
+          run_playbook "$PB_PREFIX-$PB_SUPERSET"
         ;;
         livy)
           run_playbook "$PB_PREFIX-$PB_LIVY"
