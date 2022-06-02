@@ -32,9 +32,4 @@
   delegate_to: localhost
   connection: local
 
-- name: Include create database=
-  include_tasks: tasks/database.yml
-  
-- name: Include build docker image 
-  include_tasks: tasks/docker-build.yml
   
