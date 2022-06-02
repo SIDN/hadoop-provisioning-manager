@@ -54,6 +54,7 @@ version:
   livy: v0.8.0'
   prometheus: '2.33.5'
   grafana: '8.4.3'
+  superset: '1.5.0'
 
 # location where custom virtualenvs are created
 python_venv_dir: '{{ stack_root }}/hadoop-venvs'

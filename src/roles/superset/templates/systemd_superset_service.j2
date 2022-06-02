@@ -1,0 +1,25 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Superset
+After=docker.service
+Requires=docker.service
+ 
+[Service]
+TimeoutStartSec=0
+Restart=always
+RestartSec=60
+User={{ superset_os_user }}
+Group={{ superset_os_group }}
+Type=exec
+
+ExecStart=/usr/bin/docker run --rm --name superset -p {{ superset_port }}:8088 \
+{{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
+
+ExecStop=/usr/bin/docker stop superset
+
+[Install]
+WantedBy=multi-user.target
+
+

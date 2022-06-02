@@ -1,0 +1,40 @@
+- name: Check if superset db exists
+  postgresql_query:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      query: >
+        SELECT datname 
+        FROM pg_database
+        WHERE datname = '{{ superset_db }}'
+  delegate_to: localhost
+  connection: local
+  
+- name: Create superset db user
+  postgresql_user:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      state: present
+      name: "{{ superset_db_user }}"
+      password: "{{ superset_db_password }}"
+  delegate_to: localhost
+  connection: local
+
+- name: Create superset database
+  postgresql_db:
+      login_host: "{{ groups['database'][0] }}"
+      login_password: "{{ db_admin_password }}"
+      login_user: postgres
+      owner: "{{ superset_db_user }}"
+      state: present
+      name: "{{ superset_db }}"
+  delegate_to: localhost
+  connection: local
+
+- name: Include create database=
+  include_tasks: tasks/database.yml
+  
+- name: Include build docker image 
+  include_tasks: tasks/docker-build.yml
+  

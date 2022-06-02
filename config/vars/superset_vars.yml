@@ -1,0 +1,18 @@
+# OS user to run superset
+superset_os_user: superset
+superset_os_group: superset
+
+# Location of superset configuration files
+superset_etc_dir: "{{ config_root }}/superset"
+# Location of superset logging
+superset_log_dir: /var/log/superset
+
+superset_port: 8088
+
+# database options 
+# satabase will be create automatically
+superset_db: superset
+superset_db_user: superset
+superset_db_password: "{{ vault_superset_db_password }}"
+
+superset_download_url: "https://github.com/apache/superset.git"

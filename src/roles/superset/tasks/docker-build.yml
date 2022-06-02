@@ -1,0 +1,52 @@
+# Update the ss repo
+
+- name: Fech Git repository
+  shell: git clone {{ superset_download_url }} {{ download_root }}
+  become: yes
+  
+# build docker image with kerberos support
+- name: Check if Superset docker image already exists
+  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset.*{{ version.superset }} | wc -l"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  become: yes
+  
+- name: Show Superset docker image already exists
+  ansible.builtin.debug:
+    msg: Superset image detect {{ docker_img_exists.stdout }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+
+- name: Create Superset image on controller server
+  shell: >
+    cd {{ download_root }}/superset;
+    git checkout {{ version.superset }};
+    TAG={{ version.superset }} docker build .
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+  
+- name: Tag Superset docker image
+  shell: >
+    docker image tag apache/superset:{{ version.superset }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+
+# deploy img to server  
+- name: Push Superset docker image to registry
+  shell: >
+    docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+
+- name: Pull Superset image to Superset server
+  shell: >
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
+  become: yes

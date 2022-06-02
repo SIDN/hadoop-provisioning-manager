@@ -1,0 +1,41 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ superset_os_group }}"
+    state: present
+  become: yes
+  
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ superset_os_user }}"
+    new_group: "{{ superset_os_group }}"
+# 
+# - name: Create configuration directory
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#     mode: '0755'
+#   loop:
+#     - "{{ superset_etc_dir }}"
+#   become: yes
+# 
+# - name: Create log directory
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#     owner: "{{ superset_os_user }}"
+#     group: "{{ superset_os_group }}"
+#   loop:
+#     - "{{ superset_log_dir }}"
+#   become: yes
+# 
+# - name: Install package dependencies (Ubuntu)
+#   ansible.builtin.package:
+#     name:
+#       - docker-compose
+#     state: latest
+#   become: yes
+#   when: ansible_distribution == "Ubuntu"
+# 
+
