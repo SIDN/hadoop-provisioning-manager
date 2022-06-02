@@ -42,6 +42,9 @@
 - name: Hue
   import_playbook: deploy-hue.yml
   
+- name: Superset
+  import_playbook: deploy-superset.yml
+  
 - name: Ranger
   import_playbook: deploy-ranger.yml
 

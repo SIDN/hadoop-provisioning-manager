@@ -34,6 +34,9 @@
 - name: Hue
   import_playbook: stop-hue.yml
   
+- name: Superset
+  import_playbook: stop-superset.yml
+  
 - name: Livy
   import_playbook: stop-livy.yml
   

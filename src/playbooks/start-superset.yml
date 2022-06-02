@@ -1,0 +1,8 @@
+- hosts: superset
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: superset
+  tasks:
+    - name: "Start {{ service_name }}"
+      include_tasks: startup/tasks/generic-service.yml

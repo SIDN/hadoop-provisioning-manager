@@ -49,6 +49,9 @@
 
 - name: Hue
   import_playbook: start-hue.yml
+  
+- name: Superset
+  import_playbook: start-superset.yml
 
 - name: Monitor
   import_playbook: start-monitor.yml
