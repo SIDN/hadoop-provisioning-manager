@@ -27,10 +27,10 @@
   
 # add kerberos packages to Dockerfile
 - name: Add additional packages to Dockerfile
-  ansible.builtin.lineinfile:
+  ansible.builtin.replace:
     path: '{{ download_root }}/superset/Dockerfile'
-    search_string: 'libpq-dev'
-    line: 'libpq krb5-user vim \'  
+    regexp: '^.*libpq-dev'
+    replace: 'libpq-dev krb5-user vim'  
   delegate_to: localhost
   connection: local
   #when: docker_img_exists.stdout | int == 0
