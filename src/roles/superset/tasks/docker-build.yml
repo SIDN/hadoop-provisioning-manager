@@ -50,7 +50,6 @@
     TAG={{ version.superset }} docker build .
   delegate_to: localhost
   connection: local
-  become: yes
   when: docker_img_exists.stdout | int == 0
   
 - name: Tag Superset docker image
@@ -58,7 +57,6 @@
     docker image tag apache/superset:{{ version.superset }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
   delegate_to: localhost
   connection: local
-  become: yes
   when: docker_img_exists.stdout | int == 0
 
 # deploy img to server  
@@ -67,10 +65,8 @@
     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
   delegate_to: localhost
   connection: local
-  become: yes
   when: docker_img_exists.stdout | int == 0
 
 - name: Pull Superset image to Superset server
   shell: >
     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
-  become: yes
