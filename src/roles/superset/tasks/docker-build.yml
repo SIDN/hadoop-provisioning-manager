@@ -30,7 +30,7 @@
   ansible.builtin.lineinfile:
     path: '{{ download_root }}/superset/Dockerfile'
     search_string: 'libpq-dev'
-    line: 'libpq krb5-user vim \\'  
+    line: 'libpq krb5-user vim \'  
   delegate_to: localhost
   connection: local
   when: docker_img_exists.stdout | int == 0
