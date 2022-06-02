@@ -31,12 +31,16 @@
     path: '{{ download_root }}/superset/Dockerfile'
     search_string: 'libpq-dev'
     line: 'libpq krb5-user vim \\'  
+  delegate_to: localhost
+  connection: local
   when: docker_img_exists.stdout | int == 0
 
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
     src: '../templates/requirements-local.txt'
     dest: '{{ download_root }}/superset/docker/requirements-local.txt'
+  delegate_to: localhost
+  connection: local
   when: docker_img_exists.stdout | int == 0
 
 - name: Create Superset image on controller server
