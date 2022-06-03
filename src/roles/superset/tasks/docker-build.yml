@@ -45,7 +45,7 @@
   connection: local
   loop:
     - 'RUN mkdir /app'
-    - 'RUN mkdir .+PYTHONPATH.?'
+    - 'RUN mkdir .+PYTHONPATH.+'
 
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
