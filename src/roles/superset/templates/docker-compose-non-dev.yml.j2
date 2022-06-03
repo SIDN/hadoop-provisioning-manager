@@ -16,11 +16,10 @@
 #
 x-superset-image: &superset-image apache/superset:${TAG:-latest-dev}
 x-superset-depends-on: &superset-depends-on
-  - db
   - redis
 x-superset-volumes: &superset-volumes
   # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
-  - ./docker:/app/docker
+  - {{ stack_root }}/superset-latest:/app/docker
   - superset_home:/app/superset_home
 
 version: "3.7"
@@ -32,23 +31,15 @@ services:
     volumes:
       - redis:/data
 
-  db:
-    env_file: {{ superset_etc_dir }}/.env-non-dev
-    image: postgres:10
-    container_name: superset_db
-    restart: unless-stopped
-    volumes:
-      - db_home:/var/lib/postgresql/data
-
   superset:
-    env_file: {{ superset_etc_dir }}/.env-non-dev
+    env_file: {{ superset_etc_dir }}/superset.env
     image: *superset-image
     container_name: superset_app
     command: ["/app/docker/docker-bootstrap.sh", "app-gunicorn"]
     user: "root"
     restart: unless-stopped
     ports:
-      - 8088:8088
+      - {{ superset_port }}:8088
     depends_on: *superset-depends-on
     volumes: *superset-volumes
 
@@ -56,7 +47,7 @@ services:
     image: *superset-image
     container_name: superset_init
     command: ["/app/docker/docker-init.sh"]
-    env_file: {{ superset_etc_dir }}/.env-non-dev
+    env_file: {{ superset_etc_dir }}/superset.env
     depends_on: *superset-depends-on
     user: "root"
     volumes: *superset-volumes
@@ -65,7 +56,7 @@ services:
     image: *superset-image
     container_name: superset_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
-    env_file: {{ superset_etc_dir }}/.env-non-dev
+    env_file: {{ superset_etc_dir }}/superset.env
     restart: unless-stopped
     depends_on: *superset-depends-on
     user: "root"
@@ -75,7 +66,7 @@ services:
     image: *superset-image
     container_name: superset_worker_beat
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
-    env_file: {{ superset_etc_dir }}/.env-non-dev
+    env_file: {{ superset_etc_dir }}/superset.env
     restart: unless-stopped
     depends_on: *superset-depends-on
     user: "root"
@@ -83,8 +74,6 @@ services:
 
 volumes:
   superset_home:
-    external: false
-  db_home:
     external: false
   redis:
     external: false

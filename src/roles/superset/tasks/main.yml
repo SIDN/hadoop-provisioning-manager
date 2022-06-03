@@ -10,38 +10,56 @@
   vars:
     new_user: "{{ superset_os_user }}"
     new_group: "{{ superset_os_group }}"
-# 
-# - name: Create configuration directory
-#   file:
-#     path: "{{ item }}"
-#     state: directory
-#     mode: '0755'
-#   loop:
-#     - "{{ superset_etc_dir }}"
-#   become: yes
-# 
-# - name: Create log directory
-#   file:
-#     path: "{{ item }}"
-#     state: directory
-#     owner: "{{ superset_os_user }}"
-#     group: "{{ superset_os_group }}"
-#   loop:
-#     - "{{ superset_log_dir }}"
-#   become: yes
-# 
-# - name: Install package dependencies (Ubuntu)
-#   ansible.builtin.package:
-#     name:
-#       - docker-compose
-#     state: latest
-#   become: yes
-#   when: ansible_distribution == "Ubuntu"
-# 
 
+- name: Create configuration directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ superset_etc_dir }}"
+  become: yes
 
-- name: Include create database=
-  include_tasks: tasks/database.yml
+- name: Create log directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ superset_os_user }}"
+    group: "{{ superset_os_group }}"
+  loop:
+    - "{{ superset_log_dir }}"
+  become: yes
+
+- name: Install package dependencies
+  ansible.builtin.package:
+    name:
+      - docker-compose
+    state: latest
+  become: yes
   
-- name: Include build docker image 
-  include_tasks: tasks/docker-build.yml
+- name: Copy docker-compose script
+  ansible.builtin.template:
+    src: 'templates/docker-compose-non-dev.yml.j2'
+    dest: '{{ stack_root }}/superset-{{ version.superset }}/docker-compose.yml'
+    owner: "{{ superset_os_user }}"
+    group: "{{ superset_os_group }}"
+
+- name: Copy control scripts
+  ansible.builtin.copy:
+    src: '{{ download_root }}/superset/docker'
+    dest: '{{ stack_root }}/superset-{{ version.superset }}'
+    owner: "{{ superset_os_user }}"
+    group: "{{ superset_os_group }}"
+
+- name: Create symlink to latest version
+  file:
+      src: '{{ stack_root }}/superset-{{ version.superset }}'
+      dest: '{{ stack_root }}/superset-latest'
+      state: link
+  become: yes
+      
+#- name: Include create database
+#  include_tasks: tasks/database.yml
+  
+#- name: Include build docker image 
+#  include_tasks: tasks/docker-build.yml
