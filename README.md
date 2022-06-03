@@ -26,6 +26,7 @@ The cluster is automatically configured with features such as.
 
 - At least 5 physical/virtual servers for testing, 8 for production usage.
 - A wildcard TLS certificate and private key for the domain name used by all servers
+- The management server will need 16GB of RAM to prevent issues when building Docker images.
 
 # Components
 
