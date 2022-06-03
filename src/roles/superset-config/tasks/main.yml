@@ -4,3 +4,4 @@
     dest: '{{ superset_etc_dir }}/superset.env'
     owner: "{{ superset_os_user }}"
     group: "{{ superset_os_group }}"
+  become: yes
