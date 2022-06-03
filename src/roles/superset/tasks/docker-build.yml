@@ -26,14 +26,26 @@
   become: yes
   
 # add kerberos packages to Dockerfile
+# - name: Add additional packages to Dockerfile
+#   ansible.builtin.replace:
+#     path: '{{ download_root }}/superset/Dockerfile'
+#     regexp: 'libpq-dev'
+#     replace: 'libpq-dev krb5-user vim'  
+#   delegate_to: localhost
+#   connection: local
+  #when: docker_img_exists.stdout | int == 0
+  
 - name: Add additional packages to Dockerfile
-  ansible.builtin.replace:
+  ansible.builtin.lineinfile:
     path: '{{ download_root }}/superset/Dockerfile'
-    regexp: 'libpq-dev'
-    replace: 'libpq-dev krb5-user vim'  
+    insertbefore: '{{ item }}'
+    line: 'RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -qq install krb5-user vim'  
+    state: present
   delegate_to: localhost
   connection: local
-  #when: docker_img_exists.stdout | int == 0
+  loop:
+    - 'RUN mkdir /app'
+    - 'RUN mkdir -p ${PYTHONPATH}'
 
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
