@@ -41,15 +41,13 @@
   ansible.builtin.copy:
     src: '{{ download_root }}/superset/docker'
     dest: '{{ stack_root }}/superset-{{ version.superset }}'
-    owner: "{{ superset_os_user }}"
-    group: "{{ superset_os_group }}"
+  become: yes
     
 - name: Copy docker-compose script
   ansible.builtin.template:
     src: 'templates/docker-compose-non-dev.yml.j2'
     dest: '{{ stack_root }}/superset-{{ version.superset }}/docker-compose.yml'
-    owner: "{{ superset_os_user }}"
-    group: "{{ superset_os_group }}"
+  become: yes
 
 - name: Create symlink to latest version
   file:
