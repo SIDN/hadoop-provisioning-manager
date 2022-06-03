@@ -41,6 +41,7 @@
   ansible.builtin.copy:
     src: '{{ download_root }}/superset/docker'
     dest: '{{ stack_root }}/superset-{{ version.superset }}'
+    mode: 'preserve'
   become: yes
     
 - name: Copy docker-compose script
