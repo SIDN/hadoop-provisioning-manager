@@ -29,7 +29,7 @@
 - name: Add additional packages to Dockerfile
   ansible.builtin.replace:
     path: '{{ download_root }}/superset/Dockerfile'
-    regexp: '^.*libpq-dev'
+    regexp: 'libpq-dev'
     replace: 'libpq-dev krb5-user vim'  
   delegate_to: localhost
   connection: local
