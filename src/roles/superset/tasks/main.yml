@@ -49,6 +49,14 @@
     dest: '{{ stack_root }}/superset-{{ version.superset }}/docker-compose.yml'
   become: yes
 
+- name: Recursively change ownership superset directory
+  ansible.builtin.file:
+    path: '{{ stack_root }}/superset-{{ version.superset }}'
+    state: directory
+    recurse: yes
+    owner: "{{ superset_os_user }}"
+    group: "{{ superset_os_group }}"
+
 - name: Create symlink to latest version
   file:
       src: '{{ stack_root }}/superset-{{ version.superset }}'
