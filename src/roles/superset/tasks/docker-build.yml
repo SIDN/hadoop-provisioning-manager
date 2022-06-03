@@ -42,31 +42,31 @@
   delegate_to: localhost
   connection: local
   when: docker_img_exists.stdout | int == 0
-
-- name: Create Superset image on controller server
-  shell: >
-    cd {{ download_root }}/superset;
-    git checkout {{ version.superset }};
-    TAG={{ version.superset }} docker build .
-  delegate_to: localhost
-  connection: local
-  when: docker_img_exists.stdout | int == 0
-  
-- name: Tag Superset docker image
-  shell: >
-    docker image tag apache/superset:{{ version.superset }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
-  delegate_to: localhost
-  connection: local
-  when: docker_img_exists.stdout | int == 0
-
-# deploy img to server  
-- name: Push Superset docker image to registry
-  shell: >
-    docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
-  delegate_to: localhost
-  connection: local
-  when: docker_img_exists.stdout | int == 0
-
-- name: Pull Superset image to Superset server
-  shell: >
-    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
+# 
+# - name: Create Superset image on controller server
+#   shell: >
+#     cd {{ download_root }}/superset;
+#     git checkout {{ version.superset }};
+#     TAG={{ version.superset }} docker build .
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
+# 
+# - name: Tag Superset docker image
+#   shell: >
+#     docker image tag apache/superset:{{ version.superset }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
+# 
+# # deploy img to server  
+# - name: Push Superset docker image to registry
+#   shell: >
+#     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
+# 
+# - name: Pull Superset image to Superset server
+#   shell: >
+#     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
