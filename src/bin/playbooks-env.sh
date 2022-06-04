@@ -20,6 +20,7 @@ export PB_SUPERSET=superset.yml
 export PB_LIVY=livy.yml
 export PB_ALL=all.yml
 export PB_MONITOR=monitor.yml
+export PB_MONITOR_PROXY=monitor-proxy.yml
 export PB_CLIENT_CONFIG=client-config.yml
 export PB_HOST_GATEWAY=host-gateway.yml
 export PB_KRB_PRIN=krb-principal.yml
@@ -112,6 +113,9 @@ function run_playbooks()
         ;;
         monitor)
           run_playbook "$PB_PREFIX-$PB_MONITOR"
+        ;;
+        monitor-proxy)
+          run_playbook "$PB_PREFIX-$PB_MONITOR_PROXY"
         ;;
         zookeeper)
           run_playbook "$PB_PREFIX-$PB_ZOOKEEPER"
