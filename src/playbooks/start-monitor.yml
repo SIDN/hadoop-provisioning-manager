@@ -22,3 +22,25 @@
         - impala_prometheus_proxy_catalogd
       loop_control:
         loop_var: service_name
+        
+- hosts: impala_catalog
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: "Start {{ service_name }}"
+      include_tasks: startup/tasks/generic-service.yml    
+      loop: 
+        - impala_prometheus_proxy_catalogd
+      loop_control:
+        loop_var: service_name
+        
+- hosts: impala_statestore
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: "Start {{ service_name }}"
+      include_tasks: startup/tasks/generic-service.yml    
+      loop: 
+        - impala_prometheus_proxy_statestored
+      loop_control:
+        loop_var: service_name
