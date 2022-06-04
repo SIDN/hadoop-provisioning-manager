@@ -35,11 +35,11 @@
 
 # make each line unique by echoing the match line.
 # otherwise lineinfile will only insert the line once
-- name: Add additional packages to Dockerfile
+- name: Add additional os packages
   ansible.builtin.lineinfile:
     path: '{{ download_root }}/superset/Dockerfile'
     insertbefore: '{{ item }}'
-    line: 'RUN echo "match: {{ item}}" && apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get -qq install krb5-user vim'
+    line: 'RUN echo "match: {{ item}}" && apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install krb5-user vim'
     state: present
   delegate_to: localhost
   connection: local
@@ -47,6 +47,17 @@
     - 'RUN mkdir /app'
     - 'RUN mkdir .+PYTHONPATH.+'
 
+- name: Add additional Python packages
+  ansible.builtin.lineinfile:
+    path: '{{ download_root }}/superset/requirements/base.in'
+    line: '{{ item }}'
+    state: present
+  delegate_to: localhost
+  connection: local
+  loop:
+    - kerberos
+    - impyla
+    
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
     src: '../templates/requirements-local.txt'
@@ -54,7 +65,7 @@
   delegate_to: localhost
   connection: local
   when: docker_img_exists.stdout | int == 0
-
+  
 - name: Create Superset image on controller server
   shell: >
     cd {{ download_root }}/superset;

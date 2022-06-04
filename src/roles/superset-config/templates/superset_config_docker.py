@@ -14,29 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-COMPOSE_PROJECT_NAME=superset
 
-DATABASE_DB={{ superset_db }}
-DATABASE_HOST={{ groups['database'][0] }}
-DATABASE_PASSWORD={{ superset_db_password }}
-DATABASE_USER={{ superset_db_user }}
+#
+# This is an example "local" configuration file. In order to set/override config
+# options that ONLY apply to your local environment, simply copy/rename this file
+# to docker/pythonpath/superset_config_docker.py
+# It ends up being imported by docker/superset_config.py which is loaded by
+# superset/config.py
+#
 
-# database engine specific environment variables
-# change the below if you prefers another database engine
-DATABASE_PORT=5432
-DATABASE_DIALECT=postgresql
-POSTGRES_DB={{ superset_db }}
-POSTGRES_USER={{ superset_db_user }}
-POSTGRES_PASSWORD={{ superset_db_password }}
-
-
-# Add the mapped in /app/pythonpath_docker which allows devs to override stuff
-PYTHONPATH={{ stack_root }}/superset-latest/docker/pythonpath_dev:/app/docker/pythonpath_dev
-REDIS_HOST=redis
-REDIS_PORT=6379
-
-FLASK_ENV=production
-SUPERSET_ENV=production
-SUPERSET_LOAD_EXAMPLES=yes
-CYPRESS_CONFIG=false
-SUPERSET_PORT=8088
+SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://{{ superset_db_user }}:{{ superset_db_password }}@{{ DATABASE_HOST }}/{{ superset_db }}"
+SQLALCHEMY_ECHO = False

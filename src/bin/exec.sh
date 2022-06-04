@@ -22,11 +22,11 @@ elif [[ "$CURRENT_SCRIPT" == "stop.sh" ]]; then
   PB_PREFIX="stop"
   DEPLOY_MODE=$DEPLOY_MODE_COMP
 elif [[ "$CURRENT_SCRIPT" == "deploy.sh" ]]; then
-  SCRIPT_SUPPORT="all common db tls console manager monitor zookeeper hadoop spark hive impala hue livy krb-kdc krb-keytab krb-principal ranger solr client-config host-gateway superset"
+  SCRIPT_SUPPORT="all common db tls console manager monitor monitor-proxy zookeeper hadoop spark hive impala hue livy krb-kdc krb-keytab krb-principal ranger solr client-config host-gateway superset"
   PB_PREFIX="deploy"
   DEPLOY_MODE=$DEPLOY_MODE_COMP
 elif [[ "$CURRENT_SCRIPT" == "deploy-config.sh" ]]; then
-  SCRIPT_SUPPORT="all common db tls console manager monitor zookeeper hadoop spark hive impala hue livy krb-kdc ranger solr superset"
+  SCRIPT_SUPPORT="all common db tls console manager monitor monitor-proxy zookeeper hadoop spark hive impala hue livy krb-kdc ranger solr superset"
   PB_PREFIX="deploy"
   DEPLOY_MODE=$DEPLOY_MODE_CFG_ONLY
 fi

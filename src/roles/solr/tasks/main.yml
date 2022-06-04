@@ -41,6 +41,7 @@
     src:  ../templates/{{ item.src }}
     dest: /etc/systemd/system/{{ item.name }}.service
     mode: '0644'
+    enabled: yes
   loop:
       - { src: 'systemd_solr_service.j2', name: 'solr'}
   
