@@ -82,6 +82,7 @@
     recurse: yes
     owner: "{{ superset_os_user }}"
     group: "{{ superset_os_group }}"
+  become: yes
 
 - name: Create symlink to latest version
   file:
