@@ -16,8 +16,14 @@
     - '{{ superset_etc_dir }}/python_path'
   become: yes  
 
+- name: Create secret key
+  shell: >
+      cat {{ superset_etc_dir }}/secret_key
+  register: reg_secret_key
+    
 - name: Copy config python script
   ansible.builtin.template:
     src: 'templates/superset_config.py.j2'
     dest: '{{ superset_etc_dir }}/python_path/superset_config.py'
   become: yes
+  

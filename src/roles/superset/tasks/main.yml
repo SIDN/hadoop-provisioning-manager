@@ -32,6 +32,12 @@
     - '{{ stack_root }}/apache-superset-{{ version.superset }}/bin'
   become: yes
 
+# create secret key only 1 time duing install, cannot change the key otherwise 
+# db connections are nog longer usable
+- name: Create secret key
+  shell: >
+      openssl rand -base64 42 > {{ superset_etc_dir }}/secret_key
+
 - name: Install package dependencies
   ansible.builtin.package:
     name:
