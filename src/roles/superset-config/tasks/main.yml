@@ -20,6 +20,9 @@
   shell: >
       cat {{ superset_etc_dir }}/secret_key
   register: reg_secret_key
+  
+- set_fact:
+    fact_secret_key: "{{ reg_secret_key.stdout }}"
     
 - name: Copy config python script
   ansible.builtin.template:
