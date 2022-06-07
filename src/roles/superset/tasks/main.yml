@@ -68,7 +68,7 @@
   loop:
     - superset-kt-renewer.service.j2
     - superset-kt-renewer.timer.j2
-    - systemd_superset.service.j2
+    - superset.service.j2
   become: yes
   
 - name: Systemctl Reload Daemons
