@@ -25,17 +25,5 @@
     - name: "Start {{ service_name }}"
       include_tasks: startup/tasks/generic-service.yml
           
-- hosts: impala_ha_proxy
-  remote_user: hadoop-mgr
-  become: yes
-  tasks:    
-    # setsebool not working, not needed?
-    # - name: SELinux Allow HaProxy to create connections
-    #   command: "setsebool -P haproxy_connect_any 1"
-    #   become: yes    
-
-    - name: Start Impala Proxy
-      ansible.builtin.systemd:
-        name: haproxy
-        state: started
-
+- name: Impala Proxy
+  import_playbook: start-impala-proxy.yml

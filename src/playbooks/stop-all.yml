@@ -30,6 +30,9 @@
 
 - name: Impala
   import_playbook: stop-impala.yml
+  
+- name: Impala Proxy
+  import_playbook: stop-impala-proxy.yml
        
 - name: Hue
   import_playbook: stop-hue.yml

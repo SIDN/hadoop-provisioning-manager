@@ -1,0 +1,9 @@
+- hosts: impala_ha_proxy
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Stop haproxy
+      ansible.builtin.systemd:
+        name: haproxy
+        state: stopped
+

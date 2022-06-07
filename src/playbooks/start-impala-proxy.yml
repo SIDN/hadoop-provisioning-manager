@@ -1,0 +1,9 @@
+- hosts: impala_ha_proxy
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:    
+    - name: Start Impala Proxy
+      ansible.builtin.systemd:
+        name: haproxy
+        state: started
+
