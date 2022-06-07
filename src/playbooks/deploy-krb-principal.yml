@@ -109,5 +109,11 @@
         /usr/sbin/kadmin.local -q 'addprinc -randkey solr/{{ item }}@{{ kerberos_realm }}'
       become: yes
       loop: "{{ groups['ranger'] }}"      
+      
+    - name: Create Superset service principals
+      shell: >
+        /usr/sbin/kadmin.local -q 'addprinc -randkey superset/{{ item }}@{{ kerberos_realm }}'
+      become: yes
+      loop: "{{ groups['superset'] }}"      
 
   

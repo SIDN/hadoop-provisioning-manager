@@ -3,4 +3,10 @@
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
 
-kinit -kt /etc/superset.keytab superset@{{ kerberos_realm }}
+DOCKER_IMG_FOUND=$(docker ps | grep superset | wc -l)
+
+if [ DOCKER_IMG_FOUND != 0 ]
+then
+  echo "Renew Kerberos ticket for superset"
+  kinit -kt /etc/superset.keytab superset@{{ kerberos_realm }}
+fi
