@@ -30,3 +30,8 @@
     dest: '{{ superset_etc_dir }}/python_path/superset_config.py'
   become: yes
   
+- name: Create docker-compose script
+  ansible.builtin.template:
+    src: templates/docker-compose-non-dev.yml.j2
+    dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml'
+  become: yes

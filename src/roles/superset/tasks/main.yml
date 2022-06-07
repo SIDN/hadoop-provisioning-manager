@@ -54,11 +54,11 @@
     - "{{ download_root }}/superset/docker/*"
   become: yes
     
-- name: Copy docker-compose script
-  ansible.builtin.template:
-    src: 'templates/docker-compose-non-dev.yml.j2'
-    dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml'
-  become: yes
+# - name: Copy docker-compose script
+#   ansible.builtin.template:
+#     src: 'templates/docker-compose-non-dev.yml.j2'
+#     dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml'
+#   become: yes
   
 - name: Create Keberos KT renewer script
   ansible.builtin.template:
