@@ -10,7 +10,7 @@
   vars:
     new_user: "{{ superset_os_user }}"
     new_group: "{{ superset_os_group }}"
-
+    
 # - name: Create configuration directory
 #   file:
 #     path: "{{ item }}"
@@ -32,11 +32,17 @@
     - '{{ stack_root }}/apache-superset-{{ version.superset }}/bin'
   become: yes
 
+- name: Check if secret key is already created
+  stat:
+    path: "{{ superset_etc_dir }}/secret_key"
+  register: stat_secret_key
+  
 # create secret key only 1 time duing install, cannot change the key otherwise 
 # db connections are nog longer usable
 - name: Create secret key
   shell: >
       openssl rand -base64 42 > {{ superset_etc_dir }}/secret_key
+  when: not stat_secret_key.exists
 
 - name: Install package dependencies
   ansible.builtin.package:
@@ -80,12 +86,6 @@
 - name: Systemctl Reload Daemons
   shell: systemctl daemon-reload
   become: yes
-  
-# - name: Enable kt-renewer timer
-#   ansible.builtin.systemd:
-#     name: superset-kt-renewer.timer
-#     enabled: yes
-#   become: yes
 
 - name: Recursively change ownership superset directory
   ansible.builtin.file:
@@ -109,7 +109,6 @@
     groups: docker
     append: yes
   become: yes
-
       
 #- name: Include create database
 #  include_tasks: tasks/database.yml
