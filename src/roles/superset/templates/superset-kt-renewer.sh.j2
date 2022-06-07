@@ -5,7 +5,7 @@
 
 DOCKER_IMG_FOUND=$(docker ps | grep superset | wc -l)
 
-if [ DOCKER_IMG_FOUND != 0 ]
+if [ $DOCKER_IMG_FOUND != 0 ]
 then
   . {{ superset_etc_dir }}/superset.env
   
