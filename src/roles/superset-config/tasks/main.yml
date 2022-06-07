@@ -5,3 +5,19 @@
     owner: "{{ superset_os_user }}"
     group: "{{ superset_os_group }}"
   become: yes
+  
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ superset_os_user }}"
+    group: "{{ superset_os_group }}"
+  loop:
+    - '{{ superset_etc_dir }}/python_path'
+  become: yes  
+
+- name: Copy config python script
+  ansible.builtin.template:
+    src: 'templates/superset_config.py.j2'
+    dest: '{{ superset_etc_dir }}/python_path/superset_config.py'
+  become: yes

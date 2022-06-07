@@ -22,7 +22,7 @@ x-superset-volumes: &superset-volumes
   - {{ stack_root }}/superset-latest/docker:/app/docker
   - superset_home:/app/superset_home
   - /etc/krb5.conf:/etc/krb5.conf
-  - /etc/superset/superset.keytab:/etc/superset.keytab
+  - {{ superset_etc_dir }}/superset.keytab:/etc/superset.keytab
 
 version: "3.7"
 services:

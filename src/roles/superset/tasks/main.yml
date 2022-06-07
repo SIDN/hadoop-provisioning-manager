@@ -93,7 +93,7 @@
   
 - name: Add  user {{ superset_os_user }} to group docker
   user:
-    name: '{{ hue_os_user }}'
+    name: '{{ superset_os_user }}'
     groups: docker
     append: yes
   become: yes
