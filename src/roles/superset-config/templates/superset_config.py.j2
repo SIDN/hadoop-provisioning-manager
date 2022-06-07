@@ -106,6 +106,17 @@ SQLLAB_CTAS_NO_LIMIT = True
 
 SECRET_KEY = "{{ fact_secret_key }}"
 
+
+LOG_FORMAT = '%(asctime)s:%(levelname)s:%(name)s:%(message)s'
+LOG_LEVEL = 'INFO'
+ENABLE_TIME_ROTATE = True
+TIME_ROTATE_LOG_LEVEL = 'DEBUG'
+FILENAME = '/var/log/superset/superset.log'
+ROLLOVER = 'midnight'
+INTERVAL = 1
+BACKUP_COUNT = 10
+
+
 #
 # Optionally import superset_config_docker.py (which will have been included on
 # the PYTHONPATH) in order to allow for local settings to be overridden

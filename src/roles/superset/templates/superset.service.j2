@@ -14,7 +14,7 @@ User={{ superset_os_user }}
 Group={{ superset_os_group }}
 Type=exec
 
-RootDirectory={{ stack_root }}/apache-superset-latest
+WorkingDirectory={{ stack_root }}/apache-superset-latest
 ExecStart=/usr/bin/docker-compose up
 
 ExecStop=/usr/bin/docker-compose down -v --remove-orphans

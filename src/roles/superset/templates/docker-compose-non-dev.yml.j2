@@ -23,6 +23,7 @@ x-superset-volumes: &superset-volumes
   - superset_home:/app/superset_home
   - /etc/krb5.conf:/etc/krb5.conf
   - {{ superset_etc_dir }}/superset.keytab:/etc/superset.keytab
+  - /var/log/superset:/var/log/superset
 
 version: "3.7"
 services:
