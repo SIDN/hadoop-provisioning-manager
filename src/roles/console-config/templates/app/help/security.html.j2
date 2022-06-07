@@ -14,7 +14,11 @@ configure your web browser to support SPNEGO, which is required to be able to ac
 network.negotiate-auth.delegation-uris = .{{ dns_domainname | lower }}
 network.negotiate-auth.trusted-uris = .{{ dns_domainname | lower }}
 </code></pre>
-
+<br>
+If you are using Microsoft Windows then also use the following option.
+<pre><code>
+network.auth.use-sspi false
+</code></pre>
 <p>
   <h6>Chrome</h6>
   To enable SPNEGO for Google Chrome on MacOs, open a terminal and enter the command as shown below.
@@ -100,11 +104,9 @@ ktutil: quit
 </code></pre>
 <br>
 <h5>6 Creating a Kerberos session</h5>
-Use the kinit command line utility on a gateway host or your workstation to create Kerberos session using a password or keytab.
-If you are your are using MacOs, then you cal also use the Mac Client TicketViewer (/System/Library/CoreServices/Applications/Ticket\ Viewer.app/)
-<br>
 The Kerberos client configuration (krb5.conf) file on your client before must have the correct settings before you can create a Kerberos session.
 A correct Kerberos krb5.conf file is part of the client configuration package, which is available for download from this console website.
+
 </p>
 <pre><code>
 # create session using a password
@@ -113,4 +115,26 @@ kinit username@{{ kerberos_realm }}
 # Create session using a keytab
 kinit -kt /path/to/my.keytab username@{{ kerberos_realm }}
 </code></pre>
+
+<strong>Linux or Macos</strong>
+Use the kinit command line utility on a gateway host or your workstation to create Kerberos session using a password or keytab.
+<br>
+<strong>Macos</strong>
+If you are your are using MacOs, then you can also use the Mac Client TicketViewer (/System/Library/CoreServices/Applications/Ticket\ Viewer.app/)
+<br>
+<strong>Windows</strong>
+If you are your are using Microsoft Windows, you can download a Windows <a href="https://web.mit.edu/kerberos/dist/">Kerberos Client</a>.
+
+Install the Kerberos client and configure the required environment variables.
+
+Default location of configuration file in Windows machine is C:\Program Files\MIT\Kerberos directory.
+Copy the krb5.conf file to the above mentioned location and rename krb5.conf to krb5.ini.
+
+Configure the following system environment properties for MIT Kerberos.
+<ul>
+  <li>KRB5_CONFIG: C:\Program Files\MIT\Kerberos\krb5.ini</li>
+  <li>KRB5CCNAME: c:\temp\krb5ccache</li>
+</ul>
+
+Make sure the directory used for KRB5CCNAME exists and is writable, e.g. c:\temp\krb5ccache.
 

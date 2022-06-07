@@ -60,14 +60,6 @@
     - { "src": "systemd_hue_service.j2", "dest": "/etc/systemd/system/hue.service"}
   become: yes
   
-# - name: Set correct permissions
-#   ansible.builtin.file:
-#     path: "{{ hue_etc_dir }}"
-#     state: directory
-#     mode: '0744'
-#     recurse: yes
-#   become: yes
-
 - name: Systemctl Reload Daemons
   command: "systemctl daemon-reload"
   become: yes

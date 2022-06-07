@@ -14,13 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-x-superset-image: &superset-image apache/superset:${TAG:-latest-dev}
+x-superset-image: &superset-image {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
 x-superset-depends-on: &superset-depends-on
   - redis
 x-superset-volumes: &superset-volumes
   # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
   - {{ stack_root }}/superset-latest/docker:/app/docker
   - superset_home:/app/superset_home
+  - /etc/krb5.conf:/etc/krb5.conf
+  - /etc/superset/superset.keytab:/etc/superset.keytab
 
 version: "3.7"
 services:

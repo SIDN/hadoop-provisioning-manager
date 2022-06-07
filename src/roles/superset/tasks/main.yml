@@ -11,23 +11,25 @@
     new_user: "{{ superset_os_user }}"
     new_group: "{{ superset_os_group }}"
 
-- name: Create configuration directory
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: '0755'
-  loop:
-    - "{{ superset_etc_dir }}"
-  become: yes
+# - name: Create configuration directory
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#     mode: '0755'
+#   loop:
+#     - "{{ superset_etc_dir }}"
+#   become: yes
 
-- name: Create log directory
+- name: Create directories
   file:
     path: "{{ item }}"
     state: directory
     owner: "{{ superset_os_user }}"
     group: "{{ superset_os_group }}"
   loop:
-    - "{{ superset_log_dir }}"
+    - '{{ superset_etc_dir }}'
+    - '{{ superset_log_dir }}'
+    - '{{ stack_root }}/apache-superset-{{ version.superset }}/bin'
   become: yes
 
 - name: Install package dependencies
@@ -39,15 +41,38 @@
   
 - name: Copy control scripts
   ansible.builtin.copy:
-    src: '{{ download_root }}/superset/docker'
-    dest: '{{ stack_root }}/superset-{{ version.superset }}'
+    src: '{{ item }}'
+    dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/bin'
     mode: 'preserve'
+  with_fileglob:
+    - "{{ download_root }}/superset/docker/*"
   become: yes
     
 - name: Copy docker-compose script
   ansible.builtin.template:
     src: 'templates/docker-compose-non-dev.yml.j2'
     dest: '{{ stack_root }}/superset-{{ version.superset }}/docker-compose.yml'
+  become: yes
+  
+- name: Create Keberos KT renewer script
+  ansible.builtin.template:
+    src: 'templates/superset-kt-renewer.sh.j2'
+    dest: '{{ stack_root }}/superset-{{ version.superset }}/bin/superset-kt-renewer.sh'
+    mode: '0755'
+  become: yes
+  
+- name: Create Systemd units and timer
+  ansible.builtin.template:
+    src: ../templates/{{ item }}
+    dest: /etc/systemd/system/{{ item | replace('.j2','') }}
+  loop:
+    - superset-kt-renewer.service.j2
+    - superset-kt-renewer.timer.j2
+    - systemd_superset.service.j2
+  become: yes
+  
+- name: Systemctl Reload Daemons
+  shell: systemctl daemon-reload
   become: yes
 
 - name: Recursively change ownership superset directory
@@ -61,9 +86,17 @@
 - name: Create symlink to latest version
   file:
       src: '{{ stack_root }}/superset-{{ version.superset }}'
-      dest: '{{ stack_root }}/superset-latest'
+      dest: '{{ stack_root }}/apache-superset-latest'
       state: link
   become: yes
+  
+- name: Add  user {{ superset_os_user }} to group docker
+  user:
+    name: '{{ hue_os_user }}'
+    groups: docker
+    append: yes
+  become: yes
+
       
 #- name: Include create database
 #  include_tasks: tasks/database.yml

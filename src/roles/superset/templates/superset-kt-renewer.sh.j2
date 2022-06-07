@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+kinit -kt /etc/superset.keytab superset@{{ kerberos_realm }}

@@ -1,0 +1,13 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Cleanup older Solr data
+Wants=superset-kt-renewer.timer
+
+[Service]
+Type=oneshot
+ExecStart={{ stack_root }}/apache-superset-latest/bin/superset-kt-renewer.sh
+
+[Install]
+WantedBy=multi-user.target

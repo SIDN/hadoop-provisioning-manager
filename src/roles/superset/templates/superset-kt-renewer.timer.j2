@@ -1,0 +1,18 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# use timer to start Kerberos keytab renewer script the superuser user has a nologin shell
+# and cannot use cron job
+# do kinit every hour
+
+[Unit]
+Description=Superset KT renewer
+Requires=superset-kt-renewer.service
+
+[Timer]
+Unit=solr-cleanup.service
+# run every hour on every day
+OnCalendar=*-*-* *:00:00
+
+[Install]
+WantedBy=timers.target
