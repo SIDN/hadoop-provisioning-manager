@@ -51,13 +51,13 @@
 - name: Copy docker-compose script
   ansible.builtin.template:
     src: 'templates/docker-compose-non-dev.yml.j2'
-    dest: '{{ stack_root }}/superset-{{ version.superset }}/docker-compose.yml'
+    dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml'
   become: yes
   
 - name: Create Keberos KT renewer script
   ansible.builtin.template:
     src: 'templates/superset-kt-renewer.sh.j2'
-    dest: '{{ stack_root }}/superset-{{ version.superset }}/bin/superset-kt-renewer.sh'
+    dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/bin/superset-kt-renewer.sh'
     mode: '0755'
   become: yes
   
@@ -77,7 +77,7 @@
 
 - name: Recursively change ownership superset directory
   ansible.builtin.file:
-    path: '{{ stack_root }}/superset-{{ version.superset }}'
+    path: '{{ stack_root }}/apache-superset-{{ version.superset }}'
     state: directory
     recurse: yes
     owner: "{{ superset_os_user }}"
@@ -85,7 +85,7 @@
 
 - name: Create symlink to latest version
   file:
-      src: '{{ stack_root }}/superset-{{ version.superset }}'
+      src: '{{ stack_root }}/apache-superset-{{ version.superset }}'
       dest: '{{ stack_root }}/apache-superset-latest'
       state: link
   become: yes
