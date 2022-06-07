@@ -11,7 +11,7 @@ An Impala High Availability proxy service is available to provide high availabil
     {% for host in groups['impala_ha_proxy'] %}
     <tr>
       <td>HA-Proxy</td>
-      <td><a href="https://{{ host }}:25001/stats" target="_blank">{{ host }}</a></td>
+      <td><a href="https://{{ host }}:{{ impala_haproxy.stats_port }}/stats" target="_blank">{{ host }}</a></td>
     </tr>
     {% endfor %}
     {% for host in groups['impala_statestore'] %}

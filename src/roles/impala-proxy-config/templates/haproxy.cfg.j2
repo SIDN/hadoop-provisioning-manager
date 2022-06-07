@@ -61,7 +61,7 @@ defaults
     maxconn                 3000
 
 #
-# This sets up the admin page for HA Proxy at port 25002.
+# This sets up the admin page for HA Proxy at {{ impala_haproxy.stats_port }}
 #
 listen stats
     bind *:{{ impala_haproxy.stats_port }} ssl crt {{ tls_etc_dir }}/haproxy_tls_pub_chain.pem
@@ -85,16 +85,31 @@ listen impala_shell
     server {{ host }} {{ host }}:21000 check
     {% endfor %}
 
-# Setup for Hue or other JDBC-enabled applications.
+# Setup for Hue or other JDBC-enabled applications that require sticky sessions.
 # In particular, Hue requires sticky sessions.
-# The application connects to load_balancer_host:{{ impala_haproxy.jdbc_port  }}, and HAProxy balances
+# The application connects to load_balancer_host:{{ impala_haproxy.jdbc_port_ss  }}, and HAProxy balances
 # connections to the associated hosts, where Impala listens for JDBC
 # requests on port 21050.
-listen impala_jdbc 
-    bind *:{{ impala_haproxy.jdbc_port }}
+listen impala_jdbc_ss 
+    bind *:{{ impala_haproxy.jdbc_port_ss }}
     mode tcp
     option tcplog
     balance source
+    
+    {% for host in groups['impala'] %}
+    server {{ host }} {{ host }}:21050 check
+    {% endfor %}
+    
+
+# Setup for JDBC-enabled applications uses roundrobin NO sticky sessions.
+# The application connects to load_balancer_host:{{ impala_haproxy.jdbc_port  }}, and HAProxy balances
+# connections to the associated hosts, where Impala listens for JDBC
+# requests on port 21050.
+listen impala_jdbc
+    bind *:{{ impala_haproxy.jdbc_port }}
+    mode tcp
+    option tcplog
+    balance leastconn
     
     {% for host in groups['impala'] %}
     server {{ host }} {{ host }}:21050 check

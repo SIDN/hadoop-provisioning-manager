@@ -87,7 +87,8 @@ spark_history_server_security_enabled=true
 [impala]
 #let Hue connect to impala executor through haproxy
 server_host={{ groups['impala_ha_proxy'][0] }}
-server_port={{ impala_haproxy.jdbc_port }}
+# use sticky sessions port on loadbalancer
+server_port={{ impala_haproxy.impala_jdbc_ss }} 
 
 # make sure hue send login username and not hue kerberos identity to impala
 impersonation_enabled=True

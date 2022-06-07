@@ -13,34 +13,26 @@
 - hosts: impala
   remote_user: hadoop-mgr
   become: yes
+  vars:
+    service_name: impala_prometheus_proxy_impalad
   tasks:
     - name: "Start {{ service_name }}"
-      include_tasks: startup/tasks/generic-service.yml    
-      loop: 
-        - impala_prometheus_proxy_impalad
-        - impala_prometheus_proxy_statestored
-        - impala_prometheus_proxy_catalogd
-      loop_control:
-        loop_var: service_name
+      include_tasks: startup/tasks/generic-service.yml
         
 - hosts: impala_catalog
   remote_user: hadoop-mgr
   become: yes
+  vars:
+    service_name: impala_prometheus_proxy_catalogd
   tasks:
     - name: "Start {{ service_name }}"
-      include_tasks: startup/tasks/generic-service.yml    
-      loop: 
-        - impala_prometheus_proxy_catalogd
-      loop_control:
-        loop_var: service_name
+      include_tasks: startup/tasks/generic-service.yml
         
 - hosts: impala_statestore
   remote_user: hadoop-mgr
   become: yes
+  vars:
+    service_name: impala_prometheus_proxy_statestored
   tasks:
     - name: "Start {{ service_name }}"
-      include_tasks: startup/tasks/generic-service.yml    
-      loop: 
-        - impala_prometheus_proxy_statestored
-      loop_control:
-        loop_var: service_name
+      include_tasks: startup/tasks/generic-service.yml
