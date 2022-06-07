@@ -1,8 +1,23 @@
 - hosts: superset
   remote_user: hadoop-mgr
   become: yes
-  vars:
-    service_name: superset
+  # vars:
+  #   service_name: superset
   tasks:
-    - name: "Start {{ service_name }}"
-      include_tasks: startup/tasks/generic-service.yml
+    - name: Start superset service
+      include_tasks: startup/tasks/generic-service.yml    
+      loop: 
+        - superset
+        - superset-kt-renewer.timer
+      loop_control:
+        loop_var: service_name  
+        
+    # - name: "Start {{ service_name }}"
+    #   include_tasks: startup/tasks/generic-service.yml
+
+
+# - name: Enable kt-renewer timer
+#   ansible.builtin.systemd:
+#     name: superset-kt-renewer.timer
+#     enabled: yes
+#   become: yes

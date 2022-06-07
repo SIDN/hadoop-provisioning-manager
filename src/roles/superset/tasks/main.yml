@@ -74,6 +74,12 @@
 - name: Systemctl Reload Daemons
   shell: systemctl daemon-reload
   become: yes
+  
+# - name: Enable kt-renewer timer
+#   ansible.builtin.systemd:
+#     name: superset-kt-renewer.timer
+#     enabled: yes
+#   become: yes
 
 - name: Recursively change ownership superset directory
   ansible.builtin.file:
