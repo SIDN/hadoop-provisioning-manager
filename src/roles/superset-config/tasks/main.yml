@@ -26,8 +26,8 @@
     
 - name: Copy config python script
   ansible.builtin.template:
-    src: 'templates/superset_config_docker.py.j2'
-    dest: '{{ superset_etc_dir }}/python_path/superset_config_docker.py'
+    src: 'templates/superset_config.py.j2'
+    dest: '{{ superset_etc_dir }}/python_path/superset_config.py'
   become: yes
   
 - name: Create docker-compose script

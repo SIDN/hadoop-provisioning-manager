@@ -25,6 +25,7 @@
 
 import logging
 import os
+import redis
 from datetime import timedelta
 from typing import Optional
 
@@ -71,6 +72,13 @@ REDIS_HOST = get_env_variable("REDIS_HOST")
 REDIS_PORT = get_env_variable("REDIS_PORT")
 REDIS_CELERY_DB = get_env_variable("REDIS_CELERY_DB", "0")
 REDIS_RESULTS_DB = get_env_variable("REDIS_RESULTS_DB", "1")
+
+DATA_CACHE_CONFIG = {
+    "CACHE_TYPE": "redis",
+    "CACHE_KEY_PREFIX": "superset_results",  # make sure this string is unique to avoid collisions
+    "CACHE_DEFAULT_TIMEOUT": 86400,  # 60 seconds * 60 minutes * 24 hours
+}
+
 
 RESULTS_BACKEND = FileSystemCache("/app/superset_home/sqllab")
 
