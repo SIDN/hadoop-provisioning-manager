@@ -71,7 +71,7 @@
     insertbefore: 'gunicorn'
     block: |
         # create keberos session for Impala database access
-        {{ stack_root }}/apache-superset-latest/bin/superset-kt-renewer.sh
+         kinit -kt $KRB_KEYTAB $KRB_PRINCIPAL
   become: yes
   
 - name: Create Systemd units and timer
