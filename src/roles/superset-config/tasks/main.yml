@@ -19,7 +19,7 @@
     - superset.env.j2
   become: yes
 
-- name: Create secret key
+- name: Load secret key
   shell: >
       cat {{ superset_etc_dir }}/secret_key
   register: reg_secret_key

@@ -42,7 +42,7 @@
 - name: Create secret key
   shell: >
       openssl rand -base64 42 > {{ superset_etc_dir }}/secret_key
-  when: not stat_secret_key.exists
+  when: not stat_secret_key.stat.exists
 
 - name: Install package dependencies
   ansible.builtin.package:
@@ -110,10 +110,16 @@
     append: yes
   become: yes
 
+- name: Check if  dhparam.pem is already created
+  stat:
+    path: "{{ superset_etc_dir }}/nginx_dhparam.pem"
+  register: stat_nginx_dhparam
+  
 - name: Create dhparam.pem for Nginx proxy
   shell: >
     openssl dhparam 2048 -out {{ superset_etc_dir }}/nginx_dhparam.pem
   become: yes  
+  when: not stat_nginx_dhparam.stat.exists
   
       
 #- name: Include create database
