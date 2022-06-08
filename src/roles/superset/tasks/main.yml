@@ -117,7 +117,7 @@
   
 - name: Create dhparam.pem for Nginx proxy
   shell: >
-    openssl dhparam 2048 -out {{ superset_etc_dir }}/nginx_dhparam.pem
+    openssl dhparam -out {{ superset_etc_dir }}/nginx_dhparam.pem 2048
   become: yes  
   when: not stat_nginx_dhparam.stat.exists
   

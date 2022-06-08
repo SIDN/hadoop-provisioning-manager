@@ -15,7 +15,7 @@
     owner: "{{ superset_os_user }}"
     group: "{{ superset_os_group }}"
   loop:
-    - ngingx-proxy.conf.j2
+    - nginx-proxy.conf.j2
     - superset.env.j2
   become: yes
 

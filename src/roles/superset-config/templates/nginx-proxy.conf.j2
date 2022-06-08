@@ -17,6 +17,7 @@ http {
     
     server {
         listen {{ superset_port }} ssl http2;
+        server_name {{ inventory_hostname }};
         # Use only TLS
         ssl_certificate /etc/nginx/{{ tls_remote_pub_chain }};
         ssl_certificate_key /etc/nginx/{{ tls_remote_priv_key }};
