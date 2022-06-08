@@ -37,7 +37,7 @@ http {
         ssl_session_tickets on;
  
         location / {
-            proxy_pass         https://superset;
+            proxy_pass         http://superset;
             proxy_redirect     off;
         }
     }
