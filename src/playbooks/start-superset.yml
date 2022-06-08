@@ -1,5 +1,7 @@
 - hosts: superset
   remote_user: hadoop-mgr
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
   become: yes
   # vars:
   #   service_name: superset
