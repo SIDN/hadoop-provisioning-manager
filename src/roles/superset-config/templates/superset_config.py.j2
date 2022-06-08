@@ -74,20 +74,23 @@ REDIS_CELERY_DB = get_env_variable("REDIS_CELERY_DB", "0")
 REDIS_RESULTS_DB = get_env_variable("REDIS_RESULTS_DB", "1")
 
 DATA_CACHE_CONFIG = {
-    "CACHE_TYPE": "redis",
-    "CACHE_KEY_PREFIX": "superset_results",  # make sure this string is unique to avoid collisions
+    "CACHE_TYPE": "RedisCache",
+    "CACHE_REDIS_HOST": REDIS_HOST,
+    "CACHE_KEY_PREFIX": "superset_results_data",  # make sure this string is unique to avoid collisions
     "CACHE_DEFAULT_TIMEOUT": 86400,  # 60 seconds * 60 minutes * 24 hours
 }
 
 FILTER_STATE_CACHE_CONFIG = {
-    "CACHE_TYPE": "redis",
-    "CACHE_KEY_PREFIX": "superset_results",  # make sure this string is unique to avoid collisions
+    "CACHE_TYPE": "RedisCache",
+    "CACHE_REDIS_HOST": REDIS_HOST,
+    "CACHE_KEY_PREFIX": "superset_results_filter",  # make sure this string is unique to avoid collisions
     "CACHE_DEFAULT_TIMEOUT": 86400,  # 60 seconds * 60 minutes * 24 hours
 }
 
 EXPLORE_FORM_DATA_CACHE_CONFIG = {
-    "CACHE_TYPE": "redis",
-    "CACHE_KEY_PREFIX": "superset_results",  # make sure this string is unique to avoid collisions
+    "CACHE_TYPE": "RedisCache",
+    "CACHE_REDIS_HOST": REDIS_HOST,
+    "CACHE_KEY_PREFIX": "superset_results_explore",  # make sure this string is unique to avoid collisions
     "CACHE_DEFAULT_TIMEOUT": 86400,  # 60 seconds * 60 minutes * 24 hours
 }
 
@@ -135,6 +138,13 @@ FILENAME = '/var/log/superset/superset.log'
 ROLLOVER = 'midnight'
 INTERVAL = 1
 BACKUP_COUNT = 10
+
+# Flask-WTF flag for CSRF
+WTF_CSRF_ENABLED = True
+# Add endpoints that need to be exempt from CSRF protection
+WTF_CSRF_EXEMPT_LIST = []
+# A CSRF token that expires in 1 year
+WTF_CSRF_TIME_LIMIT = 60 * 60 * 24 * 365
 
 
 {{ superset_additional_cfg_block }}
