@@ -72,6 +72,7 @@
     block: |
         # create keberos session for Impala database access
         {{ stack_root }}/apache-superset-latest/bin/superset-kt-renewer.sh
+    become: yes
   
 - name: Create Systemd units and timer
   ansible.builtin.template:
