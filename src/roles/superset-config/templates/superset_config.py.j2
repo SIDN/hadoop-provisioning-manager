@@ -137,16 +137,4 @@ INTERVAL = 1
 BACKUP_COUNT = 10
 
 
-#
-# Optionally import superset_config_docker.py (which will have been included on
-# the PYTHONPATH) in order to allow for local settings to be overridden
-#
-try:
-    import superset_config_docker
-    from superset_config_docker import *  # noqa
-
-    logger.info(
-        f"Loaded your Docker configuration at " f"[{superset_config_docker.__file__}]"
-    )
-except ImportError:
-    logger.info("Using default Docker config...")
+{{ superset_additional_cfg_block }}

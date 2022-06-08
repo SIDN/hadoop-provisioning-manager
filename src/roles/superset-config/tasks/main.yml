@@ -33,7 +33,6 @@
     dest: "{{ superset_etc_dir }}/python_path/{{ item | replace('.j2','') }}"
   loop:
     - superset_config.py.j2
-    - superset_config_docker.py.j2
   become: yes
   
 - name: Create docker-compose script
