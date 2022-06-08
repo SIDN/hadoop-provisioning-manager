@@ -1,3 +1,9 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ new_group }}"
+    state: present
+  become: yes
+  
 - name: Determine OS specific config (RHEL)
   set_fact:
      fact_login_shell: /sbin/nologin
