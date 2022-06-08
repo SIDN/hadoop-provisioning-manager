@@ -1,11 +1,3 @@
-- name: Copy environment
-  ansible.builtin.template:
-    src: 'templates/superset.env.j2'
-    dest: '{{ superset_etc_dir }}/superset.env'
-    owner: "{{ superset_os_user }}"
-    group: "{{ superset_os_group }}"
-  become: yes
-  
 - name: Create directories
   file:
     path: "{{ item }}"
@@ -15,6 +7,17 @@
   loop:
     - '{{ superset_etc_dir }}/python_path'
   become: yes  
+  
+- name: Create config files
+  ansible.builtin.template:
+    src: templates/{{ item }}
+    dest: '{{ superset_etc_dir }}/{{ item | replace('.j2','') }}'
+    owner: "{{ superset_os_user }}"
+    group: "{{ superset_os_group }}"
+  loop:
+    - ngingx-proxy.conf.j2
+    - superset.env.j2
+  become: yes
 
 - name: Create secret key
   shell: >
@@ -26,12 +29,12 @@
     
 - name: Copy config python script
   ansible.builtin.template:
-    src: 'templates/superset_config.py.j2'
-    dest: '{{ superset_etc_dir }}/python_path/superset_config.py'
+    src: templates/superset_config.py.j2
+    dest: '{{ superset_etc_dir }}/python_path/superset_config.py.j2'
   become: yes
   
 - name: Create docker-compose script
   ansible.builtin.template:
-    src: templates/docker-compose-non-dev.yml.j2
+    src: templates/docker-compose.yml.j2
     dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml'
   become: yes

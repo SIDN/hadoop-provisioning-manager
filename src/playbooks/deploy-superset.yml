@@ -45,4 +45,5 @@
       vars:
         new_user: "{{ superset_os_user }}"
         new_group: "{{ superset_os_group }}"
-      when: var_deploy_comp | bool
+      when: (var_deploy_comp | bool)
+        and (groups['superset'] || length > 0)

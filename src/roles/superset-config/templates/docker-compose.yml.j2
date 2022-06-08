@@ -34,6 +34,19 @@ services:
     restart: unless-stopped
     volumes:
       - redis:/data
+      
+  nginx:
+    image: nginx:alpine
+    container_name: superset_proxy
+    restart: unless-stopped
+    depends_on: *superset-depends-on
+    ports:
+      - 443:443
+    volumes:
+      - {{ superset_etc_dir }}/ngingx-proxy.conf:/etc/nginx/nginx.conf
+      - {{ superset_etc_dir }}/nginx_dhparam.pem:/etc/nginx/dhparam.pem
+      - {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:/etc/nginx/{{ tls_remote_pub_chain }} 
+      - {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:/etc/nginx/{{ tls_remote_priv_key }} 
 
   superset:
     env_file: {{ superset_etc_dir }}/superset.env
@@ -75,6 +88,8 @@ services:
     depends_on: *superset-depends-on
     user: "root"
     volumes: *superset-volumes
+    
+
 
 volumes:
   superset_home:

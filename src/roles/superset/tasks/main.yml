@@ -109,6 +109,12 @@
     groups: docker
     append: yes
   become: yes
+
+- name: Create dhparam.pem for Nginx proxy
+  shell: >
+    openssl dhparam 2048 -out {{ superset_etc_dir }}/nginx_dhparam.pem
+  become: yes  
+  
       
 #- name: Include create database
 #  include_tasks: tasks/database.yml

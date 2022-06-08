@@ -1,0 +1,44 @@
+worker_processes 1;
+  
+events { worker_connections 1024; }
+
+http {
+
+    sendfile on;
+
+    upstream superset {
+        server superset:8088;
+    }
+    
+    proxy_set_header   Host $host;
+    proxy_set_header   X-Real-IP $remote_addr;
+    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header   X-Forwarded-Host $server_name;
+    
+    server {
+        listen {{ superset_port }} ssl http2;
+        # Use only TLS
+        ssl_certificate /etc/nginx/{{ tls_remote_pub_chain }};
+        ssl_certificate_key /etc/nginx/{{ tls_remote_priv_key }};
+        
+        ssl_protocols TLSv1.2 TLSv1.3;
+        # Tell client which ciphers are available
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers ECDH+AESGCM:ECDH+AES256:ECDH+AES128:DH+3DES:!ADH:!AECDH:!MD5;
+        # Use our own DH params
+        ssl_dhparam /etc/nginx/dhparam.pem;
+        # Enable HSTS
+        add_header Strict-Transport-Security "max-age=31536000" always;
+        # Optimize session cache
+        ssl_session_cache   shared:SSL:40m;
+        ssl_session_timeout 4h;
+        # Enable session tickets
+        ssl_session_tickets on;
+ 
+        location / {
+            proxy_pass         https://superset;
+            proxy_redirect     off;
+        }
+    }
+
+}
