@@ -67,8 +67,8 @@
   
 - name: Add Kerberos KT renewer call to startup script
   ansible.builtin.blockinfile:
-    path: '{{ stack_root }}/apache-superset-{{ version.superset }}/bin/run-server.sh'
-    insertbefore: 'gunicorn'
+    path: '{{ stack_root }}/apache-superset-{{ version.superset }}/bin/docker-bootstrap.sh'
+    insertbefore: '/usr/bin/run-server.sh'
     block: |
         # create keberos session for Impala database access
          kinit -kt $KRB_KEYTAB $KRB_PRINCIPAL
