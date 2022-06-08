@@ -11,15 +11,13 @@
     new_user: "{{ superset_os_user }}"
     new_group: "{{ superset_os_group }}"
     
-# - name: Create configuration directory
-#   file:
-#     path: "{{ item }}"
-#     state: directory
-#     mode: '0755'
-#   loop:
-#     - "{{ superset_etc_dir }}"
-#   become: yes
-
+- name: Add  user superset user to group docker
+  user:
+    name: '{{ superset_os_user }}'
+    groups: docker
+    append: yes
+  become: yes
+    
 - name: Create directories
   file:
     path: "{{ item }}"
@@ -51,7 +49,7 @@
     state: latest
   become: yes
   
-- name: Copy control scripts
+- name: Copy docker control scripts
   ansible.builtin.copy:
     src: '{{ item }}'
     dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/bin'
@@ -60,18 +58,20 @@
     - "{{ download_root }}/superset/docker/*"
   become: yes
     
-# - name: Copy docker-compose script
-#   ansible.builtin.template:
-#     src: 'templates/docker-compose-non-dev.yml.j2'
-#     dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml'
-#   become: yes
-  
 - name: Create Keberos KT renewer script
   ansible.builtin.template:
     src: 'templates/superset-kt-renewer.sh.j2'
     dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/bin/superset-kt-renewer.sh'
     mode: '0755'
   become: yes
+  
+- name: Add Kerberos KT renewer call to startup script
+  ansible.builtin.blockinfile:
+    path: '{{ stack_root }}/apache-superset-{{ version.superset }}/bin/docker-bootstrap.sh'
+    insertbefore: 'REQUIREMENTS_LOCAL'
+    block: |
+        # create keberos session for Impala database access
+        {{ stack_root }}/apache-superset-latest/bin/superset-kt-renewer.sh
   
 - name: Create Systemd units and timer
   ansible.builtin.template:
@@ -103,13 +103,6 @@
       state: link
   become: yes
   
-- name: Add  user {{ superset_os_user }} to group docker
-  user:
-    name: '{{ superset_os_user }}'
-    groups: docker
-    append: yes
-  become: yes
-
 - name: Check if  dhparam.pem is already created
   stat:
     path: "{{ superset_etc_dir }}/nginx_dhparam.pem"
