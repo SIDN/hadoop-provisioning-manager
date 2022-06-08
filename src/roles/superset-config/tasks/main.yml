@@ -11,7 +11,7 @@
 - name: Create config files
   ansible.builtin.template:
     src: templates/{{ item }}
-    dest: '{{ superset_etc_dir }}/{{ item | replace('.j2','') }}'
+    dest: "{{ superset_etc_dir }}/{{ item | replace('.j2','') }}"
     owner: "{{ superset_os_user }}"
     group: "{{ superset_os_group }}"
   loop:
