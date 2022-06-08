@@ -7,7 +7,7 @@ http {
     sendfile on;
 
     upstream superset {
-        server superset:8088;
+        server superset:{{ superset_port }};
     }
     
     proxy_set_header   Host $host;

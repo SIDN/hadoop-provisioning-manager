@@ -41,7 +41,7 @@ services:
     restart: unless-stopped
     depends_on: *superset-depends-on
     ports:
-      - 443:443
+      - {{ superset_port }}:{{ superset_port }}
     volumes:
       - {{ superset_etc_dir }}/nginx-proxy.conf:/etc/nginx/nginx.conf
       - {{ superset_etc_dir }}/nginx_dhparam.pem:/etc/nginx/dhparam.pem
