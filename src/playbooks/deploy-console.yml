@@ -10,6 +10,7 @@
     - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
     - "{{ prov_cfg_dir }}/vars/console_vars.yml"
     - "{{ prov_cfg_dir }}/vars/hue_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/superset_vars.yml"
     - "{{ prov_cfg_dir }}/vars/zookeeper_vars.yml"
     - "{{ prov_cfg_dir }}/vars/monitor_vars.yml"
     - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
