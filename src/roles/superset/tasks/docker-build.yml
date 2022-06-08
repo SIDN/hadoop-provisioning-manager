@@ -46,6 +46,7 @@
   loop:
     - 'RUN mkdir /app'
     - 'RUN mkdir .+PYTHONPATH.+'
+  when: docker_img_exists.stdout | int == 0
 
 - name: Add additional Python packages
   ansible.builtin.lineinfile:
@@ -57,6 +58,7 @@
   loop:
     - kerberos
     - impyla
+  when: docker_img_exists.stdout | int == 0
     
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
