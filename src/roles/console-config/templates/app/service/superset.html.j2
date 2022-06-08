@@ -1,0 +1,44 @@
+<h1 class="display-6">Superset</h1>
+<p>
+<a href="https://superset.apache.org/">Apache Superset</a> is a modern data exploration and visualization platform
+</p>
+<p>
+Superset is fast, lightweight, intuitive, and loaded with options that make it easy for users of all skill sets to explore and visualize their data, from simple line charts to highly detailed geospatial charts.
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['superset'] %}
+    <tr>
+     <td>Superset</td>
+      <td><a href="https://{{ host }}:{{ superset_port }}" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h4>Create Impala database</h4>
+<p>
+Follow the steps below to add a new database connection for Impala.
+</p>
+
+1) In the menu select Data -> Databases and then click add <q>+ Database button</q>.<br>
+2) From the Supported databases list select <q>Apache Impala</q><br>
+3) Enter the following URI in the <q>SQLAlchemy URI</q> field.<br>
+<pre><code>
+impala://arn2-rnd-entrada03-p.sidnlabs.nl:21050/entrada
+</code></pre>
+
+4) Switch to the <q>Advanced tab</q>
+5) Under <q>SQL labs</q> check option <q>Expose database in SQL Lab</q>
+6) Under <q>Other</q> add the following in the <q>Engine Parameters</q> field
+
+<pre><code>
+{
+	"connect_args": {
+		"auth_mechanism": "GSSAPI",
+		"use_ssl": true
+	}
+}
+</code></pre>

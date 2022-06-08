@@ -66,6 +66,7 @@
     - { path: 'service', src: 'yarn.html.j2', name: 'yarn' }
     - { path: 'service', src: 'hive.html.j2', name: 'hive' }
     - { path: 'service', src: 'hue.html.j2', name: 'hue' }
+    - { path: 'service', src: 'superset.html.j2', name: 'superset' }
     - { path: 'service', src: 'impala.html.j2', name: 'impala' }
     - { path: 'service', src: 'livy.html.j2', name: 'livy' }
     - { path: 'service', src: 'monitor.html.j2', name: 'monitor' }

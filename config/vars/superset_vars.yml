@@ -15,4 +15,12 @@ superset_db: superset
 superset_db_user: superset
 superset_db_password: "{{ vault_superset_db_password }}"
 
+# Additional options, thse are added to the superset config
+# superset_config_docker.py
+superset_additional_cfg_block: |
+  # add additional config lines here
+  # see url below for available options
+  # https://github.com/apache/superset/blob/master/superset/config.py
+  
+
 superset_download_url: "https://github.com/apache/superset.git"

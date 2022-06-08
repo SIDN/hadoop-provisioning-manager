@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
 x-superset-image: &superset-image {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
 x-superset-depends-on: &superset-depends-on
   - redis
