@@ -15,11 +15,12 @@
 - name: Create Jupyterhub image on controller server
   community.docker.docker_image:
     build:
-      path: ../templates
+      path: "{{ role_path}}/templates"
     name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub"
     tag: latest
     push: yes
     source: build
+    debug: yes
   delegate_to: localhost
   connection: local
   become: yes
