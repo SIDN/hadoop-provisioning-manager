@@ -10,8 +10,8 @@ Requires=docker.service
 TimeoutStartSec=0
 Restart=always
 RestartSec=60
-User={{ jupyterhub__os_user }}
-Group={{ jupyterhub__os_group }}
+User={{ jupyterhub_os_user }}
+Group={{ jupyterhub_os_group }}
 Type=exec
 
 ExecStart=/usr/bin/docker run --rm --name jupyterhub -p {{ jupyterhub_port }}:8000 \
