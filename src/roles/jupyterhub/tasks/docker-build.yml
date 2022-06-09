@@ -20,6 +20,8 @@
     tag: latest
     push: yes
     source: build
+  delegate_to: localhost
+  connection: local
     
   
 # - name: Create Jupyterhub image on controller server
