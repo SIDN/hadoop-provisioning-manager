@@ -15,7 +15,7 @@ RUN apt-get update \
     npm \
     libkrb5-dev \
     krb5-user \
-    openjdk-{{ ubuntu_java_version }}-jdk \
+    openjdk-8-jdk \
     vim \
     inetutils-telnet \
     iputils-ping \
