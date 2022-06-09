@@ -46,7 +46,7 @@ RUN python3 -m pip install impyla \
   pandas \
   sqlalchemy \
   jupyterhub-kerberosauthenticator \
-  psycopg2
+  psycopg2-binary
 
 RUN mkdir /etc/jupyterhub/tls
 
