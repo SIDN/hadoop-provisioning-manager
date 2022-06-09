@@ -29,7 +29,7 @@
     - '{{ jupyterhub_log_dir }}'
   become: yes
   
-- name: Create Systemd units and timer
+- name: Create Systemd unit
   ansible.builtin.template:
     src: ../templates/{{ item }}
     dest: /etc/systemd/system/{{ item | replace('.j2','') }}
