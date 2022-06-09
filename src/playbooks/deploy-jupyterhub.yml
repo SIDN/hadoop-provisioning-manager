@@ -5,17 +5,18 @@
     - "{{ prov_cfg_dir }}/vars/jupyterhub_vars.yml"
     - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
     - "{{ prov_cfg_dir }}/vars/docker_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/db_vars.yml"
   remote_user: hadoop-mgr
   tasks:
-    - name: Include component deploy
-      include_role:
-        name: docker
-      when: var_deploy_comp | bool
-    
-    - name: Include configuration deploy
-      include_role:
-        name: docker-config
-      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
+    # - name: Include component deploy
+    #   include_role:
+    #     name: docker
+    #   when: var_deploy_comp | bool
+    # 
+    # - name: Include configuration deploy
+    #   include_role:
+    #     name: docker-config
+    #   when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
             
     - name: Include component deploy
       include_role:
