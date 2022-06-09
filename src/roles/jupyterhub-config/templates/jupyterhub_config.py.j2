@@ -740,13 +740,13 @@ c.JupyterHub.db_url = "postgresql+psycopg2://{{ jupyterhub_db_user }}:{{ jupyter
 #
 #          When setting this, you should also set ssl_key
 #  Default: ''
-# c.JupyterHub.ssl_cert = ''
+c.JupyterHub.ssl_cert = '/etc/jupyterhub/tls/{{ tls_remote_pub_chain }}'
 
 ## Path to SSL key file for the public facing interface of the proxy
 #
 #          When setting this, you should also set ssl_cert
 #  Default: ''
-# c.JupyterHub.ssl_key = ''
+c.JupyterHub.ssl_key = '/etc/jupyterhub/tls/{{ tls_remote_priv_key }}'
 
 ## Host to send statsd metrics to. An empty string (the default) disables sending
 #  metrics.

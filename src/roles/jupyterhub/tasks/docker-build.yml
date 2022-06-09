@@ -30,4 +30,5 @@
   community.docker.docker_image:
     name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:latest"
     source: pull
+    force_source: yes
 
