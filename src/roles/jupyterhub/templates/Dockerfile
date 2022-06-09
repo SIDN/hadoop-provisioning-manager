@@ -52,4 +52,4 @@ RUN mkdir /etc/jupyterhub/tls
 
 EXPOSE 8000
 
-CMD ["jupyterhub"]
+CMD ["jupyterhub", "-f", "/etc/jupyterhub/jupyterhub_config.py"]
