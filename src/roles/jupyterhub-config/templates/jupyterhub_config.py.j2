@@ -173,7 +173,10 @@
 #    - null: jupyterhub.auth.NullAuthenticator
 #    - pam: jupyterhub.auth.PAMAuthenticator
 #  Default: 'jupyterhub.auth.PAMAuthenticator'
-# c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
+
+# Enable Kerberos authentication
+c.JupyterHub.authenticator_class = 'kerberosauthenticator.KerberosAuthenticator'
+c.JupyterHub.keytab = '/etc/jupyterhub/http.keytab'
 
 ## The base URL of the entire application.
 #

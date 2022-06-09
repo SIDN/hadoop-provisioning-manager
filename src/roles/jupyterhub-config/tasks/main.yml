@@ -4,6 +4,7 @@
     dest: "{{ jupyterhub_etc_dir }}/{{ item | replace('.j2','') }}"
     owner: "{{ jupyterhub_os_user }}"
     group: "{{ jupyterhub_os_group }}"
+    mode: '0440'  
   loop:
     - jupyterhub_config.py.j2
   become: yes
