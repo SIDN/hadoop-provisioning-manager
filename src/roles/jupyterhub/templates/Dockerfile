@@ -53,6 +53,8 @@ RUN mkdir -p /etc/jupyterhub/tls
 # patch jupyterhub-kerberosauthenticator
 # see: https://github.com/jupyterhub/kerberosauthenticator/issues/12
 RUN sed -i "s/login_url=self.settings\['login_url'\]/login_url=self.settings\['login_url'\],sync=True/" /usr/local/lib/python3.10/dist-packages/kerberosauthenticator/auth.py
+RUN sed -i "s/jinja2_env/jinja2_env_sync/" /usr/local/lib/python3.10/dist-packages/kerberosauthenticator/auth.py
+
 
 EXPOSE 8000
 
