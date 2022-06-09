@@ -22,7 +22,7 @@
     source: build
   delegate_to: localhost
   connection: local
-    
+  become: yes
   
 # - name: Create Jupyterhub image on controller server
 #   shell: >
