@@ -23,7 +23,7 @@
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.stdout | int == 0
+  #when: docker_img_exists.stdout | int == 0
   
 - name: Deploy image to Jupyterhub server  
   community.docker.docker_image:
