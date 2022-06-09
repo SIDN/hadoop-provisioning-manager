@@ -22,5 +22,6 @@ superset_additional_cfg_block: |
   # see url below for available options
   # https://github.com/apache/superset/blob/master/superset/config.py
   
+  
 
 superset_download_url: "https://github.com/apache/superset.git"

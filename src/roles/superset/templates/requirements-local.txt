@@ -1,2 +1,3 @@
 impyla
+sqlalchemy-trino
 kerberos
