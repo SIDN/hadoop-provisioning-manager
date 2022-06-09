@@ -20,6 +20,7 @@
     tag: latest
     push: yes
     source: build
+    force_source: yes
   delegate_to: localhost
   connection: local
   become: yes
