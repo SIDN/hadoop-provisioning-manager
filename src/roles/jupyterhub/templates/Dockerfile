@@ -15,11 +15,15 @@ RUN apt-get update \
     npm \
     libkrb5-dev \
     krb5-user \
-    openjdk-17-jdk \
+    openjdk-{{ ubuntu_java_version }}-jdk \
+    vim \
+    inetutils-telnet \
+    iputils-ping \
+    g++ libsasl2-dev libsasl2-2 libsasl2-modules-gssapi-mit \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 
 ENV SHELL=/bin/bash \
     LC_ALL=en_US.UTF-8 \
@@ -39,7 +43,7 @@ RUN npm install -g configurable-http-proxy \
 RUN python3 -m pip install jupyterlab notebook
 
 # Install python libs
-RUN python3 -m pip install impyla \
+RUN python3 -m pip install impyla[kerberos] \
   kerberos \
   pyspark \
   numpy \

@@ -11,6 +11,10 @@
   delegate_to: localhost
   connection: local
   become: yes
+  
+- name: Determine Ubuntu Java version (Ubuntu)
+  set_fact:
+      ubuntu_java_version: "{{ version.java.split('.')[1] }}"
 
 - name: Create Jupyterhub image on controller server
   community.docker.docker_image:
