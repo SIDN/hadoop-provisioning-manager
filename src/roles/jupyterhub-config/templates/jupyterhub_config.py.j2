@@ -47,6 +47,26 @@
 #
 #  .. code-block:: python
 #
+
+c.Application.logging_configuration = {
+    'handlers': {
+        'file': {
+            'class': 'logging.FileHandler',
+            'level': 'DEBUG',
+            'filename': '/var/log/jupyterhub/jupyterhub.log',
+        }
+    },
+    'loggers': {
+        'jupyterhub': {
+            'level': 'DEBUG',
+             #NOTE: if you don't list the default "console"
+             #handler here then it will be disabled
+            'handlers': ['console', 'file'],
+        },
+    }
+}
+
+
 #     c.Application.logging_configuration = {
 #         'handlers': {
 #             'file': {

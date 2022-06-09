@@ -16,6 +16,7 @@ Type=exec
 
 ExecStart=/usr/bin/docker run --rm --name jupyterhub -p {{ jupyterhub_port }}:8000 \
 -v {{ jupyterhub_etc_dir }}:/etc/jupyterhub \
+-v {{ jupyterhub_log_dir }}:/var/log/jupyterhub \
 -v {{ tls_etc_dir }}:/etc/jupyterhub/tls \
 -v /etc/krb5.conf:/etc/krb5.conf {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:latest
 
