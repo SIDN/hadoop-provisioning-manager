@@ -48,12 +48,12 @@
 #  .. code-block:: python
 #
 
-c.Application.logging_configuration = {
+c.Application.c.Application.logging_config = {
     'handlers': {
         'file': {
             'class': 'logging.FileHandler',
             'level': 'DEBUG',
-            'filename': '/var/log/jupyterhub/jupyterhub.log',
+            'filename': '{{ jupyterhub_log_dir }}/jupyterhub.log',
         }
     },
     'loggers': {
@@ -196,7 +196,9 @@ c.Application.logging_configuration = {
 
 # Enable Kerberos authentication
 c.JupyterHub.authenticator_class = 'kerberosauthenticator.KerberosAuthenticator'
-c.JupyterHub.keytab = '/etc/jupyterhub/http.keytab'
+#c.KerberosAuthenticator.admin_users = set(['admin'])
+c.KerberosAuthenticator.auto_login = True
+c.KerberosAuthenticator.keytab = '/etc/jupyterhub/http.keytab'
 
 ## The base URL of the entire application.
 #
