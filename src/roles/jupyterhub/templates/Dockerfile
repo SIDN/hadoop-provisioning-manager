@@ -48,7 +48,7 @@ RUN python3 -m pip install impyla \
   jupyterhub-kerberosauthenticator \
   psycopg2-binary
 
-RUN mkdir /etc/jupyterhub/tls
+RUN mkdir -p /etc/jupyterhub/tls
 
 EXPOSE 8000
 
