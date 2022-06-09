@@ -1,0 +1,37 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ jupyterhub_os_group }}"
+    state: present
+  become: yes
+  
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ jupyterhub_os_user }}"
+    new_group: "{{ jupyterhub_os_group }}"
+    
+- name: Add user to group docker
+  user:
+    name: '{{ jupyterhub_os_user }}'
+    groups: docker
+    append: yes
+  become: yes
+    
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ jupyterhub_os_user }}"
+    group: "{{ jupyterhub_os_group }}"
+  loop:
+    - '{{ jupyterhub_etc_dir }}'
+    - '{{ jupyterhub_log_dir }}'
+  become: yes
+
+- name: Include create database
+  include_tasks: tasks/database.yml
+  
+- name: Include build docker image 
+  include_tasks: tasks/docker-build.yml
+  

@@ -1,0 +1,9 @@
+- name: Create config files
+  ansible.builtin.template:
+    src: templates/{{ item }}
+    dest: "{{ jupyterhub_etc_dir }}/{{ item | replace('.j2','') }}"
+    owner: "{{ jupyterhub_os_user }}"
+    group: "{{ jupyterhub_os_group }}"
+  loop:
+    - jupyterhub_config.py.j2
+  become: yes

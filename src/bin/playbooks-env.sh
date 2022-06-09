@@ -18,6 +18,7 @@ export PB_IMPALA=impala.yml
 export PB_IMPALA_PROXY=impala-proxy.yml
 export PB_HUE=hue.yml
 export PB_SUPERSET=superset.yml
+export PB_JUPYTERHUB=jupyterhub.yml
 export PB_LIVY=livy.yml
 export PB_ALL=all.yml
 export PB_MONITOR=monitor.yml
@@ -147,6 +148,9 @@ function run_playbooks()
         ;;
         superset)
           run_playbook "$PB_PREFIX-$PB_SUPERSET"
+        ;;
+        jupyterhub)
+          run_playbook "$PB_PREFIX-$PB_JUPYTERHUB"
         ;;
         livy)
           run_playbook "$PB_PREFIX-$PB_LIVY"

@@ -158,3 +158,6 @@ hadoop-dev4.example.nl
 
 [superset]
 hadoop-gateway-02.example.nl
+
+[jupyterhub]
+hadoop-gateway-02.example.nl

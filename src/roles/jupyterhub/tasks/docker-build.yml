@@ -1,0 +1,49 @@
+- name: Check if Jupyterhub docker image already exists
+  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:latest | wc -l"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  become: yes
+  
+- name: Show Jupyterhub docker image already exists
+  ansible.builtin.debug:
+    msg: Jupyterhub image detect {{ docker_img_exists.stdout }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+
+- name: Create Jupyterhub image on controller server
+  community.docker.docker_image:
+    build:
+      path: ../templates
+    name: {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub
+    tag: latest
+    push: yes
+    source: build
+    
+  
+# - name: Create Jupyterhub image on controller server
+#   shell: >
+#     docker build -t jupyterhub:latest .
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
+# 
+# - name: Tag Jupyterhub docker image
+#   shell: >
+#     docker image tag jupyterhub:latest {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:latest
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
+
+# # deploy img to server  
+# - name: Push Jupyterhub docker image to registry
+#   shell: >
+#     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:latest
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
+
+- name: Pull Jupyterhub image to Jupyterhub server
+  shell: >
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:latest
