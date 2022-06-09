@@ -15,15 +15,18 @@ RUN apt-get update \
     npm \
     libkrb5-dev \
     krb5-user \
+    openjdk-17-jdk \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
 
 ENV SHELL=/bin/bash \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
 
-RUN  locale-gen $LC_ALL
+RUN locale-gen $LC_ALL
 
 # always make sure pip is up to date!
 RUN python3 -m pip install --no-cache --upgrade setuptools pip

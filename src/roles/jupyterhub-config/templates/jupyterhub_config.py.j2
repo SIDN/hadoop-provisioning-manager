@@ -48,25 +48,6 @@
 #  .. code-block:: python
 #
 
-c.Application.c.Application.logging_config = {
-    'handlers': {
-        'file': {
-            'class': 'logging.FileHandler',
-            'level': 'DEBUG',
-            'filename': '{{ jupyterhub_log_dir }}/jupyterhub.log',
-        }
-    },
-    'loggers': {
-        'jupyterhub': {
-            'level': 'DEBUG',
-             #NOTE: if you don't list the default "console"
-             #handler here then it will be disabled
-            'handlers': ['console', 'file'],
-        },
-    }
-}
-
-
 #     c.Application.logging_configuration = {
 #         'handlers': {
 #             'file': {
@@ -1424,7 +1405,19 @@ c.JupyterHub.ssl_key = '/etc/jupyterhub/tls/{{ tls_remote_priv_key }}'
 #
 #      c.Authenticator.post_auth_hook = my_hook
 #  Default: None
-# c.Authenticator.post_auth_hook = None
+
+import subprocess
+def add_user_hook(authenticator, handler, authentication):
+    try:
+         # executing useradd command using subprocess module
+         subprocess.run(['useradd', '-m', authentication['name'] ])      
+    except:
+         print(f"Failed to add user.")                     
+
+    return authentication
+  
+# create local user in docker container for Kerberos login
+c.Authenticator.post_auth_hook = add_user_hook
 
 ## Force refresh of auth prior to spawn.
 #
