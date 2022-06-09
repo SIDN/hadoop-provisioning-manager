@@ -45,7 +45,10 @@ RUN python3 -m pip install impyla \
   scikit-learn \
   pandas \
   sqlalchemy \
-  jupyterhub-kerberosauthenticator
+  jupyterhub-kerberosauthenticator \
+  psycopg2
+
+RUN mkdir /etc/jupyterhub
 
 EXPOSE 8000
 

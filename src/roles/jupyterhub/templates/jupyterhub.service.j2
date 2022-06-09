@@ -2,7 +2,7 @@
 # Pushed to: {{  inventory_hostname }}
 
 [Unit]
-Description=Superset
+Description=Jupyterhub
 After=docker.service
 Requires=docker.service
  
@@ -14,10 +14,15 @@ User={{ superset_os_user }}
 Group={{ superset_os_group }}
 Type=exec
 
-WorkingDirectory={{ stack_root }}/apache-superset-latest
-ExecStart=/usr/bin/docker-compose up
+ExecStart=/usr/bin/docker run --rm --name jupyterhub -p {{ jupyterhub_port }}:8000 \
+-v {{ jupyterhub_etc_dir }}/jupyterhub_config.py:/etc/jupyterhub/jupyterhub_config.py \
+-v {{ jupyterhub_etc_dir }}/http.keytab:/etc/jupyterhub/http.keytab \
+-v {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:/etc/jupyterhub/{{ tls_remote_pub_chain }} \
+-v {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:/etc/jupyterhub/{{ tls_remote_priv_key }} \
+-v /etc/krb5.conf:/etc/krb5.conf {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:latest
 
-ExecStop=/usr/bin/docker-compose down -v --remove-orphans
+
+ExecStop=/usr/bin/docker stop jupyterhub
 
 [Install]
 WantedBy=multi-user.target

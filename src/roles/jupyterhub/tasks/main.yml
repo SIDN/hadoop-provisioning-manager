@@ -28,7 +28,19 @@
     - '{{ jupyterhub_etc_dir }}'
     - '{{ jupyterhub_log_dir }}'
   become: yes
-
+  
+- name: Create Systemd units and timer
+  ansible.builtin.template:
+    src: ../templates/{{ item }}
+    dest: /etc/systemd/system/{{ item | replace('.j2','') }}
+  loop:
+    - jupyterhub.service.j2
+  become: yes
+  
+- name: Systemctl Reload Daemons
+  shell: systemctl daemon-reload
+  become: yes
+  
 - name: Include create database
   include_tasks: tasks/database.yml
   
