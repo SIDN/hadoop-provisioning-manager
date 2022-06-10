@@ -44,7 +44,7 @@ RUN python3 -m pip install jupyterlab notebook
 
 # Install python libs
 RUN python3 -m pip install \
-  bitarray, six \
+  bitarray six \
   kerberos \
   thrift_sasl==0.4.3 \
   thrift==0.16.0 \
