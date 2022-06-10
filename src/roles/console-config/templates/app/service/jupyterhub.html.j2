@@ -4,6 +4,7 @@
 </p>
 <p>
 You are automatically logged-in if an active Kerberos session is detected. Kerberos principal admin@{{ kerberos_realm }} is the default Hue administrator.
+Impyla and Pyspark are both available to use for querying data from Hadoop.
 </p>
 <table class="table table-hover">
   <tr>
@@ -12,8 +13,32 @@ You are automatically logged-in if an active Kerberos session is detected. Kerbe
   </tr>
     {% for host in groups['jupyterhub'] %}
     <tr>
-     <td>Hue</td>
+     <td>Jupyterhub</td>
       <td><a href="https://{{ host }}:{{ jupyterhub_port }}" target="_blank">{{ host }}</a></td>
     </tr>
     {% endfor %}
 </table>
+<br>
+
+<h4>Impyla</h4>
+<p>
+Impyla requires an active Kerberos session, upload your keytab to 
+your notebook and then use kinit to create a Kerberos session.
+</p>
+<pre><code>
+# Create Kerberos session
+!kinit user@{{ kerberos_realm }} -kt /path/to/my.keytab
+
+# run Impyla query
+from impala.dbapi import connect
+from impala.util import as_pandas
+
+conn = connect(host='{{ groups['impala_ha_proxy'][0] }}', auth_mechanism='GSSAPI', use_ssl=True)
+cursor = conn.cursor()
+
+cursor.execute('SELECT ... FROM ... LIMIT ...')
+df = as_pandas(cursor)
+</code></pre>
+
+
+<h4>Pyspark</h4>

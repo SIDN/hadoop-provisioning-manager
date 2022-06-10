@@ -59,6 +59,24 @@ source {{ python_venv_dir }}/py2-impala-shell/bin/activate
 # connect impala-shell to the Ha-proxy host using SSL and Kerberos
 impala-shell -i {{ groups['impala_ha_proxy'][0] }} --ssl -k
 </code></pre>
+<br>
+<p>
+Impyla can be used from a Jupyterhub notebook or by starting Python3 from the command line.  
+</p>
+<pre><code>
+# Create Kerberos session
+kinit -kt /path/to/keytab username@{{ kerberos_realm }}
+
+# Start Python
+python3
+
+# run query code
+from impala.dbapi import connect
+conn = connect(host='{{ groups['impala_ha_proxy'][0] }}', auth_mechanism='GSSAPI', use_ssl=True)
+cursor = conn.cursor()
+cursor.execute('SELECT ...')
+cursor.fetchall()
+</code></pre>
 
 <h4>Security</h4>
 <p>
