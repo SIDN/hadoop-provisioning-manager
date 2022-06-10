@@ -10,6 +10,8 @@
     - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
     - "{{ prov_cfg_dir }}/vars/spark_vars.yml"
     - "{{ prov_cfg_dir }}/vars/hive_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hue_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/livy_vars.yml"
   remote_user: hadoop-mgr
   tasks:
     - name: Include component deploy
