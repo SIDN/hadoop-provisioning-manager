@@ -6,6 +6,8 @@
     - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
     - "{{ prov_cfg_dir }}/vars/docker_vars.yml"
     - "{{ prov_cfg_dir }}/vars/db_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/spark_vars.yml"
   remote_user: hadoop-mgr
   tasks:
     - name: Include component deploy
