@@ -24,3 +24,4 @@ jupyterhub_additional_cfg_block: |
   # add additional config lines here
   # see url below for available options
   #
+  c.Authenticator.admin_users = {'admin'}
