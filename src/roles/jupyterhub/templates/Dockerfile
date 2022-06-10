@@ -44,12 +44,11 @@ RUN python3 -m pip install jupyterlab notebook
 
 # Install python libs
 RUN python3 -m pip install \
-  # impyla dependencies
   bitarray, six \
   kerberos \
   thrift_sasl==0.4.3 \
   thrift==0.16.0 \
-  impyla==0.18a4 \  #need atleast 0.18a4 for py3.10 support
+  impyla==0.18a4 \
   pyspark \
   numpy \
   scipy \
