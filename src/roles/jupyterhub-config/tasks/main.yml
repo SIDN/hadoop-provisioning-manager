@@ -8,3 +8,11 @@
   loop:
     - jupyterhub_config.py.j2
   become: yes
+  
+- name: Create data directory
+  file:
+    path: "{{ jupyterhub_data_dir }}"
+    state: directory
+    owner: "{{ jupyterhub_os_user }}"
+    group: "{{ jupyterhub_os_group }}"
+  become: yes

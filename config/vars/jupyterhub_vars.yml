@@ -7,6 +7,10 @@ jupyterhub_etc_dir: "{{ config_root }}/jupyterhub"
 # Location of superset logging
 jupyterhub_log_dir: /var/log/jupyterhub
 
+# jupyterhub runs as a docker container,
+# location of user data on host system
+jupyterhub_data_dir: /data/jupyterhub
+
 jupyterhub_port: 8000
 
 # database options 
