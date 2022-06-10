@@ -74,6 +74,9 @@ RUN sed -i "s/jinja2_env/jinja2_env_sync/" /usr/local/lib/python3.10/dist-packag
 # see: https://github.com/apache/thrift/pull/2620
 RUN sed -i "s/def isOpen(self):/def isOpen(self):\\n        return self.handle is not None/" /usr/local/lib/python3.10/dist-packages/thrift/transport/TSocket.py
 
+ENV HADOOP_CONF_DIR={{ hadoop_etc_dir }}
+ENV YARN_CONF_DIR={{ hadoop_etc_dir }}
+ENV SPARK_CONF_DIR={{ spark_etc_dir }}
 
 EXPOSE 8000
 
