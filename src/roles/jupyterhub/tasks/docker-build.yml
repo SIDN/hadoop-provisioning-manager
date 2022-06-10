@@ -20,6 +20,8 @@
   file:
     path: "{{ cache_root }}/jupyterhub"
     state: directory
+  delegate_to: localhost
+  connection: local
   
 - name: Create Dockerfile
   ansible.builtin.template:
