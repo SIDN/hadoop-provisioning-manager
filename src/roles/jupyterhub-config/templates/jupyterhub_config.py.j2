@@ -1415,6 +1415,7 @@ def add_user_hook(authenticator, handler, authentication):
          # executing useradd command using subprocess module
          subprocess.run(['useradd', '-d', f'/data/{user}', '-m', user ])
          subprocess.run(['mkdir', f'/data/{user}/examples' ])
+         subprocess.run(['cp', '/examples/*.ipynb', f'/data/{user}/examples' ])
          subprocess.run(['chown', '-R', f'{user}:{user}' f'/data/{user}' ])
     except:
          print(f"Failed to add user")     
