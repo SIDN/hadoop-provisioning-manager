@@ -1418,12 +1418,12 @@ def add_user_hook(authenticator, handler, authentication):
          for file in glob.glob(r'/examples/*.ipynb'):
             shutil.copy(file, f'/data/{user}/examples/')
 
-          for root, dirs, files in os.walk(f'/data/{user}/'):
-              shutil.chown(root, user, group)
-              for item in dirs:
-                  shutil.chown(os.path.join(root, item), user, user)
-              for item in files:
-                  shutil.chown(os.path.join(root, item), user, user)
+         for root, dirs, files in os.walk(f'/data/{user}/'):
+            shutil.chown(root, user, group)
+            for item in dirs:
+              shutil.chown(os.path.join(root, item), user, user)
+            for item in files:
+              shutil.chown(os.path.join(root, item), user, user)
                   
          #shutil.chown(f'/data/{user}/', user, user)
          #subprocess.run(['chown', '-R', f'{user}:{user}' f'/data/{user}' ])
