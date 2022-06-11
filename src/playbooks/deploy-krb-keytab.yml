@@ -492,11 +492,23 @@
       loop:
         - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
         
+    - name: Create jupyterhub service keytabs 
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        responses:
+          kadmin:
+            - "xst -k {{ superset_etc_dir }}/jupyterhub.keytab jupyterhub/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+          
     - name: Change file ownership, group and permissions
       ansible.builtin.file:
-        path: "{{ jupyterhub_etc_dir }}/http.keytab"
+        path: "{{ jupyterhub_etc_dir }}/{{ item }}"
         owner: "{{ jupyterhub_os_user }}"
         group: "{{ jupyterhub_os_group }}"
         mode: '0440'  
+      loop:
+        - http.keytab
+        - jupyterhub.keytab
 
        

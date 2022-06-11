@@ -47,3 +47,16 @@
 - name: Include build docker image 
   include_tasks: tasks/docker-build.yml
   
+# jupyter notebooks run on cluster hosts, every cluster host needs 
+# py env for this.
+- name: Create Python cluster env
+  set_fact:
+     py_version: 3
+     py_env_name: 'jupyterhub_env'
+     py_env_req_file: "{{ cache_root }}/jupyterhub/requirements.txt"
+     py_env_permission: 'root:{{ jupyterhub_os_group }}'
+
+- name: Include role for Python create venv
+  include_role:
+    name: python-venv
+  

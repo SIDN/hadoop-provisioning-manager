@@ -35,31 +35,38 @@ RUN locale-gen $LC_ALL
 # always make sure pip is up to date!
 RUN python3 -m pip install --no-cache --upgrade setuptools pip
 
-RUN python3 -m pip install jupyterhub
+#RUN python3 -m pip install jupyterhub notebook
 
 RUN npm install -g configurable-http-proxy \
  && rm -rf ~/.npm
 
-RUN python3 -m pip install jupyterlab notebook
+#RUN python3 -m pip install jupyterlab notebook
+
+COPY requirements.txt /
+
+RUN pip3 install -r requirements.txt
 
 # Install python libs
-RUN python3 -m pip install \
-  bitarray six \
-  kerberos \
-  thrift_sasl==0.4.3 \
-  thrift==0.16.0 \
-  impyla==0.18a4 \
-  pyspark \
-  numpy \
-  scipy \
-  matplotlib \
-  scikit-learn \
-  pandas \
-  sqlalchemy \
-  jupyterhub-kerberosauthenticator \
-  psycopg2-binary
+#RUN python3 -m pip install \
+#  jupyterlab \ 
+#  jupyterhub \
+#  notebook \
+#  bitarray six \
+#  kerberos \
+#  thrift_sasl==0.4.3 \
+#  thrift==0.16.0 \
+#  impyla==0.18a4 \
+#  pyspark \
+#  numpy \
+#  scipy \
+#  matplotlib \
+#  scikit-learn \
+#  pandas \
+#  sqlalchemy \
+#  jupyterhub-kerberosauthenticator \
+#  psycopg2-binary 
 
-RUN mkdir -p /etc/jupyterhub/tls
+#RUN mkdir -p /etc/jupyterhub/tls
 
 # patch problems in libs
 # 

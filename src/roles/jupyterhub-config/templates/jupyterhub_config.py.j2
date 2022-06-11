@@ -2,6 +2,17 @@
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
 
+# Run single user notebook server as Yarn container on cluster
+c.JupyterHub.spawner_class = 'yarnspawner.YarnSpawner'
+
+# The principal JupyterHub is running as
+c.YarnSpawner.principal = '{{ jupyterhub_os_user }}'
+
+# Path to the keytab you created
+c.YarnSpawner.keytab = '{{ jupyterhub_etc_dir }}/jupyterhub.keytab'
+
+c.YarnSpawner.prologue = 'source {{ python_venv_dir }}/{{ jupyterhub_py_env_name }}/bin/activate'
+
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
@@ -179,7 +190,7 @@
 c.JupyterHub.authenticator_class = 'kerberosauthenticator.KerberosAuthenticator'
 #c.KerberosAuthenticator.admin_users = set(['admin'])
 c.KerberosAuthenticator.auto_login = True
-c.KerberosAuthenticator.keytab = '/etc/jupyterhub/http.keytab'
+c.KerberosAuthenticator.keytab = '{{ jupyterhub_etc_dir }}/http.keytab'
 
 ## The base URL of the entire application.
 #
@@ -392,7 +403,7 @@ c.JupyterHub.db_url = "postgresql+psycopg2://{{ jupyterhub_db_user }}:{{ jupyter
 #
 #          .. versionadded:: 0.8
 #  Default: ''
-c.JupyterHub.hub_connect_ip = '{{ inventory_hostname }}'
+# c.JupyterHub.hub_connect_ip = '{{ inventory_hostname }}'
 
 ## DEPRECATED
 #
@@ -428,7 +439,7 @@ c.JupyterHub.hub_connect_ip = '{{ inventory_hostname }}'
 #          See `hub_connect_ip` for cases where the bind and connect address should differ,
 #          or `hub_bind_url` for setting the full bind URL.
 #  Default: '127.0.0.1'
-# c.JupyterHub.hub_ip = '127.0.0.1'
+c.JupyterHub.hub_ip = '{{ inventory_hostname }}'
 
 ## The internal port for the Hub process.
 #

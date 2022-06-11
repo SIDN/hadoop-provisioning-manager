@@ -122,6 +122,14 @@ Pushed to: {{  inventory_hostname }}
     <value>*</value>
   </property>
   <property>
+    <name>hadoop.proxyuser.{{ jupyterhub_os_user }}.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.{{ jupyterhub_os_group }}.groups</name>
+    <value>*</value>
+  </property>
+  <property>
     <name>hadoop.security.group.mapping</name>
     <value>org.apache.hadoop.security.ShellBasedUnixGroupsMapping</value>
   </property>
