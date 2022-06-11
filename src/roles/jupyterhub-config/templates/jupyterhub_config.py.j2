@@ -392,7 +392,7 @@ c.JupyterHub.db_url = "postgresql+psycopg2://{{ jupyterhub_db_user }}:{{ jupyter
 #
 #          .. versionadded:: 0.8
 #  Default: ''
-# c.JupyterHub.hub_connect_ip = ''
+c.JupyterHub.hub_connect_ip = '{{ inventory_hostname }}'
 
 ## DEPRECATED
 #
@@ -746,13 +746,13 @@ c.JupyterHub.db_url = "postgresql+psycopg2://{{ jupyterhub_db_user }}:{{ jupyter
 #
 #          When setting this, you should also set ssl_key
 #  Default: ''
-c.JupyterHub.ssl_cert = '/etc/jupyterhub/tls/{{ tls_remote_pub_chain }}'
+c.JupyterHub.ssl_cert = '{{ tls_etc_dir }}/{{ tls_remote_pub_chain }}'
 
 ## Path to SSL key file for the public facing interface of the proxy
 #
 #          When setting this, you should also set ssl_cert
 #  Default: ''
-c.JupyterHub.ssl_key = '/etc/jupyterhub/tls/{{ tls_remote_priv_key }}'
+c.JupyterHub.ssl_key = '{{ tls_etc_dir }}/{{ tls_remote_priv_key }}'
 
 ## Host to send statsd metrics to. An empty string (the default) disables sending
 #  metrics.
@@ -999,7 +999,8 @@ c.JupyterHub.ssl_key = '/etc/jupyterhub/tls/{{ tls_remote_priv_key }}'
 #  process's environment (such as `CONFIGPROXY_AUTH_TOKEN`) is not passed to the
 #  single-user server's process.
 #  Default: ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'JUPYTERHUB_SINGLEUSER_APP']
-# c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'JUPYTERHUB_SINGLEUSER_APP']
+c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'JUPYTERHUB_SINGLEUSER_APP',
+'HADOOP_CONF_DIR', 'YARN_CONF_DIR', 'SPARK_CONF_DIR', 'JAVA_HOME']
 
 ## Extra environment variables to set for the single-user server's process.
 #

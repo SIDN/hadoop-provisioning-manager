@@ -80,4 +80,4 @@ ENV SPARK_CONF_DIR={{ spark_etc_dir }}
 
 EXPOSE 8000
 
-CMD ["jupyterhub", "-f", "/etc/jupyterhub/jupyterhub_config.py"]
+CMD ["jupyterhub", "-f", "{{ jupyterhub_etc_dir }}/jupyterhub_config.py"]
