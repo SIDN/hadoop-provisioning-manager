@@ -1419,7 +1419,7 @@ def add_user_hook(authenticator, handler, authentication):
             shutil.copy(file, f'/data/{user}/examples/')
 
          for root, dirs, files in os.walk(f'/data/{user}/'):
-            shutil.chown(root, user, group)
+            shutil.chown(root, user, user)
             for item in dirs:
               shutil.chown(os.path.join(root, item), user, user)
             for item in files:
