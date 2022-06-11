@@ -25,14 +25,14 @@
   
 - name: Create Dockerfile
   ansible.builtin.template:
-    src: ../templates/{{ item }}
-    dest: "{{ cache_root }}/jupyterhub/{{ item | replace('.j2','') }}"
+    src: "{{ item }}"
+    dest: "{{ cache_root }}/jupyterhub/{{ item | basename | replace('.j2','') }}"
     mode: '0644'
   loop:
-    - Dockerfile.j2
-    - requirements.txt.j2
-    - examples/impyla-example.ipynb.j2
-    - examples/pyspark-example.ipynb.j2
+    - ../templates/Dockerfile.j2
+    - ../templates/requirements.txt.j2
+    - ../templates/examples/impyla-example.ipynb.j2
+    - ../templates/examples/pyspark-example.ipynb.j2
   delegate_to: localhost
   connection: local
 
