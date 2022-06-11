@@ -43,7 +43,7 @@ COPY requirements.txt /
 RUN pip3 install -r requirements.txt
 
 RUN mkdir /examples
-COPY *.ipynb /examples
+COPY *.ipynb /examples/
 
 # patch problems in libs
 # 
