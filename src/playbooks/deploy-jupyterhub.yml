@@ -13,6 +13,7 @@
     - name: Create Python cluster env
       set_fact:
          py_path: "{{ python_venv_dir }}/{{ spark_default_python_venv }}/bin/python3"
+         py_version: 3
          py_env_name: 'jupyterhub_env'
          py_env_req_file: "{{ cache_root }}/jupyterhub/requirements.txt"
          py_env_permission: 'root:root'
