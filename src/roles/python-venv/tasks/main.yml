@@ -8,18 +8,18 @@
 - name: Get path for python2 executable
   set_fact: 
     py_path: "/usr/bin/python2"
-  when: py_version|int == 2
+  when: (py_version|int == 2) and not py_path
     
 - name: Get path for python3 executable (RHEL)
   set_fact: 
     py_path: "{{ stack_root }}/python/python-{{ version.python }}/bin/python{{ version.python }}"
   when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") 
-      and py_version|int == 3
+      and (py_version|int == 3) and not py_path
           
 - name: Get path for python3 executable (Ubuntu)
   set_fact: 
     py_path: "/usr/bin/python{{ version.python }}"
-  when: (ansible_distribution == "Ubuntu") and (py_version|int == 3)
+  when: (ansible_distribution == "Ubuntu") and (py_version|int == 3) and not py_path
   
 - name: Check if virtual env already exists
   ansible.builtin.stat:

@@ -1,3 +1,26 @@
+# jupyter notebooks run on cluster hosts, every cluster host needs 
+# py env for this.
+- hosts: hadoop
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/jupyterhub_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    - name: Create Python cluster env
+      set_fact:
+         py_path: "{{ python_venv_dir }}/{{ spark_default_python_venv }}/bin/python3"
+         py_version: 3
+         py_env_name: 'jupyterhub_env'
+         py_env_req_file: "{{ cache_root }}/jupyterhub/requirements.txt"
+         py_env_permission: 'root:{{ jupyterhub_os_group }}'
+
+    - name: Include role for Python create venv
+      include_role:
+        name: python-venv
+        
 - hosts: jupyterhub
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
@@ -46,3 +69,5 @@
       include_role:
         name: jupyterhub-config
       when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)    
+
+
