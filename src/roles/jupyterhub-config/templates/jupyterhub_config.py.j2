@@ -1408,14 +1408,16 @@ c.Spawner.notebook_dir = '~/'
 #      c.Authenticator.post_auth_hook = my_hook
 #  Default: None
 
-import subprocess
+import subprocess, glob, shutil
 def add_user_hook(authenticator, handler, authentication):
     user = authentication['name']
     try:
          # executing useradd command using subprocess module
          subprocess.run(['useradd', '-d', f'/data/{user}', '-m', user ])
          subprocess.run(['mkdir', f'/data/{user}/examples' ])
-         subprocess.run(['cp', '/examples/*.ipynb', f'/data/{user}/examples' ])
+         for file in glob.glob(r'/examples/*.ipynb'):
+            shutil.copy(file, f'/data/{user}/examples/')
+         #subprocess.run(['cp', '/examples/*.ipynb', f'/data/{user}/examples' ])
          subprocess.run(['chown', '-R', f'{user}:{user}' f'/data/{user}' ])
     except:
          print(f"Failed to add user")     
