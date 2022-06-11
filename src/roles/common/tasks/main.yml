@@ -23,30 +23,31 @@
     name:
       - chrony
       - net-tools
+      - gcc
     state: latest
   become: yes
 
-- name: Make sure chronyd is automatically started
-  ansible.builtin.systemd:
-    name: chronyd
-    state: started
-    enabled: yes
-  become: yes
-
-# create a directory for all python venvs
-- name: Create venv base directory
-  file:
-    path: '{{ python_venv_dir }}'
-    state: directory
-    mode: '755'
-  become: yes  
-
-- name: Include Ubuntu specific installation
-  include_tasks: ubuntu.yml
-  when:  ansible_distribution == "Ubuntu"
-
-- name: Include RedHat specific installation
-  include_tasks: rhel.yml
-  when: ansible_distribution == "RedHat"
-  
+# - name: Make sure chronyd is automatically started
+#   ansible.builtin.systemd:
+#     name: chronyd
+#     state: started
+#     enabled: yes
+#   become: yes
+# 
+# # create a directory for all python venvs
+# - name: Create venv base directory
+#   file:
+#     path: '{{ python_venv_dir }}'
+#     state: directory
+#     mode: '755'
+#   become: yes  
+# 
+# - name: Include Ubuntu specific installation
+#   include_tasks: ubuntu.yml
+#   when:  ansible_distribution == "Ubuntu"
+# 
+# - name: Include RedHat specific installation
+#   include_tasks: rhel.yml
+#   when: ansible_distribution == "RedHat"
+# 
 
