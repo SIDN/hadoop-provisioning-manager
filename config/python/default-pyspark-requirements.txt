@@ -1,3 +1,11 @@
 # requirements used to create the default Python venv for Pyspark
 pyspark
 pandas
+kerberos
+numpy
+scipy
+matplotlib
+scikit-learn
+sqlalchemy
+psycopg2-binary
+pyarrow

@@ -28,11 +28,11 @@ log4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{1}: 
 # spark-shell/spark-sql, the log level for these classes is used to overwrite
 # the root logger's log level, so that the user can have different defaults
 # for the shell and regular Spark apps.
-log4j.logger.org.apache.spark.repl.Main=WARN
-log4j.logger.org.apache.spark.sql.hive.thriftserver.SparkSQLCLIDriver=WARN
+log4j.logger.org.apache.spark.repl.Main=INFO
+log4j.logger.org.apache.spark.sql.hive.thriftserver.SparkSQLCLIDriver=INFO
 
 # Settings to quiet third party logs that are too verbose
-log4j.logger.org.sparkproject.jetty=WARN
+log4j.logger.org.sparkproject.jetty=INFO
 log4j.logger.org.sparkproject.jetty.util.component.AbstractLifeCycle=ERROR
 log4j.logger.org.apache.spark.repl.SparkIMain$exprTyper=INFO
 log4j.logger.org.apache.spark.repl.SparkILoop$SparkILoopInterpreter=INFO

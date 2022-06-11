@@ -23,7 +23,6 @@
     name:
       - chrony
       - net-tools
-      - gcc
     state: latest
   become: yes
 

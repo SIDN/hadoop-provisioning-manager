@@ -1,20 +1,8 @@
 # Configuration file for jupyterhub.
+#
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
-
-# Run single user notebook server as Yarn container on cluster
-c.JupyterHub.spawner_class = 'yarnspawner.YarnSpawner'
-
-# The principal JupyterHub is running as
-c.YarnSpawner.principal = '{{ jupyterhub_os_user }}'
-
-# Path to the keytab you created
-c.YarnSpawner.keytab = '{{ jupyterhub_etc_dir }}/jupyterhub.keytab'
-
-c.YarnSpawner.prologue = 'source {{ python_venv_dir }}/{{ jupyterhub_py_env_name }}/bin/activate'
-
-c.NotebookApp.contents_manager_class = 'hdfscm.HDFSContentsManager'
-
+#
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
@@ -1426,6 +1414,8 @@ def add_user_hook(authenticator, handler, authentication):
     try:
          # executing useradd command using subprocess module
          subprocess.run(['useradd', '-d', f'/data/{user}', '-m', user ])
+         subprocess.run(['mkdir', f'/data/{user}/examples' ])
+         subprocess.run(['chown', '-R', f'{user}:{user}' f'/data/{user}' ])
     except:
          print(f"Failed to add user")     
 

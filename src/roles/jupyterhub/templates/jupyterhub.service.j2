@@ -14,7 +14,8 @@ User={{ jupyterhub_os_user }}
 Group={{ jupyterhub_os_group }}
 Type=exec
 
-ExecStart=/usr/bin/docker run --rm --name jupyterhub -p {{ jupyterhub_port }}:8000 \
+ExecStart=/usr/bin/docker run --network host --rm --name jupyterhub \
+-p {{ jupyterhub_port }}:8000 \
 -v {{ config_root }}:{{ config_root }} \
 -v {{ jupyterhub_log_dir }}:{{ jupyterhub_log_dir }} \
 -v {{ jupyterhub_data_dir }}:/data \

@@ -1,0 +1,104 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fe4ad333-8766-4b8b-a20d-2b743a11af92",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!kinit maarten@{{ kerberos_realm }} -kt my.keytab"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8a279be0-3e9f-42c5-80f1-7f3cf754f53b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pyspark.sql import SparkSession"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d0db7b0c-afd9-4e3f-a1fb-78e0651b94d3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "spark = (SparkSession.builder\n",
+    "    .master('yarn') \n",
+    "    .config('spark.app.name', 'my notebook')\n",
+    "    .config('spark.submit.deployMode', 'client')\n",
+    "    .config('spark.serializer', 'org.apache.spark.serializer.KryoSerializer')\n",
+    "    .config(\"spark.sql.sources.partitionOverwriteMode\", \"dynamic\")\n",
+    "    .config('spark.sql.autoBroadcastJoinThreshold', '100MB')\n",
+    "    .config('spark.sql.parquet.int96AsTimestamp', 'true')\n",
+    "    .config('spark.sql.optimizer.expression.nestedPruning.enabled', 'true')\n",
+    "    .config('spark.sql.parquet.binaryAsString', 'true')\n",
+    "    .config('spark.sql.files.ignoreCorruptFiles', 'true')\n",
+    "    .config('spark.sql.session.timeZone', 'UTC')\n",
+    "    .config('spark.executor.instances', 11)\n",
+    "    .config('spark.executor.cores', 5)\n",
+    "    .getOrCreate())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9e79f874-90cd-4e17-bf63-caec8b853a0b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pyspark.sql.functions as F\n",
+    "hdfs_path = '/user/path/to/parquet/data'"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0986b874-be63-488a-818a-7f10caa12a9a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = (spark\n",
+    "        .read\n",
+    "        .parquet(hdfs_path)\n",
+    "        .limit(100)\n",
+    "      )"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d477c5f7-51f1-4184-b88e-67b472fe700a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data = df.toPandas()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

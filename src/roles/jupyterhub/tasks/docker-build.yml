@@ -31,6 +31,8 @@
   loop:
     - Dockerfile.j2
     - requirements.txt.j2
+    - impyla-example.ipynb.j2
+    - pyspark-example.ipynb.j2
   delegate_to: localhost
   connection: local
 

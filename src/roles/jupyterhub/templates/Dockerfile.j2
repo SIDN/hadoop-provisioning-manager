@@ -35,38 +35,15 @@ RUN locale-gen $LC_ALL
 # always make sure pip is up to date!
 RUN python3 -m pip install --no-cache --upgrade setuptools pip
 
-#RUN python3 -m pip install jupyterhub notebook
-
 RUN npm install -g configurable-http-proxy \
  && rm -rf ~/.npm
 
-#RUN python3 -m pip install jupyterlab notebook
-
+# Install python libs
 COPY requirements.txt /
-
 RUN pip3 install -r requirements.txt
 
-# Install python libs
-#RUN python3 -m pip install \
-#  jupyterlab \ 
-#  jupyterhub \
-#  notebook \
-#  bitarray six \
-#  kerberos \
-#  thrift_sasl==0.4.3 \
-#  thrift==0.16.0 \
-#  impyla==0.18a4 \
-#  pyspark \
-#  numpy \
-#  scipy \
-#  matplotlib \
-#  scikit-learn \
-#  pandas \
-#  sqlalchemy \
-#  jupyterhub-kerberosauthenticator \
-#  psycopg2-binary 
-
-#RUN mkdir -p /etc/jupyterhub/tls
+RUN mkdir /examples
+COPY *.ipynb /examples
 
 # patch problems in libs
 # 
@@ -81,6 +58,7 @@ RUN sed -i "s/jinja2_env/jinja2_env_sync/" /usr/local/lib/python3.10/dist-packag
 # see: https://github.com/apache/thrift/pull/2620
 RUN sed -i "s/def isOpen(self):/def isOpen(self):\\n        return self.handle is not None/" /usr/local/lib/python3.10/dist-packages/thrift/transport/TSocket.py
 
+# set pyspark envs
 ENV HADOOP_CONF_DIR={{ hadoop_etc_dir }}
 ENV YARN_CONF_DIR={{ hadoop_etc_dir }}
 ENV SPARK_CONF_DIR={{ spark_etc_dir }}
