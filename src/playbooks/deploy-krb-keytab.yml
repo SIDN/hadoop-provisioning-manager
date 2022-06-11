@@ -497,7 +497,7 @@
         command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
         responses:
           kadmin:
-            - "xst -k {{ superset_etc_dir }}/jupyterhub.keytab jupyterhub/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "xst -k {{ jupyterhub_etc_dir }}/jupyterhub.keytab jupyterhub/{{ inventory_hostname }}@{{ kerberos_realm }}"
             - "quit"
           Password for (.*): "{{ kerberos_hadoop_admin_password }}"
           
