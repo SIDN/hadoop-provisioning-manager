@@ -13,6 +13,8 @@ c.YarnSpawner.keytab = '{{ jupyterhub_etc_dir }}/jupyterhub.keytab'
 
 c.YarnSpawner.prologue = 'source {{ python_venv_dir }}/{{ jupyterhub_py_env_name }}/bin/activate'
 
+c.NotebookApp.contents_manager_class = 'hdfscm.HDFSContentsManager'
+
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------

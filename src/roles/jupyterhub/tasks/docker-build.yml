@@ -26,7 +26,7 @@
 - name: Create Dockerfile
   ansible.builtin.template:
     src: ../templates/{{ item }}
-    dest: '{{ cache_root }}/jupyterhub/{{ item | replace('.j2','') }}'
+    dest: "{{ cache_root }}/jupyterhub/{{ item | replace('.j2','') }}"
     mode: '0644'
   loop:
     - Dockerfile.j2
