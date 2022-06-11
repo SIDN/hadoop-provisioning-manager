@@ -7,6 +7,7 @@
     - "{{ prov_cfg_dir }}/vars/jupyterhub_vars.yml"
     - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
     - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/spark_vars.yml"
   remote_user: hadoop-mgr
   tasks:
     - name: Create Python cluster env
