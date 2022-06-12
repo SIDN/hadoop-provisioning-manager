@@ -3,3 +3,5 @@
 # 
 # after changing this a redeploy of Jupyterhub needs to rebuild the Docker image
 plotly
+jupyterlab-drawio
+jupyterlab-git
