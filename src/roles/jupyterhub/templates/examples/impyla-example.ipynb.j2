@@ -30,9 +30,9 @@
    },
    "outputs": [],
    "source": [
-    "conn = connect(host='groups['impala_ha_proxy'][0]', auth_mechanism='GSSAPI', use_ssl=True)\n",
+    "conn = connect(host='{{ groups['impala_ha_proxy'][0] }}', auth_mechanism='GSSAPI', use_ssl=True)\n",
     "cursor = conn.cursor()\n",
-    "cursor.execute('SELECT .. FROM .. WHERE ... 1 LIMIT 10')"
+    "cursor.execute('SELECT .. FROM .. WHERE ... LIMIT 10')"
    ]
   },
   {

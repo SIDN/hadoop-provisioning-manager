@@ -1000,8 +1000,8 @@ c.JupyterHub.ssl_key = '{{ tls_etc_dir }}/{{ tls_remote_priv_key }}'
 #  process's environment (such as `CONFIGPROXY_AUTH_TOKEN`) is not passed to the
 #  single-user server's process.
 #  Default: ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'JUPYTERHUB_SINGLEUSER_APP']
-c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'JUPYTERHUB_SINGLEUSER_APP',
-'HADOOP_CONF_DIR', 'YARN_CONF_DIR', 'SPARK_CONF_DIR', 'JAVA_HOME']
+#c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'JUPYTERHUB_SINGLEUSER_APP',
+#'HADOOP_CONF_DIR', 'YARN_CONF_DIR', 'SPARK_CONF_DIR', 'JAVA_HOME']
 
 ## Extra environment variables to set for the single-user server's process.
 #
@@ -1026,7 +1026,11 @@ c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', '
 #      allowing override of 'default' env variables,
 #      such as JUPYTERHUB_API_URL.
 #  Default: {}
-# c.Spawner.environment = {}
+c.Spawner.environment = {
+  'HADOOP_CONF_DIR': '{{ hadoop_etc_dir }}', 
+  'YARN_CONF_DIR': '{{ hadoop_etc_dir }}', 
+  'SPARK_CONF_DIR': '{{ spark_etc_dir }}'
+}
 
 ## Timeout (in seconds) before giving up on a spawned HTTP server
 #
@@ -1414,6 +1418,8 @@ def add_user_hook(authenticator, handler, authentication):
     try:
          # executing useradd command using subprocess module
          subprocess.run(['useradd', '-d', f'/data/{user}', '-m', user ])
+         
+         # add sample to new user directory
          subprocess.run(['mkdir', f'/data/{user}/examples' ])
          for file in glob.glob(r'/examples/*.ipynb'):
             shutil.copy(file, f'/data/{user}/examples/')

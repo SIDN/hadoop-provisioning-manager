@@ -56,6 +56,9 @@ version:
   grafana: '8.4.3'
   superset: '1.5.0'
   jupyterhub: '2.3.1'
+  jupyterlab: '3.4.3'
+  
+  
 
 # location where custom virtualenvs are created
 python_venv_dir: '{{ stack_root }}/hadoop-venvs'
