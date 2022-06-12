@@ -20,15 +20,22 @@ Impyla and Pyspark are both available to use for querying data from Hadoop.
 </table>
 <br>
 
-<h4>Impyla</h4>
+<h4>Authentication</h4>
 <p>
-Impyla requires an active Kerberos session, upload your keytab to 
-your notebook and then use kinit to create a Kerberos session.
+Impyla and Pyspark both requires an active Kerberos session, upload your keytab to 
+your notebook and then use kinit to create a Kerberos session by adding the following at the top
+of your notebook.
 </p>
 <pre><code>
 # Create Kerberos session
 !kinit user@{{ kerberos_realm }} -kt /path/to/my.keytab
+</code></pre>
 
+<h4>Impyla</h4>
+<p>
+Create an Impyl to the Impala loadbalancer (proxy), make sure to also enable SSL.
+</p>
+<pre><code>
 # run Impyla query
 from impala.dbapi import connect
 from impala.util import as_pandas
@@ -42,3 +49,44 @@ df = as_pandas(cursor)
 
 
 <h4>Pyspark</h4>
+<p>
+Create a Pyspark driver where the Spark Driver (client) is executed on the Jupyterhub server and the
+Spark executors are running on the cluster using Yarn containers.
+</p>
+<pre><code>
+from pyspark.sql import SparkSession
+import pyspark.sql.functions as F
+
+spark = (SparkSession.builder
+    .master('yarn') 
+    .config('spark.app.name', 'my notebook')
+    .config('spark.submit.deployMode', 'client')
+    .config('spark.serializer', 'org.apache.spark.serializer.KryoSerializer')
+    .config("spark.sql.sources.partitionOverwriteMode", "dynamic")
+    .config('spark.sql.autoBroadcastJoinThreshold', '100MB')
+    .config('spark.sql.parquet.int96AsTimestamp', 'true')
+    .config('spark.sql.optimizer.expression.nestedPruning.enabled', 'true')
+    .config('spark.sql.parquet.binaryAsString', 'true')
+    .config('spark.sql.files.ignoreCorruptFiles', 'true')
+    .config('spark.sql.session.timeZone', 'UTC')
+    .config('spark.executor.instances', 11)
+    .config('spark.executor.cores', 5)
+    .getOrCreate())
+
+df = (spark
+        .read
+        .parquet('/user/path/to/parquet/data')
+        .limit(100)
+      )
+      
+data = df.toPandas()
+</code></pre>
+
+
+<h4>Pyhton libraries</h4>
+<p>
+JupyterLab notbooks have the following Pyhton packages installed by default.
+
+</p>
+
+{{ jupyterhub_default_packages }}
