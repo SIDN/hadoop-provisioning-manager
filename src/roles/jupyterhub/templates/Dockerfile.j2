@@ -63,6 +63,10 @@ ENV HADOOP_CONF_DIR={{ hadoop_etc_dir }}
 ENV YARN_CONF_DIR={{ hadoop_etc_dir }}
 ENV SPARK_CONF_DIR={{ spark_etc_dir }}
 
+# install user required python packages
+COPY jupyterhub-user-requirements.txt /
+RUN pip3 install -r jupyterhub-user-requirements.txt
+
 EXPOSE 8000
 
 CMD ["jupyterhub", "-f", "{{ jupyterhub_etc_dir }}/jupyterhub_config.py"]

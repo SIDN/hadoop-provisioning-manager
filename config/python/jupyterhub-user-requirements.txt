@@ -1,0 +1,5 @@
+# Additional Python package requirements for Jupyterhub
+# If users need additional packages add them to this file
+# 
+# after changing this a redeploy of Jupyterhub needs to rebuild the Docker image
+pyplot

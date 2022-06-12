@@ -96,82 +96,90 @@
   connection: local
   become: yes
 
-- name: Pull Hue image to controller server
-  command: "docker pull gethue/hue:{{ version.hue }}"
-  delegate_to: localhost
-  connection: local
-  become: yes
-  when: docker_img_exists.stdout | int == 0
+# - name: Pull Hue image to controller server
+#   command: "docker pull gethue/hue:{{ version.hue }}"
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+  #when: docker_img_exists.stdout | int == 0
   
 # start docker without Kerberos mappings, otherwise we cannot install krb5-user
-- name: Start Hue Docker container without Kerberos
-  shell: >
-    docker run -d --rm --name hue -p {{ hue_port }}:8888 gethue/hue:{{ version.hue }}
-  delegate_to: localhost
-  connection: local
-  become: yes
-  when: docker_img_exists.stdout | int == 0
+# - name: Start Hue Docker container without Kerberos
+#   shell: >
+#     docker run -d --rm --name hue -p {{ hue_port }}:8888 gethue/hue:{{ version.hue }}
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+#   when: docker_img_exists.stdout | int == 0
   
 # make sure Docker container has had time to start
 # before updating the container
-- name: Wait for Hue Docker container to become active
-  wait_for:
-    host: localhost
-    port: '{{ hue_port }}'
-    delay: 5
-    timeout: 60
-  delegate_to: localhost
-  connection: local
-  when: docker_img_exists.stdout | int == 0
+# - name: Wait for Hue Docker container to become active
+#   wait_for:
+#     host: localhost
+#     port: '{{ hue_port }}'
+#     delay: 5
+#     timeout: 60
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
   
 # Hue 4.10.0 has bug that no kerberos user utils have been installed.
 # fix this by adding correct packages
 # also add home dir for user hue, to store the krb cache
 # TODO: remove this when this is fixed by hue project, keep the hue home dir
-- name: Install Kerberos packages in Hue container
-  community.docker.docker_container_exec:
-    container: hue
-    argv:
-      - /bin/bash
-      - "-c"
-      - "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y krb5-user krb5-config && mkdir -p /home/hue && chown -R hue:hue /home/hue"
-    chdir: /root
-    user: root
-  delegate_to: localhost
-  connection: local
-  become: yes
-  when: docker_img_exists.stdout | int == 0
+# - name: Install Kerberos packages in Hue container
+#   community.docker.docker_container_exec:
+#     container: hue
+#     argv:
+#       - /bin/bash
+#       - "-c"
+#       - "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y krb5-user krb5-config && mkdir -p /home/hue && chown -R hue:hue /home/hue"
+#     chdir: /root
+#     user: root
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+#   when: docker_img_exists.stdout | int == 0
   
-- name: Commit Hue docker container changes
-  command: docker commit hue gethue/hue:{{ version.hue }}
-  delegate_to: localhost
-  connection: local
-  become: yes
-  when: docker_img_exists.stdout | int == 0
+# - name: Commit Hue docker container changes
+#   command: docker commit hue gethue/hue:{{ version.hue }}
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+#   when: docker_img_exists.stdout | int == 0
   
-- name: Stop Hue Docker container without Kerberos
-  command: docker stop hue
-  delegate_to: localhost
-  connection: local
-  become: yes
-  when: docker_img_exists.stdout | int == 0
+# - name: Stop Hue Docker container without Kerberos
+#   command: docker stop hue
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+#   when: docker_img_exists.stdout | int == 0
   
-- name: Tag Hue docker image
-  shell: >
-    docker image tag gethue/hue:{{ version.hue  }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
-  delegate_to: localhost
-  connection: local
-  become: yes
-  when: docker_img_exists.stdout | int == 0
-
-# deploy img to server  
-- name: Push Hue docker image to registry
-  shell: >
-    docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
-  delegate_to: localhost
-  connection: local
-  become: yes
-  when: docker_img_exists.stdout | int == 0
+# - name: Tag Hue docker image
+#   shell: >
+#     docker image tag gethue/hue:{{ version.hue  }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+#   when: docker_img_exists.stdout | int == 0
+# 
+# # deploy img to server  
+# - name: Push Hue docker image to registry
+#   shell: >
+#     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+#   when: docker_img_exists.stdout | int == 0
+  
+- name: Tag and push to local registry
+  community.docker.docker_image:
+    name: gethue/hue:{{ version.hue }}
+    repository: {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue
+    tag: {{ version.hue }}
+    push: yes
+    source: pull
 
 - name: Pull Hue image to Hue server
   shell: >

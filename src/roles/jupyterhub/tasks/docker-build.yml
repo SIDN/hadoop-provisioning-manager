@@ -1,27 +1,23 @@
-- name: Check if Jupyterhub docker image already exists
-  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub.*latest | wc -l"
-  register: docker_img_exists
-  delegate_to: localhost
-  connection: local
-  become: yes
-  
-- name: Show Jupyterhub docker image already exists
-  ansible.builtin.debug:
-    msg: Jupyterhub image detect {{ docker_img_exists.stdout }}
-  delegate_to: localhost
-  connection: local
-  become: yes
-  
-- name: Determine Ubuntu Java version (Ubuntu)
-  set_fact:
-      ubuntu_java_version: "{{ version.java.split('.')[1] }}"
-
-- name: Create docker build directory
-  file:
-    path: "{{ cache_root }}/jupyterhub"
-    state: directory
-  delegate_to: localhost
-  connection: local
+# - name: Check if Jupyterhub docker image already exists
+#   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub.*{{ version.jupyterhub }} | wc -l"
+#   register: docker_img_exists
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+# 
+# - name: Show Jupyterhub docker image already exists
+#   ansible.builtin.debug:
+#     msg: Jupyterhub image detect {{ docker_img_exists.stdout }}
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+# 
+# - name: Create docker build directory
+#   file:
+#     path: "{{ cache_root }}/jupyterhub"
+#     state: directory
+#   delegate_to: localhost
+#   connection: local
   
 - name: Create Dockerfile
   ansible.builtin.template:
@@ -33,6 +29,7 @@
     - ../templates/requirements.txt.j2
     - ../templates/examples/impyla-example.ipynb.j2
     - ../templates/examples/pyspark-example.ipynb.j2
+    - "{{ prov_cfg_dir }}/python/jupyterhub-user-requirements.txt"
   delegate_to: localhost
   connection: local
 
@@ -52,7 +49,7 @@
   
 - name: Deploy image to Jupyterhub server  
   community.docker.docker_image:
-    name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:latest"
+    name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:{{ version.jupyterhub }}"
     source: pull
     force_source: yes
 
