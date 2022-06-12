@@ -27,7 +27,7 @@
     mode: '0777'
   become: yes
   
-- name: install package dependencies
+- name: Install package dependencies
   ansible.builtin.package:
     name:
       - wget
@@ -173,11 +173,11 @@
 #   become: yes
 #   when: docker_img_exists.stdout | int == 0
   
-- name: Tag and push to local registry
+- name: Pull image, tag and push to registry
   community.docker.docker_image:
     name: gethue/hue:{{ version.hue }}
-    repository: {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue
-    tag: {{ version.hue }}
+    repository: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue"
+    tag: "{{ version.hue }}"
     push: yes
     source: pull
 
