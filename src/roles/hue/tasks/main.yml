@@ -82,19 +82,19 @@
 # Pull remote Hue image to controller
 # add a tag and push it to local docker registry
 # from registry distribute to Hue servers.
-- name: Check if Hue docker image already exists
-  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue.*{{ version.hue }} | wc -l"
-  register: docker_img_exists
-  delegate_to: localhost
-  connection: local
-  become: yes
-  
-- name: Show Hue docker image already exists
-  ansible.builtin.debug:
-    msg: Hue image detect {{ docker_img_exists.stdout }}
-  delegate_to: localhost
-  connection: local
-  become: yes
+# - name: Check if Hue docker image already exists
+#   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue.*{{ version.hue }} | wc -l"
+#   register: docker_img_exists
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+# 
+# - name: Show Hue docker image already exists
+#   ansible.builtin.debug:
+#     msg: Hue image detect {{ docker_img_exists.stdout }}
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
 
 # - name: Pull Hue image to controller server
 #   command: "docker pull gethue/hue:{{ version.hue }}"

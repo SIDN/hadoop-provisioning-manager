@@ -38,7 +38,7 @@
     build:
       path: "{{ cache_root }}/jupyterhub"
     name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub"
-    tag: latest
+    tag: "{{ version.jupyterhub }}"
     push: yes
     source: build
     force_source: yes
