@@ -1,10 +1,11 @@
 <h1 class="display-6">Jupyterhub</h1>
 <p>
-<a href="https://jupyter.org/hub">Jupyterhub</a> A multi-user version of the notebook designed for companies, classrooms and research labs
+<a href="https://jupyter.org/hub">Jupyterhub</a> A multi-user version of Jupyterlab notebooks
 </p>
 <p>
 You are automatically logged-in if an active Kerberos session is detected. Kerberos principal admin@{{ kerberos_realm }} is the default Hue administrator.
-Impyla and Pyspark are both available to use for querying data from Hadoop.
+Impyla and Pyspark are both available to use for querying data from Hadoop.<br>
+
 </p>
 <table class="table table-hover">
   <tr>
@@ -18,6 +19,12 @@ Impyla and Pyspark are both available to use for querying data from Hadoop.
     </tr>
     {% endfor %}
 </table>
+<br>
+
+<h4>Deploy</h4>
+<p>
+Building and deploying Jupyterhub may take some time, therefore the &quot;deploy.sh all&quot; command does not deploy Jupyterhub, use "&quot;deploy.sh jupyterhub&quot;"
+</p>
 <br>
 
 <h4>Authentication</h4>
@@ -85,12 +92,25 @@ data = df.toPandas()
 
 <h4>Python package</h4>
 <p>
-JupyterLab notbooks have the following Python packages installed by default.
+JupyterLab has the following Python packages installed by default.
 
 </p>
 
-{{ jupyterhub_default_packages }}
-
+<ul>
 {% for p in jupyterhub_default_packages %}
-  package {{ p }}
+   {% if not o.startswith('#') %}
+     <li>{{ p }}</li>
+    {% endif %}  
 {% endfor %}
+</ul>
+
+Installing additional package can be done by adding these to the configuration file &quot;config/python/jupyterhub-user-requirements.txt&quot; in your configuration set.
+After updating the package list you must redeploy (rebuild the Docker image) Jupyterhub.
+
+{% for p in jupyterhub_user_packages %}
+   {% if not o.startswith('#') %}
+     <li>{{ p }}</li>
+    {% endif %}  
+{% endfor %}
+</ul>
+

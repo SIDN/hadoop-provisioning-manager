@@ -19,9 +19,6 @@ jupyterhub_db: jupyterhub
 jupyterhub_db_user: jupyterhub
 jupyterhub_db_password: "{{ vault_jupyterhub_db_password }}"
 
-# name of py env for jupyterhub on cluster nodes
-jupyterhub_py_env_name: "jupyterhub_env"
-
 # Additional options, thse are added to the jupyterhub config
 jupyterhub_additional_cfg_block: |
   # add additional config lines here
