@@ -91,6 +91,6 @@ JupyterLab notbooks have the following Python packages installed by default.
 
 {{ jupyterhub_default_packages }}
 
-% for p in jupyterhub_default_packages %}
+{% for p in jupyterhub_default_packages %}
   package {{ p }}
 {% endfor %}
