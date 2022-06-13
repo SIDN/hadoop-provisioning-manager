@@ -57,6 +57,7 @@
     json_label_map: "{{ lookup('file','../templates/app/label_map.json') | from_json }}"
     jupyterhub_default_packages: "{{ lookup('template','../../jupyterhub/templates/requirements.txt.j2') | split('\n') }}"
     jupyterhub_user_packages: "{{ lookup('file','{{ prov_cfg_dir }}/python/jupyterhub-user-requirements.txt') | split('\n') }}"
+    pyspark_packages: "{{ lookup('file','{{ prov_cfg_dir }}/python/default-pyspark-requirements.txt') | split('\n') }}"
   ansible.builtin.template:
     src: ../templates/app/index.html.j2
     dest: "{{ mgtm_console_content_dir }}/{{ service_item.path }}/{{ service_item.name }}.html"

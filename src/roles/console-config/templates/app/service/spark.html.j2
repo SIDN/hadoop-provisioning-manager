@@ -43,9 +43,13 @@ There are multiple Spark methods available for users to use connect to Spark:
 <p>
 Spark is configured to use a default Python virtual environment (venv), this venv is automatically created during Spark deployment.
 The following Python modules are available in the default venv.
+</p>
 <ul>
-  <li>pyspark</li>
-  <li>pandas</li>
+{% for p in pyspark_packages %}
+   {% if not p.startswith('#') %}
+     <li>{{ p }}</li>
+    {% endif %}  
+{% endfor %}
 </ul>
 
 The requirements file used to creat the venv can be found in the configuration directory (config/python/default-pyspark-requirements.txt).

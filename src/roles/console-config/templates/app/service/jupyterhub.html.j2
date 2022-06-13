@@ -1,7 +1,6 @@
 <h1 class="display-6">Jupyterhub</h1>
 <p>
-<a href="https://jupyter.org/hub">Jupyterhub</a> A multi-user version of <a href="https://jupyter.org/">Jupyterlab</a> notebooks.<br>
-Impyla and Pyspark can be used to analyse the data available on Hadoop.<br>
+<a href="https://jupyter.org/hub">Jupyterhub</a> A multi-user version of <a href="https://jupyter.org/">Jupyterlab</a> notebooks. Impyla and Pyspark are available to analyse the data available on Hadoop.
 </p>
 <table class="table table-hover">
   <tr>
@@ -21,12 +20,11 @@ Impyla and Pyspark can be used to analyse the data available on Hadoop.<br>
 <p>
 Building and deploying Jupyterhub may take some time, therefore the &quot;deploy.sh all&quot; command does not deploy Jupyterhub, use "&quot;deploy.sh jupyterhub&quot;"
 </p>
-<br>
 
 <h4>Authentication</h4>
 <p>
 You are automatically logged-in if an active Kerberos session is detected. Kerberos principal admin@{{ kerberos_realm }} is the default Hue administrator.<br>
-Impyla and Pyspark both requires an active Kerberos session, upload your keytab to your notebook and then use kinit to create a Kerberos session by adding the following at the top
+Impyla and Pyspark both require an active Kerberos session, upload your keytab and use kinit to create a Kerberos session by adding the following to the top
 of your notebook.
 </p>
 <pre><code>
@@ -49,7 +47,6 @@ cursor = conn.cursor()
 cursor.execute('SELECT ... FROM ... LIMIT ...')
 df = as_pandas(cursor)
 </code></pre>
-
 
 <h4>Pyspark</h4>
 <p>
@@ -100,8 +97,11 @@ JupyterLab has the following Python packages installed by default.
 {% endfor %}
 </ul>
 
+<p>
 Installing additional package can be done by adding these to the configuration file &quot;config/python/jupyterhub-user-requirements.txt&quot; in your configuration set.
 After updating the package list you must redeploy (rebuild the Docker image) Jupyterhub.
+
+</p>
 
 <ul>
 {% for p in jupyterhub_user_packages %}
