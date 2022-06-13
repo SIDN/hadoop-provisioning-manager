@@ -98,7 +98,7 @@ JupyterLab has the following Python packages installed by default.
 
 <ul>
 {% for p in jupyterhub_default_packages %}
-   {% if not o.startswith('#') %}
+   {% if not p.startswith('#') %}
      <li>{{ p }}</li>
     {% endif %}  
 {% endfor %}
