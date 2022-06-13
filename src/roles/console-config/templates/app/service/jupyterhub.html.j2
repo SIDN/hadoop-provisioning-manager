@@ -108,7 +108,7 @@ Installing additional package can be done by adding these to the configuration f
 After updating the package list you must redeploy (rebuild the Docker image) Jupyterhub.
 
 {% for p in jupyterhub_user_packages %}
-   {% if not o.startswith('#') %}
+   {% if not p.startswith('#') %}
      <li>{{ p }}</li>
     {% endif %}  
 {% endfor %}
