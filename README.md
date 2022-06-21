@@ -10,6 +10,8 @@ SIDN Labs Hadoop Provisioning Manager is a set of tools to make is easier to dep
 - Apache Zookeeper
 - Monitoring (Prometheus and Grafana)
 - Hue
+- Apache Superset
+- JupyterHub
 
 The cluster is automatically configured with features such as.
 
