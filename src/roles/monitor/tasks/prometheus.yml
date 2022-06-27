@@ -84,4 +84,5 @@
   ansible.builtin.systemd:
     name: prometheus
     enabled: yes
+  become: yes
   

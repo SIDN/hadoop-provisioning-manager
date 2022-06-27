@@ -64,6 +64,7 @@
   ansible.builtin.systemd:
     name: grafana
     enabled: yes
+  become: yes
 
 # 
 # create grafana database
