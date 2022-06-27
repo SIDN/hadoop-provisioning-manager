@@ -58,6 +58,12 @@
     dest: /etc/systemd/system/grafana.service
     mode: '0644'
   become: yes
+  
+# make sure monitoring restarts after reboot
+- name: Enable Grafana systemd service
+  ansible.builtin.systemd:
+    name: grafana
+    enabled: yes
 
 # 
 # create grafana database

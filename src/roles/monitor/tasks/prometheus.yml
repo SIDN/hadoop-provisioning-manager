@@ -79,3 +79,9 @@
     mode: '0644'
   become: yes
   
+# make sure monitoring restarts after reboot
+- name: Enable Prometheus systemd service
+  ansible.builtin.systemd:
+    name: prometheus
+    enabled: yes
+  
