@@ -34,7 +34,7 @@
 
 - name: Create symlink latest Prometheus Node Exporter version
   file:
-      src: "{{ stack_root }}/{{ stack_root }}/node_exporter-{{ version.prometheus_node_exporter }}.linux-amd64"
+      src: "{{ stack_root }}/node_exporter-{{ version.prometheus_node_exporter }}.linux-amd64"
       dest: "{{ stack_root }}/prometheus-node-exporter-latest"
       state: link
   become: yes
