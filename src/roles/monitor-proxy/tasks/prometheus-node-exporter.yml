@@ -29,12 +29,12 @@
       src: "{{ cache_root }}/{{ prometheus_node_exporter_url | basename }}"
       remote_src: true
       dest: "{{ stack_root }}"
-      creates: "{{ stack_root }}/prometheus-node-exporter-{{ version.prometheus_node_exporter }}-linux-amd64"
+      creates: "{{ stack_root }}/node_exporter-{{ version.prometheus_node_exporter }}.linux-amd64"
   become: yes
 
 - name: Create symlink latest Prometheus Node Exporter version
   file:
-      src: "{{ stack_root }}/prometheus-node-exporter-{{ version.prometheus_node_exporter }}-linux-amd64"
+      src: "{{ stack_root }}/{{ stack_root }}/node_exporter-{{ version.prometheus_node_exporter }}.linux-amd64"
       dest: "{{ stack_root }}/prometheus-node-exporter-latest"
       state: link
   become: yes
