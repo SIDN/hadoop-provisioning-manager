@@ -1,0 +1,56 @@
+- name: Check if the Prometheus Node Exporter src is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ prometheus_node_exporter_url | basename }}"
+  register: exporter_downloaded
+  delegate_to: localhost
+  connection: local
+    
+- name: Download Prometheus Node Exporter
+  get_url:
+      url: "{{ prometheus_node_exporter_url }}"
+      dest: "{{ download_root }}/{{ prometheus_node_exporter_url | basename }}"
+  delegate_to: localhost
+  connection: local
+  when: not exporter_downloaded.stat.exists
+
+- name: Check if the Prometheus Node Exporter src is already on remote
+  stat:
+    path: "{{ cache_root }}/{{ prometheus_node_exporter_url | basename }}"
+  register: remote_exporter_downloaded
+
+- name: Copy Prometheus Node Exporter to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ prometheus_node_exporter_url | basename }}"
+    dest: "{{ cache_root }}"
+  when: not remote_exporter_downloaded.stat.exists
+  
+- name: Extract Prometheus Node Exporter
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/{{ prometheus_node_exporter_url | basename }}"
+      remote_src: true
+      dest: "{{ stack_root }}"
+      creates: "{{ stack_root }}/prometheus-node-exporter-{{ version.prometheus_node_exporter }}"
+      owner: "{{ hive_os_user }}"
+      group: "{{ hive_os_group }}"
+  become: yes
+
+- name: Create symlink latest Prometheus Node Exporter version
+  file:
+      src: "{{ stack_root }}/prometheus-node-exporter-{{ version.prometheus_node_exporter }}"
+      dest: "{{ stack_root }}/prometheus-node-exporter-latest"
+      state: link
+  become: yes
+
+- name: Create Prometheus Node Exporter systemd unit
+  ansible.builtin.template:
+    src: ../templates/systemd_prometheus_node_exporter_service.j2
+    dest: /etc/systemd/system/prometheus_node_exporter.service
+    mode: '0644'
+  become: yes
+  
+# make sure monitoring restarts after reboot
+- name: Enable Prometheus Node Exporter systemd service
+  ansible.builtin.systemd:
+    name: prometheus_node_exporter
+    enabled: yes
+  become: yes

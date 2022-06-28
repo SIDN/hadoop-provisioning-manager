@@ -12,6 +12,9 @@ prometheus_password: "{{ vault_prometheus_password }}"
 #URL where to download the JMX exporter for Proemtheus
 prometheus_jmx_exporter_url: "https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.16.1/jmx_prometheus_javaagent-0.16.1.jar"
 
+prometheus_node_exporter_url: "https://github.com/prometheus/node_exporter/releases/download/v{{ version.prometheus_node_exporter }}/node_exporter-{{ version.prometheus_node_exporter }}.linux-amd64.tar.gz"
+
+
 # Grafana
 grafana_etc_dir: "{{ config_root }}/grafana"
 grafana_port: 3000
