@@ -10,5 +10,5 @@ then
   . {{ superset_etc_dir }}/superset.env
   
   echo "Renew Kerberos ticket for $KRB_PRINCIPAL"
-  docker exec -it superset_app kinit -kt $KRB_KEYTAB $KRB_PRINCIPAL
+  docker exec superset_app kinit -kt $KRB_KEYTAB $KRB_PRINCIPAL
 fi
