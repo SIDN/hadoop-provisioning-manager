@@ -17,7 +17,7 @@ then
   hdfs dfs -chown -R {{ hadoop_os_user.yarn }}:{{ hadoop_os_group }} /user/{{ hadoop_os_user.yarn }} && \
   hdfs dfs -chmod -R 1777 /user/{{ hadoop_os_user.yarn }}/timeline && \
   hdfs dfs -chmod -R 0700 /user/{{ hadoop_os_user.yarn }}/timeline/done && \
-  hdfs dfs -chmod 0777 /user/{{ hadoop_os_user.yarn }}/log
+  hdfs dfs -chmod 1777 /user/{{ hadoop_os_user.yarn }}/log
 else
   echo "Yarn HDFS directories are present"
 fi
