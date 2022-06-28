@@ -7,12 +7,13 @@ After=docker.service
 Requires=docker.service
  
 [Service]
-TimeoutStartSec=0
+Type=simple
+User={{ prometheus_os_user }}
+Group={{ prometheus_os_group }}
+ExecStart={{ stack_root }}/prometheus-node-exporter-latest/node_exporter
 Restart=always
 RestartSec=60
-Type=exec
 
-ExecStart={{ stack_root }}/prometheus-node-exporter-latest/node_exporter
 #ExecStop=
 
 [Install]
