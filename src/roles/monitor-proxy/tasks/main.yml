@@ -1,12 +1,17 @@
 # Create a non-Kerberos proxy to allow prometheus to scrape
 # metrics from kerberos protected services
 
-- name: Include Prometheis Impala Proxy Exporter
-  include_tasks: prometheus-impala.yml
-  
+# node exporter on every node
 - name: Include Prometheus Node Exporter
   include_tasks: prometheus-node-exporter.yml
-  
+
+# impala exporter only on nodes with impala daemons
+- name: Include Prometheus Impala Proxy Exporter
+  include_tasks: prometheus-impala.yml
+  when: (inventory_hostname in groups['impala']) 
+      OR (inventory_hostname in groups['impala_statestore']) 
+      OR (inventory_hostname in groups['impala_catalog']) 
+        
 - name: Systemctl Reload Daemon
   shell: systemctl daemon-reload
   become: yes

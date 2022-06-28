@@ -1,5 +1,5 @@
 # deploy prometheus end proxy on each impala node 
-- hosts: impala:impala_statestore:impala_catalog
+- hosts: all
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
     - "{{ prov_cfg_dir }}/vars/monitor_vars.yml"

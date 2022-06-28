@@ -12,8 +12,8 @@ Restart=always
 RestartSec=60
 Type=exec
 
-ExecStart=
-ExecStop=
+ExecStart={{ stack_root }}/prometheus-node-exporter-latest/node_exporter
+#ExecStop=
 
 [Install]
 WantedBy=multi-user.target
