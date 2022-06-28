@@ -12,4 +12,6 @@
   loop_control:
     loop_var: daemon
   become: yes
-  when: not (inventory_hostname in groups['gateway']) 
+  when: (inventory_hostname in groups['impala']) 
+      or (inventory_hostname in groups['impala_statestore']) 
+      or (inventory_hostname in groups['impala_catalog']) 
