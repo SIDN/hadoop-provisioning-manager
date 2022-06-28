@@ -27,15 +27,14 @@ elif [[ "$CURRENT_SCRIPT" == "deploy-config.sh" ]]; then
   DEPLOY_MODE=$DEPLOY_MODE_CFG_ONLY
 fi
 
-if [ "$#" -lt 1 ]; then
-    show_usage exit 1
-fi
-
 function show_usage()
 {
   echo "Usage: $CURRENT_SCRIPT [service]+\n"
   echo "Supported services: $SCRIPT_SUPPORT"
 }
 
+if [ "$#" -lt 1 ]; then
+    show_usage exit 1
+fi
 
 run_playbooks "$@"
