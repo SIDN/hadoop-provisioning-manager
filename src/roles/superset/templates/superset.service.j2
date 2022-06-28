@@ -2,7 +2,7 @@
 # Pushed to: {{  inventory_hostname }}
 
 [Unit]
-Description=JupyterHub
+Description=Apache Superset
 After=docker.service
 Requires=docker.service
  
@@ -10,12 +10,12 @@ Requires=docker.service
 TimeoutStartSec=0
 Restart=always
 RestartSec=60
-User={{ jupyterhub_os_user }}
-Group={{ jupyterhub_os_group }}
+User={{ superset_os_user }}
+Group={{ superset_os_group }}
 Type=exec
 
-ExecStart=/usr/bin/docker
-ExecStop=/usr/bin/docker
+ExecStart=/usr/bin/docker-compose -f {{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml up
+ExecStop=/usr/bin/docker-compose -f {{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml down -v --remove-orphans
 
 [Install]
 WantedBy=multi-user.target
