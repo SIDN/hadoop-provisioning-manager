@@ -8,8 +8,8 @@ Requires=docker.service
  
 [Service]
 Type=simple
-User={{ prometheus_os_user }}
-Group={{ prometheus_os_group }}
+User=root
+Group=root
 ExecStart={{ stack_root }}/prometheus-node-exporter-latest/node_exporter
 Restart=always
 RestartSec=60
