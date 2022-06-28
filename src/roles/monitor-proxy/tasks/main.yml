@@ -9,8 +9,8 @@
 - name: Include Prometheus Impala Proxy Exporter
   include_tasks: prometheus-impala.yml
   when: (inventory_hostname in groups['impala']) 
-      OR (inventory_hostname in groups['impala_statestore']) 
-      OR (inventory_hostname in groups['impala_catalog']) 
+      or (inventory_hostname in groups['impala_statestore']) 
+      or (inventory_hostname in groups['impala_catalog']) 
         
 - name: Systemctl Reload Daemon
   shell: systemctl daemon-reload

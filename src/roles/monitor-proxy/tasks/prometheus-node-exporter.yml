@@ -31,6 +31,17 @@
       dest: "{{ stack_root }}"
       creates: "{{ stack_root }}/node_exporter-{{ version.prometheus_node_exporter }}.linux-amd64"
   become: yes
+  
+# extract somehow does not set the correct owner and permission
+# now set permissions and ownerships
+- name: Recursively change ownership of Prometheus Node Exporter directory
+  ansible.builtin.file:
+    path: "{{ stack_root }}/node_exporter-{{ version.prometheus_node_exporter }}.linux-amd64"
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+  become: yes
 
 - name: Create symlink latest Prometheus Node Exporter version
   file:
