@@ -63,6 +63,12 @@ if [[ -z "$ANSIBLE_BECOME_PASSWORD" ]]; then
  exit 1
 fi
 
+function show_usage()
+{
+  echo "Usage: $CURRENT_SCRIPT [service]+\n"
+  echo "Supported services: $SCRIPT_SUPPORT"
+}
+
 
 function run_playbook()
 {
