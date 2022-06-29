@@ -2,7 +2,6 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'
   loop:
     - "{{ prometheus_etc_dir }}"
   become: yes
@@ -17,6 +16,7 @@
     src: "../templates/prometheus-node-exporter-config.yml.j2"
     dest: "{{ prometheus_etc_dir }}/prometheus-node-exporter-config.yml"
     mode: '0644'
+  become: yes
     
 - name: Create Proxy configuration files
   ansible.builtin.template:
