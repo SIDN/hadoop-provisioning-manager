@@ -3,18 +3,12 @@
 
 [Unit]
 Description=Prometheus Node Exporter
-After=docker.service
-Requires=docker.service
  
 [Service]
 Type=simple
-User=root
-Group=root
-ExecStart={{ stack_root }}/prometheus-node-exporter-latest/node_exporter
+ExecStart={{ stack_root }}/prometheus-node-exporter-latest/node_exporter --web.config={{ prometheus_etc_dir }}/prometheus-node-exporter-config.yml
 Restart=always
 RestartSec=60
-
-#ExecStop=
 
 [Install]
 WantedBy=multi-user.target

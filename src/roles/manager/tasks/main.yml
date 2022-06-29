@@ -16,6 +16,7 @@
   ansible.builtin.package:
     name:
       - python3-psycopg2
+      - apache2-utils
     state: latest
   become: yes
 

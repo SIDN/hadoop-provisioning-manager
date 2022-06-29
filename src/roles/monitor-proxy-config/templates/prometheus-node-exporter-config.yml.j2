@@ -1,0 +1,6 @@
+
+tls_server_config:
+  cert_file: {{ tls_etc_dir }}/ssl.crt
+  key_file: {{ tls_etc_dir }}/ssl.key
+basic_auth_users:
+  prometheus: {{ prometheus_password_hash.stdout }}

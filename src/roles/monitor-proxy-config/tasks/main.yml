@@ -1,3 +1,23 @@
+- name: create Prometheus config directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ prometheus_etc_dir }}"
+  become: yes
+  
+- name: Create Prometheus Node Exporter password hash 
+  shell: >
+    echo "{{ prometheus_node_exporter_password }}" | htpasswd -niBC 10 "" | tr -d ':\n'
+  register: prometheus_node_exporter_password_hash
+  
+- name: Create Node Exporter configuration file
+  ansible.builtin.template:
+    src: "../templates/prometheus-node-exporter-config.yml.j2"
+    dest: "{{ prometheus_etc_dir }}/prometheus-node-exporter-config.yml"
+    mode: '0644'
+    
 - name: Create Proxy configuration files
   ansible.builtin.template:
     src: "../templates/prometheus-proxy-env.sh.j2"

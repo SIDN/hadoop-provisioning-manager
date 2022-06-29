@@ -72,6 +72,17 @@
   when: not (inventory_hostname in groups['gateway']) 
      and inventory_hostname in groups['impala_statestore']
 
-- name: Systemctl Reload Daemon
-  shell: systemctl daemon-reload
+# make sure monitoring restarts after reboot
+- name: Enable Prometheus systemd services
+  ansible.builtin.systemd:
+    name: impala_prometheus_proxy_{{ item.service }}
+    enabled: yes
   become: yes
+  when: not (inventory_hostname in groups['gateway']) 
+     and inventory_hostname in groups[{{ item.group }}]
+  loop:
+    - { service: 'statestored', group: 'impala_statestore' }
+    - { service: 'catalogd', group: 'impala_catalog' }
+    - { service: 'impalad', group: 'impala' }
+
+  
