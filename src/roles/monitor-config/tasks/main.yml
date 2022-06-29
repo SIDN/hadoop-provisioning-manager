@@ -14,7 +14,6 @@
     dest: "{{ grafana_etc_dir }}/provisioning"
   become: yes
   
-  
 # create hash with with htpasswd util, the ansible password_hash
 # does not work, cannot find bcrypt. even after installing the required packages
 - name: Create Prometheus password hash 

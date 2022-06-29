@@ -21,7 +21,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 6,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -78,7 +77,65 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "entrada-ingest-01.sidnlabs.nl:9100"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#584477",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "arn2-rnd-entrada01-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada02-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada03-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada04-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada05-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada06-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada07-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada08-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada09-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada10-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada11-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada12-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada13-p.sidnlabs.nl:9100",
+                  "arn2-rnd-entrada14-p.sidnlabs.nl:9100",
+                  "bakbeest.sidnlabs.nl:9100",
+                  "hadoop-gateway-01.sidnlabs.nl:9100",
+                  "hadoop-gateway-02.sidnlabs.nl:9100",
+                  "hadoop-mgmt-02.sidnlabs.nl:9100",
+                  "hadoop-mon-01.sidnlabs.nl:9100"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -94,8 +151,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -183,8 +240,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -273,8 +330,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -364,8 +421,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -454,8 +511,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -465,9 +522,9 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(node_network_receive_packets_total[$__rate_interval])",
+          "expr": "rate(node_network_receive_packets_total[1m])",
           "interval": "",
-          "legendFormat": "{{ instance }}",
+          "legendFormat": "{{ instance }} - {{ device }}",
           "refId": "A"
         },
         {
@@ -552,8 +609,8 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -563,9 +620,9 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(node_network_transmit_packets_total[$__rate_interval])",
+          "expr": "rate(node_network_transmit_packets_total[1m])",
           "interval": "",
-          "legendFormat": "{{ instance }}",
+          "legendFormat": "{{ instance }} - {{ device }}",
           "refId": "A"
         },
         {
@@ -588,13 +645,13 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Node - Overview",
   "uid": "_-7mewq7z",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
