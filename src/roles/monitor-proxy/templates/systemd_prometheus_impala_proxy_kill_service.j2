@@ -8,10 +8,4 @@ Description=Kill Prometheus Impala Proxy service
 
 [Service]
 Type=oneshot
-{% if inventory_hostname in groups['impala_statestore'] %}
-ExecStart=systemctl restart impala_prometheus_proxy_statestored
-{% elif inventory_hostname in groups['impala_catalog'] %}
-ExecStart=systemctl restart impala_prometheus_proxy_catalogd
-{% else %}
-ExecStart=systemctl restart impala_prometheus_proxy_impalad
-{% endif %}
+ExecStart={{ stack_root }}/apache-impala-latest/bin/prometheus_impala_proxy_kill.sh

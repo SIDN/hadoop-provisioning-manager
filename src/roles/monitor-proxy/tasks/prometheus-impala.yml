@@ -17,10 +17,26 @@
     group: "{{ impala_os_group }}"
   become: yes
     
-- name: Create Proxy startup scripts
+- name: Create Proxy start scripts
   ansible.builtin.template:
     src: "../templates/start-prometheus-proxy.sh.j2"
     dest: "{{ stack_root }}/apache-impala-latest/bin/start-prometheus-proxy-{{ daemon.service }}.sh"
+    mode: '0774'
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+  loop:
+    - { service: 'statestored', group: 'impala_statestore' }
+    - { service: 'catalogd', group: 'impala_catalog' }
+    - { service: 'impalad', group: 'impala' }
+  loop_control:
+    loop_var: daemon
+  become: yes
+  when: inventory_hostname in groups[daemon.group]
+  
+- name: Create Proxy kill scripts
+  ansible.builtin.template:
+    src: "../templates/prometheus_impala_proxy_kill.sh.j2"
+    dest: "{{ stack_root }}/apache-impala-latest/bin/prometheus_impala_proxy_kill.sh"
     mode: '0774'
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
@@ -60,7 +76,7 @@
          or (inventory_hostname in groups['impala_catalog'])
          or (inventory_hostname in groups['impala'])
   
-# make sure monitoring restarts after reboot
+# make sure monitoring proxies start after reboot
 - name: Enable Prometheus systemd Proxy services
   ansible.builtin.systemd:
     name: impala_prometheus_proxy_{{ item.service }}

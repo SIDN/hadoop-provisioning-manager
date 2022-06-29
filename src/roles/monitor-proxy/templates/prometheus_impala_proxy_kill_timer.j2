@@ -6,10 +6,10 @@
 
 [Unit]
 Description=Prometheus Impala Proxy Kill Timer
-Requires=prometheus_proxy_kill_service.service
+Requires=prometheus_impala_proxy_kill.service
 
 [Timer]
-Unit=prometheus_proxy_kill_service.service
+Unit=prometheus_impala_proxy_kill.service
 # run every hour on every day
 OnCalendar=*:0/5
 #OnCalendar=*-*-* *:00:00
