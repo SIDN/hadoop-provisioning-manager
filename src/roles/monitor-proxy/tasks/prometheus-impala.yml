@@ -12,7 +12,7 @@
   ansible.builtin.copy:
     src: ../files/prometheus-exporter/prometheus-generic-exporter.py
     dest: "{{ stack_root }}/apache-impala-latest/bin/impala-prometheus-exporter.py"
-    mode: '0774'
+    mode: '0664'
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
   become: yes
@@ -21,7 +21,7 @@
   ansible.builtin.template:
     src: "../templates/start-prometheus-proxy.sh.j2"
     dest: "{{ stack_root }}/apache-impala-latest/bin/start-prometheus-proxy-{{ daemon.service }}.sh"
-    mode: '0774'
+    mode: '0664'
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
   loop:
@@ -37,7 +37,7 @@
   ansible.builtin.template:
     src: "../templates/prometheus_impala_proxy_kill.sh.j2"
     dest: "{{ stack_root }}/apache-impala-latest/bin/prometheus_impala_proxy_kill.sh"
-    mode: '0774'
+    mode: '0664'
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
   loop:

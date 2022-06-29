@@ -1,8 +1,6 @@
 - hosts: superset
   remote_user: hadoop-mgr
   become: yes
-  # vars:
-  #   service_name: superset
   tasks:
     - name: Stop superset service
       include_tasks: shutdown/tasks/generic-service.yml    
@@ -12,5 +10,3 @@
       loop_control:
         loop_var: service_name  
         
-    # - name: "Stop {{ service_name }}"
-    #   include_tasks: shutdown/tasks/generic-service.yml

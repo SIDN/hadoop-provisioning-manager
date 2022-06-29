@@ -1,29 +1,38 @@
 - hosts: impala
   remote_user: hadoop-mgr
   become: yes
-  vars:
-    service_name: impala_prometheus_proxy_impalad
   tasks:
     - name: "Start {{ service_name }}"
       include_tasks: startup/tasks/generic-service.yml
+      loop: 
+        - impala_prometheus_proxy_impalad
+        - prometheus_impala_proxy_kill.timer
+      loop_control:
+        loop_var: service_name  
         
 - hosts: impala_catalog
   remote_user: hadoop-mgr
   become: yes
-  vars:
-    service_name: impala_prometheus_proxy_catalogd
   tasks:
     - name: "Start {{ service_name }}"
       include_tasks: startup/tasks/generic-service.yml
+      loop: 
+        - impala_prometheus_proxy_catalogd
+        - prometheus_impala_proxy_kill.timer
+      loop_control:
+        loop_var: service_name  
         
 - hosts: impala_statestore
   remote_user: hadoop-mgr
   become: yes
-  vars:
-    service_name: impala_prometheus_proxy_statestored
   tasks:
     - name: "Start {{ service_name }}"
       include_tasks: startup/tasks/generic-service.yml
+      loop: 
+        - impala_prometheus_proxy_statestored
+        - prometheus_impala_proxy_kill.timer
+      loop_control:
+        loop_var: service_name  
 
 - hosts: all
   remote_user: hadoop-mgr
