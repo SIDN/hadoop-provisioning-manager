@@ -1,0 +1,26 @@
+- hosts: all      
+  remote_user: hadoop-mgr
+  tasks:
+    
+    - name: stop supervisord
+      ansible.builtin.systemd:
+        name: supervisord
+        state: stopped
+        enabled: no
+      become: yes
+      
+    - name: stop cdh agent
+      ansible.builtin.systemd:
+        name: cloudera-scm-agent
+        state: stopped
+        enabled: no
+      become: yes
+
+    # - name: Remove the CDH packages
+    #   ansible.builtin.package:
+    #     name: "{{ item }}"
+    #     state: absent
+    #   loop:
+    #     - cloudera-manager-agent
+    #     - cloudera-manager-daemons
+    

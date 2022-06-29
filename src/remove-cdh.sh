@@ -30,6 +30,6 @@ fi
 
 export ANSIBLE_CONFIG=$SIDN_HADOOP_CFG_DIR
 
-ansible-playbook -i $SIDN_HADOOP_CFG_DIR/hosts $SCRIPT_DIR/fix.yml \
-    --vault-password-file /home/hadoop-mgr/git/hadoop-provision-sidn/config/.vault_pass \
+ansible-playbook -i $SIDN_HADOOP_CFG_DIR/hosts $SCRIPT_DIR/remove-cdh.yml \
+    --vault-password-file $SIDN_HADOOP_CFG_DIR/$VAULT_PASSWD_FILE \
     --extra-vars="ansible_become_password={{ lookup('env', 'ANSIBLE_BECOME_PASSWORD') }} prov_cfg_dir={{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}"
