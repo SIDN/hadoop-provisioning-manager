@@ -20,58 +20,18 @@
 - name: Create Proxy startup scripts
   ansible.builtin.template:
     src: "../templates/start-prometheus-proxy.sh.j2"
-    dest: "{{ stack_root }}/apache-impala-latest/bin/start-prometheus-proxy-{{ daemon }}.sh"
+    dest: "{{ stack_root }}/apache-impala-latest/bin/start-prometheus-proxy-{{ daemon.service }}.sh"
     mode: '0774'
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
   loop:
-    - impalad
-    - catalogd
-    - statestored
+    - { service: 'statestored', group: 'impala_statestore' }
+    - { service: 'catalogd', group: 'impala_catalog' }
+    - { service: 'impalad', group: 'impala' }
   loop_control:
     loop_var: daemon
   become: yes
-  when: not (inventory_hostname in groups['gateway']) 
-
-- name: Create impalad Systemd services
-  ansible.builtin.template:
-    src: "../templates/systemd_prometheus_proxy_service.j2"
-    dest: "/etc/systemd/system/impala_prometheus_proxy_{{ daemon }}.service"
-    mode: '0644'
-  loop:
-    - impalad
-  loop_control:
-    loop_var: daemon
-  become: yes
-  when: not (inventory_hostname in groups['gateway']) 
-    and inventory_hostname in groups['impala']
-  
-- name: Create catalogd Systemd services
-  ansible.builtin.template:
-    src: "../templates/systemd_prometheus_proxy_service.j2"
-    dest: "/etc/systemd/system/impala_prometheus_proxy_{{ daemon }}.service"
-    mode: '0644'
-  loop:
-    - catalogd
-  loop_control:
-    loop_var: daemon
-  become: yes
-  when: not (inventory_hostname in groups['gateway']) 
-    and inventory_hostname in groups['impala_catalog']
-  
-- name: Create statestored Systemd services
-  ansible.builtin.template:
-    src: "../templates/systemd_prometheus_proxy_service.j2"
-    dest: "/etc/systemd/system/impala_prometheus_proxy_{{ daemon }}.service"
-    mode: '0644'
-  loop:
-    - statestored
-  loop_control:
-    loop_var: daemon
-  become: yes
-  when: not (inventory_hostname in groups['gateway']) 
-     and inventory_hostname in groups['impala_statestore']
-
+  when: inventory_hostname in groups[daemon.group]
 
 - name: Create Prometheus systemd services
   ansible.builtin.template:
@@ -85,8 +45,7 @@
   loop_control:
     loop_var: daemon
   become: yes
-  when: not (inventory_hostname in groups['gateway']) 
-     and inventory_hostname in groups[daemon.group]
+  when: inventory_hostname in groups[daemon.group]
      
 - name: Create Prometheus systemd Proxy kill service and timer
   ansible.builtin.template:
@@ -97,10 +56,9 @@
     - { src: '../templates/systemd_prometheus_impala_proxy_kill_service.j2', dst: 'prometheus_impala_proxy_kill.service'}
     - { src: '../templates/prometheus_impala_proxy_kill_timer.j2', dst: 'prometheus_impala_proxy_kill.timer'}
   become: yes
-  when: not (inventory_hostname in groups['gateway']) 
-     and ((inventory_hostname in groups['impala_statestore'])
+  when: (inventory_hostname in groups['impala_statestore'])
          or (inventory_hostname in groups['impala_catalog'])
-         or (inventory_hostname in groups['impala']) )
+         or (inventory_hostname in groups['impala'])
   
 # make sure monitoring restarts after reboot
 - name: Enable Prometheus systemd Proxy services
@@ -114,6 +72,9 @@
     - { service: 'statestored', group: 'impala_statestore' }
     - { service: 'catalogd', group: 'impala_catalog' }
     - { service: 'impalad', group: 'impala' }
+  when: (inventory_hostname in groups['impala_statestore'])
+         or (inventory_hostname in groups['impala_catalog'])
+         or (inventory_hostname in groups['impala'])
     
 
   
