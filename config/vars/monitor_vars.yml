@@ -15,6 +15,7 @@ prometheus_jmx_exporter_url: "https://repo1.maven.org/maven2/io/prometheus/jmx/j
 # node exporter
 prometheus_node_exporter_url: "https://github.com/prometheus/node_exporter/releases/download/v{{ version.prometheus_node_exporter }}/node_exporter-{{ version.prometheus_node_exporter }}.linux-amd64.tar.gz"
 prometheus_node_exporter_port: 9100
+prometheus_node_exporter_user: prometheus
 prometheus_node_exporter_password: "{{ vault_prometheus_node_exporter_password }}"
 
 # Grafana
