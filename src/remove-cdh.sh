@@ -13,6 +13,7 @@ fi
 PY_EXEC="~/activate-python"
 SCRIPT_DIR=$( cd "$(dirname "$0")" ; pwd -P )
 ENV_FILE=set-env.sh
+VAULT_PASSWD_FILE=".vault_pass"
 
 if test -f "$SCRIPT_DIR/$ENV_FILE"; then
     echo "Using environment file: $SCRIPT_DIR/$ENV_FILE"
@@ -22,7 +23,6 @@ fi
 
 echo "Running playbooks in: $SCRIPT_DIR"
 echo "Using variables in: $SIDN_HADOOP_CFG_DIR"
-echo "Create user: $1"
 
 if [ -f "$PY_EXEC" ]; then
   . $PY_EXEC 
