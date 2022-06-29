@@ -1,0 +1,17 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# Older version of systemd do not support RuntimeMaxSec
+# using this kill unit to kill the Prometheus Impala Proxy service
+[Unit]
+Description=Kill Prometheus Impala Proxy service
+
+[Service]
+Type=oneshot
+{% if inventory_hostname in groups['impala_statestore'] %}
+ExecStart=systemctl restart impala_prometheus_proxy_statestored
+{% elif inventory_hostname in groups['impala_catalog'] %}
+ExecStart=systemctl restart impala_prometheus_proxy_catalogd
+{% else %}
+ExecStart=systemctl restart impala_prometheus_proxy_impalad
+{% endif %}
