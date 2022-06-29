@@ -1,3 +1,20 @@
+# make sure htpasswd utility is installed for creating encrypted passwords
+- name: install required packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - httpd-tools
+    state: latest
+  become: yes
+  when: ansible_distribution == 'RedHat'
+    
+- name: install required packages (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - apache2-utils
+    state: latest
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+  
 - name: Check if the Prometheus Node Exporter src is already downloaded
   stat:
     path: "{{ download_root }}/{{ prometheus_node_exporter_url | basename }}"

@@ -6,22 +6,6 @@
     - "{{ prometheus_etc_dir }}"
   become: yes
   
-- name: install required packages (RHEL)
-  ansible.builtin.package:
-    name:
-      - httpd-tools
-    state: latest
-  become: yes
-  when: ansible_distribution == 'RedHat'
-    
-- name: install required packages (Ubuntu)
-  ansible.builtin.package:
-    name:
-      - apache2-utils
-    state: latest
-  become: yes
-  when: ansible_distribution == 'Ubuntu'
-  
 - name: Create Prometheus Node Exporter password hash 
   shell: >
     echo "{{ prometheus_node_exporter_password }}" | htpasswd -niBC 10 "" | tr -d ':\n'
