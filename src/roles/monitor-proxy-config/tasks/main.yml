@@ -6,6 +6,22 @@
     - "{{ prometheus_etc_dir }}"
   become: yes
   
+- name: install required packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - httpd-tools
+    state: latest
+  become: yes
+  when: ansible_distribution == 'RedHat'
+    
+- name: install required packages (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - apache2-utils
+    state: latest
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+  
 - name: Create Prometheus Node Exporter password hash 
   shell: >
     echo "{{ prometheus_node_exporter_password }}" | htpasswd -niBC 10 "" | tr -d ':\n'
@@ -18,20 +34,18 @@
     mode: '0644'
   become: yes
     
-- name: Create Proxy configuration files
+- name: Create Impala Proxy configuration files
   ansible.builtin.template:
     src: "../templates/prometheus-proxy-env.sh.j2"
-    dest: "{{ impala_etc_dir }}/prometheus-proxy-env-{{ daemon }}.sh"
+    dest: "{{ impala_etc_dir }}/prometheus-proxy-env-{{ daemon.name }}.sh"
     mode: '0755'
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
   loop:
-    - impalad
-    - catalogd
-    - statestored
+    - { name: 'impalad', group: 'impala' }
+    - { name: 'catalogd', group: 'impala_catalog' }
+    - { name: 'statestored', group: 'impala_statestore' }
   loop_control:
     loop_var: daemon
   become: yes
-  when: (inventory_hostname in groups['impala']) 
-      or (inventory_hostname in groups['impala_statestore']) 
-      or (inventory_hostname in groups['impala_catalog']) 
+  when: inventory_hostname in groups[daemon.group] 
