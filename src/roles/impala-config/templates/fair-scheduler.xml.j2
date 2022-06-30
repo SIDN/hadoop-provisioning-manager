@@ -18,6 +18,6 @@
     <defaultQueueSchedulingPolicy>drf</defaultQueueSchedulingPolicy>
     <queuePlacementPolicy>
         <rule name="specified" create="false"/>
-        <rule name="default" queue="impala"/>
+        <rule name="default" queue="{{ impala_fair_scheduler_options[0].name }}"/>
     </queuePlacementPolicy>
 </allocations>

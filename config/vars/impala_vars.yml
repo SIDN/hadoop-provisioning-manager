@@ -86,7 +86,7 @@ impala_heap:
 # first queue must have name "impala"
 # see: https://impala.apache.org/docs/build/html/topics/impala_admission_config.html
 impala_fair_scheduler_options:
-  - name: 'default'
+  - name: 'impala'
     maxResources: 737280 # mb (max mb avail to Impala, memory for all nodes combined )
     weight: 1.0
     schedulingPolicy: drf
@@ -95,18 +95,18 @@ impala_fair_scheduler_options:
     
 # Create addmission queue for impala queries  
 # queue propertes for llama-site.xml
-# first queue has name "default"
+# first queue has name "impala"
 # see: https://impala.apache.org/docs/build/html/topics/impala_admission_config.html
 impala_llama_site_options:
-  llama.am.throttling.maximum.placed.reservations.root.default: 10
-  llama.am.throttling.maximum.queued.reservations.root.default: 50
-  impala.admission-control.pool-default-query-options.root.default: ''
-  impala.admission-control.pool-queue-timeout-ms.root.default: 600000
+  llama.am.throttling.maximum.placed.reservations.root.impala: 10
+  llama.am.throttling.maximum.queued.reservations.root.impala: 50
+  impala.admission-control.pool-default-query-options.root.impala: ''
+  impala.admission-control.pool-queue-timeout-ms.root.impala: 600000
   # set max mem allowed for impalad per host  (USE BYTES only) # 64g
-  impala.admission-control.max-query-mem-limit.root.default.regularPool: 68719476736
+  impala.admission-control.max-query-mem-limit.root.impala.regularPool: 68719476736
   # set min mem allowed for impalad per host  (USE BYTES only) # 1g
-  impala.admission-control.min-query-mem-limit.root.default.regularPool: 1073741824
+  impala.admission-control.min-query-mem-limit.root.impala.regularPool: 1073741824
   # if user sets mem_limit > max-query-mem-limit then mem_limit value is set to max-query-mem-limit value
-  impala.admission-control.clamp-mem-limit-query-option.root.default.regularPool: true
+  impala.admission-control.clamp-mem-limit-query-option.root.impala.regularPool: true
 
 
