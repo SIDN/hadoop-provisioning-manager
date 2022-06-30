@@ -21,7 +21,7 @@
   ansible.builtin.template:
     src: "../templates/start-prometheus-proxy.sh.j2"
     dest: "{{ stack_root }}/apache-impala-latest/bin/start-prometheus-proxy-{{ daemon.service }}.sh"
-    mode: '0664'
+    mode: '0775'
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
   loop:
