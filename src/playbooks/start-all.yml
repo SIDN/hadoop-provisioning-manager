@@ -58,3 +58,6 @@
 
 - name: Monitor
   import_playbook: start-monitor.yml
+  
+- name: Monitor Proxies
+  import_playbook: start-monitor-proxy.yml

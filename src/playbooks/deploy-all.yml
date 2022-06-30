@@ -56,5 +56,8 @@
 - name: Monitor Server
   import_playbook: deploy-monitor.yml
   
+- name: Monitor Proxies
+  import_playbook: deploy-monitor-proxy.yml
+  
 - name: Client Config
   import_playbook: deploy-client-config.yml

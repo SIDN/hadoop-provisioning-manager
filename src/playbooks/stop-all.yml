@@ -13,6 +13,9 @@
 - name: Monitor
   import_playbook: stop-monitor.yml
   
+- name: Monitor Proxies
+  import_playbook: stop-monitor-proxy.yml
+  
 - name: Spark
   import_playbook: stop-spark.yml
   
