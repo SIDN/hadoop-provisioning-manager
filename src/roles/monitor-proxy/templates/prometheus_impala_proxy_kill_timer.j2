@@ -10,8 +10,8 @@ Requires=prometheus_impala_proxy_kill.service
 
 [Timer]
 Unit=prometheus_impala_proxy_kill.service
-# run every 30 minutes
-OnCalendar=*-*-* *:*/30:00
+# run every night at midnight
+OnCalendar=*-*-* 00:00:00
 
 [Install]
 WantedBy=timers.target
