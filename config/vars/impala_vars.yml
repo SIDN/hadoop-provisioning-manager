@@ -83,7 +83,7 @@ impala_heap:
   
 # Create addmission queue for impala queries  
 # queue propertes for fair-scheduler.xml
-# first queue must have name "impala"
+# first queue will become the default queue
 # see: https://impala.apache.org/docs/build/html/topics/impala_admission_config.html
 impala_fair_scheduler_options:
   - name: 'impala'
@@ -103,10 +103,10 @@ impala_llama_site_options:
   impala.admission-control.pool-default-query-options.root.impala: ''
   impala.admission-control.pool-queue-timeout-ms.root.impala: 600000
   # set max mem allowed for impalad per host  (USE BYTES only) # 64g
-  impala.admission-control.max-query-mem-limit.root.impala.regularPool: 68719476736
+  impala.admission-control.max-query-mem-limit.root.impala: 68719476736
   # set min mem allowed for impalad per host  (USE BYTES only) # 1g
-  impala.admission-control.min-query-mem-limit.root.impala.regularPool: 1073741824
+  impala.admission-control.min-query-mem-limit.root.impala: 1073741824
   # if user sets mem_limit > max-query-mem-limit then mem_limit value is set to max-query-mem-limit value
-  impala.admission-control.clamp-mem-limit-query-option.root.impala.regularPool: true
+  impala.admission-control.clamp-mem-limit-query-option.root.impala: true
 
 
