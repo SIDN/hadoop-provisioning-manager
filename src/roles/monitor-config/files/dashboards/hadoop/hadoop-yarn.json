@@ -21,7 +21,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 17,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -91,13 +90,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "suM(Hadoop_NodeManager_ApplicationsRunning)",
+          "expr": "sum(Hadoop_NodeManager_ContainersRunning)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Applications Running",
+      "title": "Containers Running",
       "type": "stat"
     },
     {
@@ -717,6 +716,6 @@
   "timezone": "",
   "title": "Hadoop - Yarn",
   "uid": "dqMof_3nz",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

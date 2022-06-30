@@ -325,6 +325,69 @@
         "x": 12,
         "y": 1
       },
+      "id": 21,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "min(impala_buffer_pool_limit)",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Max",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Total host memory, sum of all cluster nodes",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 15,
+        "y": 1
+      },
       "id": 19,
       "options": {
         "colorMode": "value",
@@ -385,7 +448,7 @@
       "gridPos": {
         "h": 5,
         "w": 3,
-        "x": 15,
+        "x": 18,
         "y": 1
       },
       "id": 20,
@@ -461,7 +524,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -478,10 +541,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -705,6 +764,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -751,7 +811,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "clockms"
         },
         "overrides": []
       },
@@ -780,13 +841,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_num_queries_spilled[1m])",
+          "expr": "impala_server_query_durations_ms_sum",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
-      "title": "Queries Spilled",
+      "title": "Query Duration",
       "type": "timeseries"
     },
     {
@@ -1014,14 +1075,10 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "bytes"
         },
         "overrides": []
       },
@@ -1050,7 +1107,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_io_mgr_bytes_read[1m])",
+          "expr": "delta(impala_server_io_mgr_bytes_read[5m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1157,13 +1214,13 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Impala - Overview",
   "uid": "uyclm_r7z",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

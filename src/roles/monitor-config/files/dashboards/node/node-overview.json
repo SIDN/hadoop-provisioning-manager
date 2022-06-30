@@ -52,8 +52,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -100,25 +100,7 @@
               "options": {
                 "mode": "exclude",
                 "names": [
-                  "arn2-rnd-entrada01-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada02-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada03-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada04-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada05-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada06-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada07-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada08-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada09-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada10-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada11-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada12-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada13-p.sidnlabs.nl:9100",
-                  "arn2-rnd-entrada14-p.sidnlabs.nl:9100",
-                  "bakbeest.sidnlabs.nl:9100",
-                  "hadoop-gateway-01.sidnlabs.nl:9100",
-                  "hadoop-gateway-02.sidnlabs.nl:9100",
-                  "hadoop-mgmt-02.sidnlabs.nl:9100",
-                  "hadoop-mon-01.sidnlabs.nl:9100"
+                  "arn2-rnd-entrada06-p.sidnlabs.nl:9100"
                 ],
                 "prefix": "All except:",
                 "readOnly": true
@@ -199,8 +181,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -251,7 +233,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "node_load15{}",
+          "expr": "node_load15",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -288,8 +270,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -341,7 +323,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "100 - ((node_memory_MemAvailable_bytes * 100) / node_memory_MemTotal_bytes)",
+          "expr": "100 - ((node_memory_MemAvailable_bytes{instance=~\"arn2-rnd-entrada.*-p.sidnlabs.nl:9100\"} * 100) / node_memory_MemTotal_bytes{instance=~\"arn2-rnd-entrada.*-p.sidnlabs.nl:9100\"})",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -379,8 +361,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -432,7 +414,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "((node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) / (node_memory_SwapTotal_bytes )) * 100",
+          "expr": "((node_memory_SwapTotal_bytes{instance=~\"arn2-rnd-entrada.*-p.sidnlabs.nl:9100\"} - node_memory_SwapFree_bytes{instance=~\"arn2-rnd-entrada.*-p.sidnlabs.nl:9100\"}) / (node_memory_SwapTotal_bytes{instance=~\"arn2-rnd-entrada.*-p.sidnlabs.nl:9100\"} )) * 100",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -469,8 +451,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -486,14 +468,10 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "pps"
+          "unit": "binBps"
         },
         "overrides": []
       },
@@ -522,9 +500,9 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(node_network_receive_packets_total[1m])",
+          "expr": "sum(rate(node_network_receive_bytes_total[1m]))",
           "interval": "",
-          "legendFormat": "{{ instance }} - {{ device }}",
+          "legendFormat": "Receive",
           "refId": "A"
         },
         {
@@ -532,11 +510,15 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
+          "exemplar": true,
+          "expr": "sum(rate(node_network_transmit_bytes_total[1m]))",
           "hide": false,
+          "interval": "",
+          "legendFormat": "Transmit",
           "refId": "B"
         }
       ],
-      "title": "Network In",
+      "title": "Network",
       "type": "timeseries"
     },
     {
@@ -567,8 +549,8 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
-            "spanNulls": false,
+            "showPoints": "never",
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -584,14 +566,10 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "pps"
+          "unit": "binBps"
         },
         "overrides": []
       },
@@ -620,21 +598,99 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(node_network_transmit_packets_total[1m])",
+          "expr": "sum by (instance) (rate(node_network_receive_bytes_total[1m]))",
           "interval": "",
-          "legendFormat": "{{ instance }} - {{ device }}",
+          "legendFormat": "{{ instance }}",
           "refId": "A"
+        }
+      ],
+      "title": "Network Receive",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "binBps"
         },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "hide": false,
-          "refId": "B"
+          "exemplar": true,
+          "expr": "sum by (instance) (rate(node_network_transmit_bytes_total[1m]))",
+          "interval": "",
+          "legendFormat": "{{ instance }}",
+          "refId": "A"
         }
       ],
-      "title": "Network Out",
+      "title": "Network Transmit",
       "type": "timeseries"
     }
   ],
@@ -652,6 +708,6 @@
   "timezone": "",
   "title": "Node - Overview",
   "uid": "_-7mewq7z",
-  "version": 5,
+  "version": 1,
   "weekStart": ""
 }
