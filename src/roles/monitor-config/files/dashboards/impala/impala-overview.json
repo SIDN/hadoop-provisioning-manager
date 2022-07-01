@@ -661,7 +661,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "up * on (instance, job) group_left(role) host_role{role=\"impala\"}",
+          "expr": "impala_service_port_up{port=\"21050\"}",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1214,13 +1214,13 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Impala - Overview",
   "uid": "uyclm_r7z",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
