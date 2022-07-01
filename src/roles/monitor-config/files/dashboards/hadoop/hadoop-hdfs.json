@@ -554,6 +554,93 @@
           "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "fillOpacity": 70,
+            "lineWidth": 1
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 5
+      },
+      "id": 27,
+      "options": {
+        "colWidth": 0.9,
+        "legend": {
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "rowHeight": 0.9,
+        "showValue": "auto",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "up * on (instance, job) group_left(role) host_role{role=\"hadoop\"}",
+          "interval": "",
+          "legendFormat": "{{ instance }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Host Status",
+      "type": "status-history"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -571,8 +658,8 @@
       "gridPos": {
         "h": 9,
         "w": 12,
-        "x": 12,
-        "y": 5
+        "x": 0,
+        "y": 14
       },
       "id": 23,
       "options": {
@@ -603,93 +690,6 @@
       ],
       "title": "DFS Bytes Written (1h)",
       "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "Block/sec (5m)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "log": 2,
-              "type": "log"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 14
-      },
-      "id": 20,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "delta(Hadoop_DataNode_BlocksRead[5m])",
-          "interval": "",
-          "legendFormat": "{{ instance }}",
-          "refId": "A"
-        }
-      ],
-      "title": "Data Node Block Read",
-      "type": "timeseries"
     },
     {
       "datasource": {
@@ -789,7 +789,7 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisLabel": "",
+            "axisLabel": "Block/sec (5m)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -804,7 +804,8 @@
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
-              "type": "linear"
+              "log": 2,
+              "type": "log"
             },
             "showPoints": "auto",
             "spanNulls": false,
@@ -823,14 +824,10 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "decmbytes"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -840,7 +837,7 @@
         "x": 0,
         "y": 23
       },
-      "id": 16,
+      "id": 20,
       "options": {
         "legend": {
           "calcs": [],
@@ -859,13 +856,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "Hadoop_NameNode_MemHeapUsedM",
+          "expr": "delta(Hadoop_DataNode_BlocksRead[5m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
-      "title": "Name node Heap Used",
+      "title": "Data Node Block Read",
       "type": "timeseries"
     },
     {
@@ -1004,20 +1001,24 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "decmbytes"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 0,
         "y": 32
       },
-      "id": 22,
+      "id": 16,
       "options": {
         "legend": {
           "calcs": [],
@@ -1036,13 +1037,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(Hadoop_DataNode_RemoteBytesRead[5m])",
+          "expr": "Hadoop_NameNode_MemHeapUsedM",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
-      "title": "Data Node Remote Bytes Read",
+      "title": "Name node Heap Used",
       "type": "timeseries"
     },
     {
@@ -1177,6 +1178,92 @@
               {
                 "color": "green",
                 "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 41
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "rate(Hadoop_DataNode_RemoteBytesRead[5m])",
+          "interval": "",
+          "legendFormat": "{{ instance }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Data Node Remote Bytes Read",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1192,7 +1279,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 49
       },
       "id": 17,
       "options": {
@@ -1237,6 +1324,6 @@
   "timezone": "",
   "title": "Hadoop - HDFS",
   "uid": "ajvGA_q7z",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }

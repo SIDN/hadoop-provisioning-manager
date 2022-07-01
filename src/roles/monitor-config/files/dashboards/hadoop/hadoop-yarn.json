@@ -391,8 +391,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 10,
+        "h": 9,
+        "w": 11,
         "x": 0,
         "y": 5
       },
@@ -434,69 +434,71 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "fillOpacity": 70,
+            "lineWidth": 0,
+            "spanNulls": false
           },
-          "mappings": [],
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
               }
             ]
-          },
-          "unit": "none"
+          }
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 10,
-        "x": 10,
+        "h": 9,
+        "w": 11,
+        "x": 11,
         "y": 5
       },
-      "id": 12,
+      "id": 17,
       "options": {
+        "alignValue": "left",
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom"
         },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "never",
         "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
+          "mode": "none",
+          "sort": "none"
         }
       },
-      "pluginVersion": "8.4.3",
       "targets": [
         {
           "datasource": {
@@ -504,14 +506,14 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "Hadoop_NodeManager_ContainerCpuUtilization",
+          "expr": "up * on (instance, job) group_left(role) host_role{role=\"hadoop\"}",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
-      "title": "Container CPU Utilization",
-      "type": "timeseries"
+      "title": "Host Status",
+      "type": "state-timeline"
     },
     {
       "datasource": {
@@ -567,9 +569,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 10,
+        "w": 11,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "id": 13,
       "options": {
@@ -598,6 +600,93 @@
         }
       ],
       "title": "Container Memory Used",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 11,
+        "y": 14
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "8.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "Hadoop_NodeManager_ContainerCpuUtilization",
+          "interval": "",
+          "legendFormat": "{{ instance }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Container CPU Utilization",
       "type": "timeseries"
     },
     {
@@ -655,9 +744,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 10,
-        "x": 10,
-        "y": 13
+        "w": 11,
+        "x": 0,
+        "y": 22
       },
       "id": 15,
       "options": {
@@ -709,13 +798,13 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Hadoop - Yarn",
   "uid": "dqMof_3nz",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }

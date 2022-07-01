@@ -82,8 +82,6 @@
     name: impala_prometheus_proxy_{{ item.service }}
     enabled: yes
   become: yes
-  when: not (inventory_hostname in groups['gateway']) 
-     and inventory_hostname in groups[item.group]
   loop:
     - { service: 'statestored', group: 'impala_statestore' }
     - { service: 'catalogd', group: 'impala_catalog' }

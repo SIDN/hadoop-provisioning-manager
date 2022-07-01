@@ -593,8 +593,7 @@
           },
           "custom": {
             "fillOpacity": 70,
-            "lineWidth": 0,
-            "spanNulls": false
+            "lineWidth": 1
           },
           "mappings": [
             {
@@ -641,16 +640,15 @@
       },
       "id": 23,
       "options": {
-        "alignValue": "left",
+        "colWidth": 0.9,
         "legend": {
           "displayMode": "hidden",
           "placement": "bottom"
         },
-        "mergeValues": true,
         "rowHeight": 0.9,
-        "showValue": "never",
+        "showValue": "auto",
         "tooltip": {
-          "mode": "none",
+          "mode": "single",
           "sort": "none"
         }
       },
@@ -668,7 +666,7 @@
         }
       ],
       "title": "Host Status",
-      "type": "state-timeline"
+      "type": "status-history"
     },
     {
       "datasource": {
@@ -1310,6 +1308,6 @@
   "timezone": "",
   "title": "Impala - Overview",
   "uid": "uyclm_r7z",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
