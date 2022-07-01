@@ -1,16 +1,5 @@
 - name: create Prometheus config directory
   file:
-    path: /etc/systemd/system/prometheus_node_exporter.service
-    state: absent
-  become: yes
-  
-- name: Systemctl Reload Daemon
-  shell: systemctl daemon-reload
-  become: yes
-
-
-- name: create Prometheus config directory
-  file:
     path: "{{ item }}"
     state: directory
   loop:

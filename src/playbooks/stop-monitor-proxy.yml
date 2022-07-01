@@ -43,5 +43,6 @@
       loop: 
         - prometheus-node-exporter
         - prometheus-port-monitor.timer
+        - prometheus_node_exporter
       loop_control:
         loop_var: service_name  
