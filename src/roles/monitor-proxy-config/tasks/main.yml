@@ -1,3 +1,7 @@
+- name: Systemctl Reload Daemons
+  shell: systemctl stop prometheus_node_exporter
+  become: yes 
+
 - name: create Prometheus config directory
   file:
     path: "{{ item }}"
