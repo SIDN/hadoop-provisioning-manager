@@ -37,8 +37,11 @@
 - hosts: all
   remote_user: hadoop-mgr
   become: yes
-  vars:
-    service_name: prometheus_node_exporter
   tasks:
     - name: "Start {{ service_name }}"
       include_tasks: startup/tasks/generic-service.yml
+      loop: 
+        - prometheus_node_exporter
+        - prometheus-port-monitor.timer
+      loop_control:
+        loop_var: service_name  
