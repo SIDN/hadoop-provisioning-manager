@@ -648,13 +648,12 @@
         },
         "mergeValues": true,
         "rowHeight": 0.9,
-        "showValue": "auto",
+        "showValue": "never",
         "tooltip": {
           "mode": "none",
           "sort": "none"
         }
       },
-      "pluginVersion": "8.4.3",
       "targets": [
         {
           "datasource": {
@@ -662,7 +661,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum by (instance)(\n    up * on (instance) group_left(role) host_role{role=\"impala\"}\n)",
+          "expr": "up * on (instance, job) group_left(role) host_role{role=\"impala\"}",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
