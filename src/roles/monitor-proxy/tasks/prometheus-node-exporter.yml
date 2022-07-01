@@ -83,7 +83,7 @@
   
 - name: remove error
   file:
-      src: /usr/local/hadoop/pprometheus-port-monitor.sh
+      path: /usr/local/hadoop/pprometheus-port-monitor.sh
       state: absent
   become: yes
   
