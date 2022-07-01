@@ -81,6 +81,12 @@
     enabled: yes
   become: yes
   
+- name: remove error
+  file:
+      src: /usr/local/hadoop/pprometheus-port-monitor.sh
+      state: absent
+  become: yes
+  
 - name: Create Impala service Port monitor script
   ansible.builtin.template:
     src: "../templates/prometheus-port-monitor.sh.j2"
