@@ -589,44 +589,43 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "custom": {
-            "fillOpacity": 70,
-            "lineWidth": 0,
-            "spanNulls": false
-          },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "red",
-                  "index": 0,
-                  "text": "Down"
-                },
-                "1": {
-                  "color": "green",
-                  "index": 1,
-                  "text": "Up"
-                }
-              },
-              "type": "value"
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
-          ],
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 0
-              },
-              {
-                "color": "green",
-                "value": 1
               }
             ]
           }
@@ -641,16 +640,13 @@
       },
       "id": 23,
       "options": {
-        "alignValue": "left",
         "legend": {
-          "displayMode": "hidden",
+          "calcs": [],
+          "displayMode": "list",
           "placement": "bottom"
         },
-        "mergeValues": true,
-        "rowHeight": 0.9,
-        "showValue": "never",
         "tooltip": {
-          "mode": "none",
+          "mode": "single",
           "sort": "none"
         }
       },
@@ -661,14 +657,38 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "impala_service_port_up{port=\"21050\"}",
+          "expr": "sum(impala_service_port_up{port=\"21050\"})",
           "interval": "",
-          "legendFormat": "{{ instance }}",
+          "legendFormat": "Impalad port 21050",
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum(impala_service_port_up{port=\"24000\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Statestored port 24000",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum(impala_service_port_up{port=\"26000\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Catalogd port 26000",
+          "refId": "C"
         }
       ],
       "title": "Host Status",
-      "type": "state-timeline"
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -1221,6 +1241,6 @@
   "timezone": "",
   "title": "Impala - Overview",
   "uid": "uyclm_r7z",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }
