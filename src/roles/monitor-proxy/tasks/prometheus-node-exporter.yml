@@ -84,7 +84,7 @@
 - name: Create Impala service Port monitor script
   ansible.builtin.template:
     src: "../templates/prometheus-port-monitor.sh.j2"
-    dest: "{{ stack_root }}/pprometheus-port-monitor.sh"
+    dest: "{{ stack_root }}/prometheus-node-exporter-latest/prometheus-port-monitor.sh"
     mode: '0775'
   become: yes
   when: (inventory_hostname in groups['impala_statestore'])
