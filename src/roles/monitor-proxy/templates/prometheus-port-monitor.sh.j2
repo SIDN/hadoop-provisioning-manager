@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# check if service ports are still listening
+
+TEMP_FILE=/tmp/prom-port-mon.tmp
+
+rm -f $TEMP_FILE
+
+{% if inventory_hostname in groups['impala_statestore'] %}
+
+stat_val=$(netstat -na | grep LIST | grep 24000 | wc -l)
+echo "impala_service_port_up{port=\"24000\"} $stat_val" >> $TEMP_FILE
+
+{% endif %}
+
+{% if inventory_hostname in groups['impala_catalog'] %}
+
+stat_val=$(netstat -na | grep LIST | grep 26000 | wc -l)
+echo "impala_service_port_up{port=\"26000\"} $stat_val" >> $TEMP_FILE
+
+{% endif %}
+
+{% if inventory_hostname in groups['impala'] %}
+
+stat_val=$(netstat -na | grep LIST | grep 21050 | wc -l)
+echo "impala_service_port_up{port=\"21050\"} $stat_val" >> $TEMP_FILE
+
+stat_val=$(netstat -na | grep LIST | grep 21000 | wc -l)
+echo "impala_service_port_up{port=\"21000\"} $stat_val" >> $TEMP_FILE
+
+{% endif %}
+
+mv -f $TEMP_FILE {{ prometheus_etc_dir }}/port-mon.prom
+
+
+

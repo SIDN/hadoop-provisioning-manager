@@ -80,3 +80,13 @@
     name: prometheus_node_exporter
     enabled: yes
   become: yes
+  
+- name: Create Impala service Port monitor script
+  ansible.builtin.template:
+    src: "../templates/prometheus-port-monitor.sh.j2"
+    dest: "{{ stack_root }}/pprometheus-port-monitor.sh"
+    mode: '0775'
+  become: yes
+  when: (inventory_hostname in groups['impala_statestore'])
+         or (inventory_hostname in groups['impala_catalog'])
+         or (inventory_hostname in groups['impala'])
