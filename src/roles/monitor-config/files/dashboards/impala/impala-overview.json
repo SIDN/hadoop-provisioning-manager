@@ -572,7 +572,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(impala_server_num_queries[1m])",
+          "expr": "rate(impala_server_num_queries[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -593,7 +593,8 @@
           },
           "custom": {
             "fillOpacity": 70,
-            "lineWidth": 1
+            "lineWidth": 0,
+            "spanNulls": false
           },
           "mappings": [
             {
@@ -640,18 +641,20 @@
       },
       "id": 23,
       "options": {
-        "colWidth": 0.9,
+        "alignValue": "left",
         "legend": {
           "displayMode": "hidden",
           "placement": "bottom"
         },
+        "mergeValues": true,
         "rowHeight": 0.9,
         "showValue": "auto",
         "tooltip": {
-          "mode": "single",
+          "mode": "none",
           "sort": "none"
         }
       },
+      "pluginVersion": "8.4.3",
       "targets": [
         {
           "datasource": {
@@ -659,14 +662,14 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "up * on (instance, job) group_left(role) host_role{role=\"impala\"}",
+          "expr": "sum by (instance)(\n    up * on (instance) group_left(role) host_role{role=\"impala\"}\n)",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
       "title": "Host Status",
-      "type": "status-history"
+      "type": "state-timeline"
     },
     {
       "datasource": {
@@ -748,7 +751,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(impala_server_num_queries_spilled[1m])",
+          "expr": "rate(impala_server_num_queries_spilled[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -837,7 +840,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(impala_server_backend_num_queries_executed[1m])",
+          "expr": "rate(impala_server_backend_num_queries_executed[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -927,7 +930,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "impala_memory_total_used",
+          "expr": "rate(impala_memory_total_used[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1104,7 +1107,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(impala_server_io_mgr_bytes_read[1m])",
+          "expr": "delta(impala_server_io_mgr_bytes_read[5m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1262,7 +1265,7 @@
       "gridPos": {
         "h": 9,
         "w": 12,
-        "x": 0,
+        "x": 12,
         "y": 43
       },
       "id": 17,
@@ -1284,7 +1287,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(impala_server_io_mgr_short_circuit_bytes_read[1m])",
+          "expr": "rate(impala_server_io_mgr_short_circuit_bytes_read[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1301,7 +1304,7 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},

@@ -556,7 +556,8 @@
           },
           "custom": {
             "fillOpacity": 70,
-            "lineWidth": 1
+            "lineWidth": 0,
+            "spanNulls": false
           },
           "mappings": [
             {
@@ -603,15 +604,16 @@
       },
       "id": 27,
       "options": {
-        "colWidth": 0.9,
+        "alignValue": "left",
         "legend": {
           "displayMode": "hidden",
           "placement": "bottom"
         },
+        "mergeValues": true,
         "rowHeight": 0.9,
-        "showValue": "auto",
+        "showValue": "never",
         "tooltip": {
-          "mode": "single",
+          "mode": "none",
           "sort": "none"
         }
       },
@@ -629,7 +631,7 @@
         }
       ],
       "title": "Host Status",
-      "type": "status-history"
+      "type": "state-timeline"
     },
     {
       "datasource": {
@@ -1317,13 +1319,13 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Hadoop - HDFS",
   "uid": "ajvGA_q7z",
-  "version": 9,
+  "version": 10,
   "weekStart": ""
 }
