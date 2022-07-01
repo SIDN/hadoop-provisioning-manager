@@ -41,7 +41,7 @@
     - name: "Stop {{ service_name }}"
       include_tasks: shutdown/tasks/generic-service.yml
       loop: 
-        - prometheus_node_exporter
+        - prometheus-node-exporter
         - prometheus-port-monitor.timer
       loop_control:
         loop_var: service_name  
