@@ -684,13 +684,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(Hadoop_DataNode_BytesWritten[1h])",
+          "expr": "delta(Hadoop_DataNode_BytesWritten[$__range])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
-      "title": "DFS Bytes Written (1h)",
+      "title": "DFS Bytes Written",
       "type": "bargauge"
     },
     {
@@ -771,13 +771,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(Hadoop_DataNode_BlocksWritten[5m])",
+          "expr": "delta(Hadoop_DataNode_BlocksWritten[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
-      "title": "DFS Blocks Written (5m)",
+      "title": "DFS Blocks Written",
       "type": "timeseries"
     },
     {
@@ -858,7 +858,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(Hadoop_DataNode_BlocksRead[5m])",
+          "expr": "delta(Hadoop_DataNode_BlocksRead[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1102,7 +1102,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 12,
         "y": 32
@@ -1126,7 +1126,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(Hadoop_DataNode_BlocksWritten[5m])",
+          "expr": "rate(Hadoop_DataNode_BlocksWritten[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1188,7 +1188,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 0,
         "y": 41
@@ -1212,7 +1212,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(Hadoop_DataNode_RemoteBytesRead[5m])",
+          "expr": "rate(Hadoop_DataNode_RemoteBytesRead[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1278,10 +1278,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
-        "x": 0,
-        "y": 49
+        "x": 12,
+        "y": 41
       },
       "id": 17,
       "options": {
@@ -1319,13 +1319,13 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Hadoop - HDFS",
   "uid": "ajvGA_q7z",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }

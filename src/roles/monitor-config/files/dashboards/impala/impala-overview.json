@@ -94,7 +94,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "max(impala_statestore_live_backends)",
+          "expr": "min(impala_cluster_membership_backends_total)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -411,7 +411,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(node_memory_MemTotal_bytes{instance=~\"arn2-rnd-entrada.*-p.sidnlabs.nl:9100\"})",
+          "expr": "sum (node_memory_MemTotal_bytes * on (instance) group_left (host_role) host_role{role=\"impala\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -474,7 +474,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(node_memory_MemAvailable_bytes{instance=~\"arn2-rnd-entrada.*-p.sidnlabs.nl:9100\"})",
+          "expr": "sum (node_memory_MemAvailable_bytes * on (instance) group_left (host_role) host_role{role=\"impala\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1221,6 +1221,6 @@
   "timezone": "",
   "title": "Impala - Overview",
   "uid": "uyclm_r7z",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }
