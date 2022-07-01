@@ -572,7 +572,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_num_queries[1m])",
+          "expr": "delta(impala_server_num_queries[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -750,7 +750,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_num_queries_spilled[1m])",
+          "expr": "delta(impala_server_num_queries_spilled[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -764,6 +764,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -810,7 +811,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "clockms"
         },
         "overrides": []
       },
@@ -820,7 +822,7 @@
         "x": 12,
         "y": 16
       },
-      "id": 3,
+      "id": 6,
       "options": {
         "legend": {
           "calcs": [],
@@ -839,13 +841,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_backend_num_queries_executed[1m])",
+          "expr": "impala_server_query_durations_ms_sum",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
-      "title": "Backend Queries Executed",
+      "title": "Query Duration",
       "type": "timeseries"
     },
     {
@@ -929,7 +931,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_memory_total_used[1m])",
+          "expr": "impala_memory_total_used",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -943,7 +945,6 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -991,7 +992,7 @@
               }
             ]
           },
-          "unit": "clockms"
+          "unit": "decbytes"
         },
         "overrides": []
       },
@@ -1001,7 +1002,7 @@
         "x": 12,
         "y": 25
       },
-      "id": 6,
+      "id": 15,
       "options": {
         "legend": {
           "calcs": [],
@@ -1020,13 +1021,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "impala_server_query_durations_ms_sum",
+          "expr": "sum(impala_memory_total_used)",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
         }
       ],
-      "title": "Query Duration",
+      "title": "Memory Used Total",
       "type": "timeseries"
     },
     {
@@ -1106,7 +1107,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(impala_server_io_mgr_bytes_read[5m])",
+          "expr": "delta(impala_server_io_mgr_bytes_read[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1167,7 +1168,7 @@
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "bytes"
         },
         "overrides": []
       },
@@ -1176,96 +1177,6 @@
         "w": 12,
         "x": 12,
         "y": 34
-      },
-      "id": 15,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "exemplar": true,
-          "expr": "sum(impala_memory_total_used)",
-          "interval": "",
-          "legendFormat": "{{ instance }}",
-          "refId": "A"
-        }
-      ],
-      "title": "Memory Used Total",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 43
       },
       "id": 17,
       "options": {
@@ -1286,7 +1197,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_io_mgr_short_circuit_bytes_read[1m])",
+          "expr": "delta(impala_server_io_mgr_short_circuit_bytes_read[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1310,6 +1221,6 @@
   "timezone": "",
   "title": "Impala - Overview",
   "uid": "uyclm_r7z",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
