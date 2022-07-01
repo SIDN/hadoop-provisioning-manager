@@ -33,7 +33,8 @@ echo "impala_service_port_up{port=\"21000\"} $stat_val" >> $TEMP_FILE
 
 {% endif %}
 
-mv -f $TEMP_FILE {{ prometheus_etc_dir }}/port-mon.prom
+chmod 444 $TEMP_FILE
+mv -f $TEMP_FILE {{ prometheus_etc_dir }}/metrics/port-mon.prom
 
 
 

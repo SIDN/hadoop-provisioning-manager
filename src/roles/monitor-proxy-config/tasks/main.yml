@@ -4,6 +4,7 @@
     state: directory
   loop:
     - "{{ prometheus_etc_dir }}"
+    - "{{ prometheus_etc_dir }}/metrics"
   become: yes
   
 - name: Create Prometheus Node Exporter password hash 
@@ -18,6 +19,14 @@
     mode: '0644'
   loop:
     - prometheus-node-exporter-config.yml.j2
+  become: yes
+  
+- name: Create Node Exporter static metric files
+  ansible.builtin.template:
+    src: ../templates/{{ item }}
+    dest: "{{ prometheus_etc_dir }}/metrics/{{ item | replace('.j2', '') }}"
+    mode: '0644'
+  loop:
     - roles.prom.j2
   become: yes
     
