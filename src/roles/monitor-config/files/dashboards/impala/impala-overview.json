@@ -572,7 +572,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_num_queries[1m])",
+          "expr": "delta(impala_server_num_queries[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -748,7 +748,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_num_queries_spilled[1m])",
+          "expr": "delta(impala_server_num_queries_spilled[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -837,7 +837,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_backend_num_queries_executed[1m])",
+          "expr": "delta(impala_server_backend_num_queries_executed[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -927,7 +927,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_memory_total_used[1m])",
+          "expr": "impala_memory_total_used",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1104,7 +1104,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "delta(impala_server_io_mgr_bytes_read[5m])",
+          "expr": "delta(impala_server_io_mgr_bytes_read[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1262,7 +1262,7 @@
       "gridPos": {
         "h": 9,
         "w": 12,
-        "x": 12,
+        "x": 0,
         "y": 43
       },
       "id": 17,
@@ -1284,7 +1284,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "rate(impala_server_io_mgr_short_circuit_bytes_read[1m])",
+          "expr": "delta(impala_server_io_mgr_short_circuit_bytes_read[1m])",
           "interval": "",
           "legendFormat": "{{ instance }}",
           "refId": "A"
@@ -1301,13 +1301,13 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Impala - Overview",
   "uid": "uyclm_r7z",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
