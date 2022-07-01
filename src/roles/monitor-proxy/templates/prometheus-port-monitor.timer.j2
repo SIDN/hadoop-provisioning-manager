@@ -1,0 +1,16 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# use timer to start Prometheus Port monitor script
+
+[Unit]
+Description=Prometheus Port Monitor
+Requires=prometheus-port-monitor.service
+
+[Timer]
+Unit=prometheus-port-monitor.service
+# run every minute
+OnCalendar=*-*-* *:*:00
+
+[Install]
+WantedBy=timers.target

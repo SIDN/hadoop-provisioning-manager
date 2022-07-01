@@ -67,27 +67,7 @@
       state: link
   become: yes
 
-- name: Create Prometheus Node Exporter systemd unit
-  ansible.builtin.template:
-    src: ../templates/systemd_prometheus_node_exporter_service.j2
-    dest: /etc/systemd/system/prometheus_node_exporter.service
-    mode: '0644'
-  become: yes
-  
-# make sure monitoring restarts after reboot
-- name: Enable Prometheus Node Exporter systemd service
-  ansible.builtin.systemd:
-    name: prometheus_node_exporter
-    enabled: yes
-  become: yes
-  
-- name: remove error
-  file:
-      path: /usr/local/hadoop/pprometheus-port-monitor.sh
-      state: absent
-  become: yes
-  
-- name: Create Impala service Port monitor script
+- name: Create Port monitor script
   ansible.builtin.template:
     src: "../templates/prometheus-port-monitor.sh.j2"
     dest: "{{ stack_root }}/prometheus-node-exporter-latest/prometheus-port-monitor.sh"
@@ -96,3 +76,25 @@
   when: (inventory_hostname in groups['impala_statestore'])
          or (inventory_hostname in groups['impala_catalog'])
          or (inventory_hostname in groups['impala'])
+         
+- name: Create Prometheus Node Exporter systemd units
+  ansible.builtin.template:
+    src: ../templates/{{ item }}
+    dest: /etc/systemd/system/{{ item | replace('.j2','') }}
+    mode: '0644'
+  loop: 
+    - prometheus-node-exporter.service.j2
+    - prometheus-port-monitor.service.j2
+    - prometheus-port-monitor.timer.j2
+  become: yes
+  
+# make sure monitoring restarts after reboot
+- name: Enable Prometheus Node Exporter systemd units
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: yes
+  loop:
+    - prometheus-node-exporter.service
+    - prometheus-port-monitor.timer
+  become: yes
+  
