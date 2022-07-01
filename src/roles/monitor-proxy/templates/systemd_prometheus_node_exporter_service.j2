@@ -6,7 +6,9 @@ Description=Prometheus Node Exporter
  
 [Service]
 Type=simple
-ExecStart={{ stack_root }}/prometheus-node-exporter-latest/node_exporter --web.config={{ prometheus_etc_dir }}/prometheus-node-exporter-config.yml
+ExecStart={{ stack_root }}/prometheus-node-exporter-latest/node_exporter \
+  --collector.textfile.directory {{ prometheus_etc_dir }} \
+  --web.config={{ prometheus_etc_dir }}/prometheus-node-exporter-config.yml
 Restart=always
 RestartSec=60
 

@@ -1,0 +1,6 @@
+{% if inventory_hostname in groups['impala'] %}
+host_role{role="impala"} 1
+{% endif %}
+{% if inventory_hostname in groups['hadoop'] %}
+host_role{role="hadoop"} 1
+{% endif %}

@@ -11,11 +11,14 @@
     echo "{{ prometheus_node_exporter_password }}" | htpasswd -niBC 10 "" | tr -d ':\n'
   register: prometheus_node_exporter_password_hash
   
-- name: Create Node Exporter configuration file
+- name: Create Node Exporter configuration files
   ansible.builtin.template:
-    src: "../templates/prometheus-node-exporter-config.yml.j2"
-    dest: "{{ prometheus_etc_dir }}/prometheus-node-exporter-config.yml"
+    src: ../templates/{{ item }}
+    dest: "{{ prometheus_etc_dir }}/{{ item | replace('.j2', '') }}"
     mode: '0644'
+  loop:
+    - prometheus-node-exporter-config.yml.j2
+    - roles.prom.j2
   become: yes
     
 - name: Create Impala Proxy configuration files

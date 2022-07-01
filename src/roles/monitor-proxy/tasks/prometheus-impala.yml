@@ -89,6 +89,15 @@
     - { service: 'catalogd', group: 'impala_catalog' }
     - { service: 'impalad', group: 'impala' }
   when: inventory_hostname in groups[item.group]
+  
+- name: Enable Prometheus systemd Proxy kill timer
+  ansible.builtin.systemd:
+    name: prometheus_impala_proxy_kill.timer
+    enabled: yes
+  become: yes
+  when: (inventory_hostname in groups['impala_statestore'])
+         or (inventory_hostname in groups['impala_catalog'])
+         or (inventory_hostname in groups['impala'])
     
 
   
