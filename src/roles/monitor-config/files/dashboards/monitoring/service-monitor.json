@@ -21,7 +21,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 19,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -151,13 +150,13 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(cluster_service_port_up{name=\"impala_impalad\", port=\"21050\"})",
+          "expr": "sum(cluster_service_port_up{name=\"impala_statestored\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Impala Daemon",
+      "title": "Impala Statestore",
       "type": "stat"
     },
     {
@@ -1419,7 +1418,7 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(cluster_service_port_up{name=\"impala_impalad\"})",
+          "expr": "sum(cluster_service_port_up{name=\"impala_impalad\", port=\"21050\"})",
           "interval": "",
           "legendFormat": "Impalad",
           "refId": "A"
@@ -2190,6 +2189,6 @@
   "timezone": "",
   "title": "Service Monitor",
   "uid": "PX3cve3nz",
-  "version": 32,
+  "version": 33,
   "weekStart": ""
 }
