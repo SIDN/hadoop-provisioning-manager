@@ -89,12 +89,13 @@ echo "cluster_service_port_up{name=\"hue\", port=\"{{ hue_port }}\"} $stat_val" 
 
 {% if inventory_hostname in groups['jupyterhub'] %}
 # jupyterhub
-stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ jupyterhub_port }} " | wc -l)
+stat_val=$(netstat -na | grep LIST | grep ":{{ jupyterhub_port }} " | wc -l)
 echo "cluster_service_port_up{name=\"jupyterhub\", port=\"{{ jupyterhub_port }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['superset'] %}
 # superset
+stat_val=$(netstat -na | grep LIST | grep ":{{ superset_port }} " | wc -l)
 echo "cluster_service_port_up{name=\"superset\", port=\"{{ superset_port }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
