@@ -1342,6 +1342,46 @@
       "type": "row"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "B",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Impala down",
+        "name": "Impala alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "11B-2I67k"
+          }
+        ]
+      },
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1446,6 +1486,14 @@
           "interval": "",
           "legendFormat": "Catalogd",
           "refId": "C"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 1,
+          "visible": true
         }
       ],
       "title": "Impala",
@@ -2189,6 +2237,6 @@
   "timezone": "",
   "title": "Service Monitor",
   "uid": "PX3cve3nz",
-  "version": 33,
+  "version": 34,
   "weekStart": ""
 }
