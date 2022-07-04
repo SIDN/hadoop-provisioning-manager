@@ -1445,7 +1445,7 @@
               "type": "gt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -1468,7 +1468,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -1645,7 +1645,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -1668,7 +1668,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -1691,7 +1691,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -1714,7 +1714,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -1919,7 +1919,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -1942,7 +1942,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -2123,7 +2123,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -2146,7 +2146,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -2461,7 +2461,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -2764,7 +2764,7 @@
               "type": "lt"
             },
             "operator": {
-              "type": "and"
+              "type": "or"
             },
             "query": {
               "params": [
@@ -2896,6 +2896,92 @@
         }
       ],
       "title": "Ranger",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 0,
+        "y": 43
+      },
+      "id": 41,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum(cluster_service_port_up{name=\"krb_kdc\"})",
+          "interval": "",
+          "legendFormat": "KDC",
+          "refId": "A"
+        }
+      ],
+      "title": "Kerberos",
       "type": "timeseries"
     }
   ],
