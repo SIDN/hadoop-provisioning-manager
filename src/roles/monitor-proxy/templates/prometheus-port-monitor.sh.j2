@@ -28,8 +28,8 @@ echo "cluster_service_port_up{name=\"impala_impalad\", port=\"21000\"} $stat_val
 
 {% if inventory_hostname in groups['hadoop'] %}
 # datanode dfs.datanode.address
-stat_val=$(netstat -na | grep LIST | grep 9866 | wc -l)
-echo "cluster_service_port_up{name=\"hdfs_datanode\", port=\"9866\"} $stat_val" >> $TEMP_FILE
+stat_val=$(netstat -na | grep LIST | grep 10019 | wc -l)
+echo "cluster_service_port_up{name=\"hdfs_datanode\", port=\"10019\"} $stat_val" >> $TEMP_FILE
 
 # yarn nodemanager
 stat_val=$(netstat -na | grep LIST | grep 8044 | wc -l)
