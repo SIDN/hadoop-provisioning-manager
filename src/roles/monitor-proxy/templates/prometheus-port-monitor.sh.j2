@@ -10,7 +10,7 @@ TEMP_FILE=/tmp/prom-port-mon.tmp
 rm -f $TEMP_FILE
 
 {% if inventory_hostname in groups['impala_statestore'] %}
-stat_val=$(netstat -na | grep LIST | grep "tcp .*: 24000 " | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:24000 " | wc -l)
 echo "cluster_service_port_up{name=\"impala_statestored\", port=\"24000\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
