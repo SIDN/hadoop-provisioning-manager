@@ -57,14 +57,14 @@ stat_val=$(netstat -na | grep LIST | grep "tcp .*:8019 " | wc -l)
 echo "cluster_service_port_up{name=\"hdfs_zkfc\", port=\"8019\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
-# journalnode
 {% if inventory_hostname in groups['hdfs_journalnode'] %}
+# journalnode
 stat_val=$(netstat -na | grep LIST | grep "tcp .*:8485 " | wc -l)
 echo "cluster_service_port_up{name=\"hdfs_journalnode\", port=\"8485\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
-# web hdfs
 {% if inventory_hostname in groups['hdfs_httpfs'] %}
+# web hdfs
 stat_val=$(netstat -na | grep LIST | grep "tcp .*:14000 " | wc -l)
 echo "cluster_service_port_up{name=\"hdfs_webhdfs\", port=\"14000\"} $stat_val" >> $TEMP_FILE
 {% endif %}

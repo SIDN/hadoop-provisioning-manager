@@ -1433,7 +1433,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -1456,7 +1456,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -1479,7 +1479,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "avg"
+              "type": "last"
             },
             "type": "query"
           }
@@ -1633,7 +1633,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -1656,7 +1656,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -1679,7 +1679,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -1702,7 +1702,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -1725,7 +1725,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           }
@@ -1907,7 +1907,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -1930,7 +1930,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -1953,7 +1953,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           }
@@ -2111,7 +2111,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -2134,7 +2134,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -2157,7 +2157,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           }
@@ -2315,7 +2315,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           }
@@ -2449,7 +2449,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -2472,7 +2472,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           }
@@ -2618,7 +2618,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           }
@@ -2752,7 +2752,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           },
@@ -2775,7 +2775,7 @@
             },
             "reducer": {
               "params": [],
-              "type": "sum"
+              "type": "last"
             },
             "type": "query"
           }
@@ -2899,6 +2899,46 @@
       "type": "timeseries"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "last"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Kerberos KDC problem",
+        "name": "Kerberos alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "Jg_v9V6nz"
+          }
+        ]
+      },
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2979,6 +3019,14 @@
           "interval": "",
           "legendFormat": "KDC",
           "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 1,
+          "visible": true
         }
       ],
       "title": "Kerberos",
