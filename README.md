@@ -23,6 +23,9 @@ The cluster is automatically configured with features such as.
  A management console is provided, to help administrators and users to navigate all the available services.
 ![Screenshot of console web application](https://github.com/SIDN/hadoop-provisioning-manager/blob/9ff36208aadb7adb633b0628f67d7eb5848608c5/docs/img/hpm-screenshot-impala.png)
 
+Monitoring is automatically configured using Prometheus and Grafana, dashboards are provided, to help administrators monitor all services and receive alerts when a service becomes unavailable.
+![Screenshot of Grafana monitor dashboard](https://github.com/SIDN/hadoop-provisioning-manager/blob/9ff36208aadb7adb633b0628f67d7eb5848608c5/docs/img/screenshot-cluster-monitor.png)
+
 
 # Requirements
 
