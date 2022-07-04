@@ -1367,18 +1367,67 @@
               "type": "sum"
             },
             "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                11
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
           }
         ],
         "executionErrorState": "alerting",
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "Impala down",
+        "message": "Impala problem",
         "name": "Impala alert",
         "noDataState": "no_data",
         "notifications": [
           {
             "uid": "11B-2I67k"
+          },
+          {
+            "uid": "Jg_v9V6nz"
           }
         ]
       },
@@ -1500,6 +1549,138 @@
       "type": "timeseries"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                3
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                2
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "B",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                2
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "D",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                11
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "E",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Hadoop HDFS problem",
+        "name": "Hadoop - HDFS alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "Jg_v9V6nz"
+          }
+        ]
+      },
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1630,10 +1811,81 @@
           "refId": "E"
         }
       ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 3,
+          "visible": true
+        }
+      ],
       "title": "Hadoop - HDFS",
       "type": "timeseries"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "B",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Hadoop Yarn problem",
+        "name": "Hadoop - Yarn alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "Jg_v9V6nz"
+          }
+        ]
+      },
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1740,10 +1992,104 @@
           "refId": "C"
         }
       ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 1,
+          "visible": true
+        }
+      ],
       "title": "Hadoop - Yarn",
       "type": "timeseries"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "B",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Analytics problem",
+        "name": "Analytics alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "Jg_v9V6nz"
+          }
+        ]
+      },
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1850,10 +2196,58 @@
           "refId": "C"
         }
       ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 1,
+          "visible": true
+        }
+      ],
       "title": "Analytics",
       "type": "timeseries"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Hive problem",
+        "name": "Hive alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "Jg_v9V6nz"
+          }
+        ]
+      },
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1936,10 +2330,58 @@
           "refId": "A"
         }
       ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 1,
+          "visible": true
+        }
+      ],
       "title": "Hive",
       "type": "timeseries"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Spark problem",
+        "name": "Spark alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "Jg_v9V6nz"
+          }
+        ]
+      },
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2034,10 +2476,58 @@
           "refId": "B"
         }
       ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 1,
+          "visible": true
+        }
+      ],
       "title": "Spark",
       "type": "timeseries"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Zookeeper problem",
+        "name": "Zookeeper alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "Jg_v9V6nz"
+          }
+        ]
+      },
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2120,10 +2610,81 @@
           "refId": "A"
         }
       ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 1,
+          "visible": true
+        }
+      ],
       "title": "Zookeeper",
       "type": "timeseries"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "B",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Ranger problem",
+        "name": "Ranger alert",
+        "noDataState": "no_data",
+        "notifications": [
+          {
+            "uid": "Jg_v9V6nz"
+          }
+        ]
+      },
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -2218,6 +2779,14 @@
           "refId": "B"
         }
       ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "lt",
+          "value": 1,
+          "visible": true
+        }
+      ],
       "title": "Ranger",
       "type": "timeseries"
     }
@@ -2237,6 +2806,6 @@
   "timezone": "",
   "title": "Service Monitor",
   "uid": "PX3cve3nz",
-  "version": 34,
+  "version": 35,
   "weekStart": ""
 }
