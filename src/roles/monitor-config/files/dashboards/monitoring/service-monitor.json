@@ -115,6 +115,14 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
               }
             ]
           }
@@ -1491,7 +1499,11 @@
         "message": "Impala problem",
         "name": "Impala alert",
         "noDataState": "no_data",
-        "notifications": []
+        "notifications": [
+          {
+            "uid": "Jg_v9V6nz"
+          }
+        ]
       },
       "datasource": {
         "type": "prometheus",
@@ -2186,6 +2198,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisGridShow": true,
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -3048,6 +3061,6 @@
   "timezone": "",
   "title": "Service Monitor",
   "uid": "PX3cve3nz",
-  "version": 36,
+  "version": 38,
   "weekStart": ""
 }
