@@ -1329,6 +1329,75 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 15,
+        "y": 7
+      },
+      "id": 40,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "exemplar": true,
+          "expr": "sum(cluster_service_port_up{name=\"krb_kdc\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Kerberos KDC",
+      "type": "stat"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -1422,14 +1491,7 @@
         "message": "Impala problem",
         "name": "Impala alert",
         "noDataState": "no_data",
-        "notifications": [
-          {
-            "uid": "11B-2I67k"
-          },
-          {
-            "uid": "Jg_v9V6nz"
-          }
-        ]
+        "notifications": []
       },
       "datasource": {
         "type": "prometheus",
@@ -1862,6 +1924,29 @@
             "query": {
               "params": [
                 "B",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                11
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C",
                 "5m",
                 "now"
               ]
@@ -2367,6 +2452,29 @@
               "type": "sum"
             },
             "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                1
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "B",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "sum"
+            },
+            "type": "query"
           }
         ],
         "executionErrorState": "alerting",
@@ -2806,6 +2914,6 @@
   "timezone": "",
   "title": "Service Monitor",
   "uid": "PX3cve3nz",
-  "version": 35,
+  "version": 36,
   "weekStart": ""
 }

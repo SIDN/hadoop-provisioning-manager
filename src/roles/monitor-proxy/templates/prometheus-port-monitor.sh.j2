@@ -10,118 +10,125 @@ TEMP_FILE=/tmp/prom-port-mon.tmp
 rm -f $TEMP_FILE
 
 {% if inventory_hostname in groups['impala_statestore'] %}
-stat_val=$(netstat -na | grep LIST | grep 24000 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*: 24000" | wc -l)
 echo "cluster_service_port_up{name=\"impala_statestored\", port=\"24000\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['impala_catalog'] %}
-stat_val=$(netstat -na | grep LIST | grep 26000 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:26000" | wc -l)
 echo "cluster_service_port_up{name=\"impala_catalogd\", port=\"26000\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['impala'] %}
-stat_val=$(netstat -na | grep LIST | grep 21050 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:21050" | wc -l)
 echo "cluster_service_port_up{name=\"impala_impalad\", port=\"21050\"} $stat_val" >> $TEMP_FILE
-stat_val=$(netstat -na | grep LIST | grep 21000 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:21000" | wc -l)
 echo "cluster_service_port_up{name=\"impala_impalad\", port=\"21000\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['hadoop'] %}
 # datanode dfs.datanode.address
-stat_val=$(netstat -na | grep LIST | grep 10019 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:10019" | wc -l)
 echo "cluster_service_port_up{name=\"hdfs_datanode\", port=\"10019\"} $stat_val" >> $TEMP_FILE
 
 # yarn nodemanager
-stat_val=$(netstat -na | grep LIST | grep 8044 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:8044" | wc -l)
 echo "cluster_service_port_up{name=\"yarn_nodemanager\", port=\"8044\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['yarn_resource_mgr'] %}
 # yarn resourcemanager
-stat_val=$(netstat -na | grep LIST | grep 8032 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:8032" | wc -l)
 echo "cluster_service_port_up{name=\"yarn_resourcemanager\", port=\"8032\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['yarn_timelineserver'] %}
 # yarn resourcemanager
-stat_val=$(netstat -na | grep LIST | grep 10200 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:10200" | wc -l)
 echo "cluster_service_port_up{name=\"yarn_timelineserver\", port=\"10200\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if (inventory_hostname in groups['hdfs_primary_nn']) or (inventory_hostname in groups['hdfs_secondary_nn']) %}
 # namenode fs.namenode.rpc-address
-stat_val=$(netstat -na | grep LIST | grep 8020 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:8020" | wc -l)
 echo "cluster_service_port_up{name=\"hdfs_namenode\", port=\"8020\"} $stat_val" >> $TEMP_FILE
 # hdfs failover controller
-stat_val=$(netstat -na | grep LIST | grep 8019 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:8019" | wc -l)
 echo "cluster_service_port_up{name=\"hdfs_zkfc\", port=\"8019\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 # journalnode
 {% if inventory_hostname in groups['hdfs_journalnode'] %}
-stat_val=$(netstat -na | grep LIST | grep 8485 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:8485" | wc -l)
 echo "cluster_service_port_up{name=\"hdfs_journalnode\", port=\"8485\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 # web hdfs
 {% if inventory_hostname in groups['hdfs_httpfs'] %}
-stat_val=$(netstat -na | grep LIST | grep 14000 | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:14000" | wc -l)
 echo "cluster_service_port_up{name=\"hdfs_webhdfs\", port=\"14000\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['spark_history'] %}
 # spark History
-stat_val=$(netstat -na | grep LIST | grep {{ spark_ports.history_ui_port }} | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ spark_ports.history_ui_port }}" | wc -l)
 echo "cluster_service_port_up{name=\"spark_history\", port=\"{{ spark_ports.history_ui_port }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['hive'] %}
 # hive metastore
-stat_val=$(netstat -na | grep LIST | grep {{ hive_ports.metastore }} | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ hive_ports.metastore }}" | wc -l)
 echo "cluster_service_port_up{name=\"hive_metastore\", port=\"{{ hive_ports.metastore }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['hue'] %}
 # hive metastore
-stat_val=$(netstat -na | grep LIST | grep {{ hue_port }} | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ hue_port }}" | wc -l)
 echo "cluster_service_port_up{name=\"hue\", port=\"{{ hue_port }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['jupyterhub'] %}
 # jupyterhub
-stat_val=$(netstat -na | grep LIST | grep {{ jupyterhub_port }} | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ jupyterhub_port }}" | wc -l)
 echo "cluster_service_port_up{name=\"jupyterhub\", port=\"{{ jupyterhub_port }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['superset'] %}
 # superset
-stat_val=$(netstat -na | grep LIST | grep {{ superset_port }} | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ superset_port }}" | wc -l)
 echo "cluster_service_port_up{name=\"superset\", port=\"{{ superset_port }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['livy'] %}
 # livy
-stat_val=$(netstat -na | grep LIST | grep {{ livy_conf_options['livy.server.port'] }} | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ livy_conf_options['livy.server.port'] }}" | wc -l)
 echo "cluster_service_port_up{name=\"livy\", port=\"{{ livy_conf_options['livy.server.port'] }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['zookeeper'] %}
 # zookeeper
-stat_val=$(netstat -na | grep LIST | grep {{ zookeeper_options.clientPort }} | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ zookeeper_options.clientPort }}" | wc -l)
 echo "cluster_service_port_up{name=\"zookeeper\", port=\"{{ zookeeper_options.clientPort }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['solr'] %}
 # solr
-stat_val=$(netstat -na | grep LIST | grep {{ solr_port }} | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ solr_port }}" | wc -l)
 echo "cluster_service_port_up{name=\"solr\", port=\"{{ solr_port }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
 {% if inventory_hostname in groups['ranger'] %}
 # ranger
-stat_val=$(netstat -na | grep LIST | grep {{ ranger_admin_port }} | wc -l)
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:{{ ranger_admin_port }}" | wc -l)
 echo "cluster_service_port_up{name=\"ranger\", port=\"{{ ranger_admin_port }}\"} $stat_val" >> $TEMP_FILE
 {% endif %}
+
+{% if inventory_hostname in groups['kerberos'] %}
+# ranger
+stat_val=$(netstat -na | grep LIST | grep "tcp .*:88" | wc -l)
+echo "cluster_service_port_up{name=\"krb_kdc\", port=\"88\"} $stat_val" >> $TEMP_FILE
+{% endif %}
+
 
 chmod 444 $TEMP_FILE
 mv -f $TEMP_FILE {{ prometheus_etc_dir }}/metrics/port-mon.prom
