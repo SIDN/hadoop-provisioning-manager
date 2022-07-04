@@ -93,7 +93,7 @@
     mode: '0775'
   become: yes
   when: not (((inventory_hostname in groups['gateway']) or (inventory_hostname in groups['monitor']))
-            and (len(group_names) == 1))
+            and ( group_names | length ==  1))
 
 
 - name: Create Prometheus port monitor systemd units
@@ -106,7 +106,7 @@
     - prometheus-port-monitor.timer.j2
   become: yes
   when: not (((inventory_hostname in groups['gateway']) or (inventory_hostname in groups['monitor']))
-            and (len(group_names) == 1))
+            and ( group_names | length ==  1))
             
 # make sure monitoring restarts after reboot
 - name: Enable Prometheus port monitor systemd units
@@ -118,7 +118,7 @@
   become: yes
   when: 
     not (((inventory_hostname in groups['gateway']) or (inventory_hostname in groups['monitor']))
-            and (len(group_names) == 1))
+            and ( group_names | length ==  1))
            
 
   
