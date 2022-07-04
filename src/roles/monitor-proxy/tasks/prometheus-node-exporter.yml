@@ -66,17 +66,7 @@
       dest: "{{ stack_root }}/prometheus-node-exporter-latest"
       state: link
   become: yes
-
-- name: Create Port monitor script
-  ansible.builtin.template:
-    src: "../templates/prometheus-port-monitor.sh.j2"
-    dest: "{{ stack_root }}/prometheus-node-exporter-latest/prometheus-port-monitor.sh"
-    mode: '0775'
-  become: yes
-  when: (inventory_hostname in groups['impala_statestore'])
-         or (inventory_hostname in groups['impala_catalog'])
-         or (inventory_hostname in groups['impala'])
-         
+  
 - name: Create Prometheus Node Exporter systemd units
   ansible.builtin.template:
     src: ../templates/{{ item }}
@@ -84,8 +74,6 @@
     mode: '0644'
   loop: 
     - prometheus-node-exporter.service.j2
-    - prometheus-port-monitor.service.j2
-    - prometheus-port-monitor.timer.j2
   become: yes
   
 # make sure monitoring restarts after reboot
@@ -95,6 +83,42 @@
     enabled: yes
   loop:
     - prometheus-node-exporter.service
+  become: yes
+
+# do not enable port monitoring on nodes that only run gateway or monitor service
+- name: Create Port monitor script
+  ansible.builtin.template:
+    src: "../templates/prometheus-port-monitor.sh.j2"
+    dest: "{{ stack_root }}/prometheus-node-exporter-latest/prometheus-port-monitor.sh"
+    mode: '0775'
+  become: yes
+  when: not (((inventory_hostname in groups['gateway']) or (inventory_hostname in groups['monitor']))
+            and (len(group_names) == 1))
+
+
+- name: Create Prometheus port monitor systemd units
+  ansible.builtin.template:
+    src: ../templates/{{ item }}
+    dest: /etc/systemd/system/{{ item | replace('.j2','') }}
+    mode: '0644'
+  loop: 
+    - prometheus-port-monitor.service.j2
+    - prometheus-port-monitor.timer.j2
+  become: yes
+  when: not (((inventory_hostname in groups['gateway']) or (inventory_hostname in groups['monitor']))
+            and (len(group_names) == 1))
+            
+# make sure monitoring restarts after reboot
+- name: Enable Prometheus port monitor systemd units
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: yes
+  loop:
     - prometheus-port-monitor.timer
   become: yes
+  when: 
+    not (((inventory_hostname in groups['gateway']) or (inventory_hostname in groups['monitor']))
+            and (len(group_names) == 1))
+           
+
   
