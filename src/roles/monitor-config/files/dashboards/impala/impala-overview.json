@@ -646,7 +646,7 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -657,9 +657,9 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(impala_service_port_up{port=\"21050\"})",
+          "expr": "sum(cluster_service_port_up{name=\"impala_impalad\", port=\"21050\"})",
           "interval": "",
-          "legendFormat": "Impalad port 21050",
+          "legendFormat": "Impalad",
           "refId": "A"
         },
         {
@@ -668,10 +668,10 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(impala_service_port_up{port=\"24000\"})",
+          "expr": "sum(cluster_service_port_up{name=\"impala_statestored\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "Statestored port 24000",
+          "legendFormat": "Statestored",
           "refId": "B"
         },
         {
@@ -680,14 +680,14 @@
             "uid": "prometheus"
           },
           "exemplar": true,
-          "expr": "sum(impala_service_port_up{port=\"26000\"})",
+          "expr": "sum(cluster_service_port_up{name=\"impala_catalogd\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "Catalogd port 26000",
+          "legendFormat": "Catalogd",
           "refId": "C"
         }
       ],
-      "title": "Host Status",
+      "title": "Daemon Status",
       "type": "timeseries"
     },
     {
@@ -1241,6 +1241,6 @@
   "timezone": "",
   "title": "Impala - Overview",
   "uid": "uyclm_r7z",
-  "version": 9,
+  "version": 10,
   "weekStart": ""
 }

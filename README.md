@@ -30,8 +30,10 @@ Monitoring is automatically configured using Prometheus and Grafana. Dashboards 
 # Requirements
 
 - At least 5 physical/virtual servers for testing, 8 for production usage.
-- A wildcard TLS certificate and private key for the domain name used by all servers
+- A single TLS-certificate which is valid for every server in the cluster.
 - The management server will need 16GB of RAM to prevent issues when building Docker images.
+
+The TLS-certificate may be a wildcard certificate or use a SAN-list that contains each server name.
 
 # Components
 
@@ -301,8 +303,7 @@ host2.hadoop-domain.tld
 host3.hadoop-domain.tld
 ```
 
-A TLS certificate must have a wildcard match `*.hadoop-domain.tld` or be a multi-domain (SAN) certificate
-and have all the host names explicitly included in the certificate. 
+The TLS certificate must have a wildcard match `*.hadoop-domain.tld` or be a multi-domain (SAN) certificate and have all the host names explicitly included in the certificate. 
 
 The certificate must be PEM formatted and the PEM file must include all required intermediate certificates.
 
