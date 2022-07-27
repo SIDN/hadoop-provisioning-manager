@@ -71,6 +71,8 @@
   delegate_to: localhost
   connection: local
 
+# cannot use impala >= 4.0.0 until this issue is fixed.
+# https://issues.apache.org/jira/browse/IMPALA-10756
 - name: Download Apache Impala
   get_url:
       url: "{{ item }}"
