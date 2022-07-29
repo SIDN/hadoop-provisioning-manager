@@ -18,11 +18,15 @@
 
 # this the logging config for usersync
 
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
 log4j.rootLogger = info,logFile
 
 # logFile
 log4j.appender.logFile=org.apache.log4j.DailyRollingFileAppender
 log4j.appender.logFile.file=${logdir}/usersync-${hostname}-${user}.log
+log4j.appender.logFile.MaxBackupIndex=5
 log4j.appender.logFile.datePattern='.'yyyy-MM-dd
 log4j.appender.logFile.layout=org.apache.log4j.PatternLayout
 log4j.appender.logFile.layout.ConversionPattern=%d{dd MMM yyyy HH:mm:ss} %5p %c{1} [%t] - %m%n

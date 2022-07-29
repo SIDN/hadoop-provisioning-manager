@@ -16,12 +16,16 @@
 # limitations under the License.
 #
 
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
 log4j.rootLogger = warn,xa_log_appender
 
 
 # xa_logger
 log4j.appender.xa_log_appender=org.apache.log4j.DailyRollingFileAppender
 log4j.appender.xa_log_appender.file=${logdir}/ranger-admin-${hostname}-${user}.log
+log4j.appender.xa_log_appender.MaxBackupIndex=5
 log4j.appender.xa_log_appender.datePattern='.'yyyy-MM-dd
 log4j.appender.xa_log_appender.append=true
 log4j.appender.xa_log_appender.layout=org.apache.log4j.PatternLayout
@@ -39,6 +43,7 @@ log4j.additivity.xa=false
 # perf_logger
 log4j.appender.perf_appender=org.apache.log4j.DailyRollingFileAppender
 log4j.appender.perf_appender.file=${logdir}/ranger_admin_perf.log
+log4j.appender.perf_appender.MaxBackupIndex=5
 log4j.appender.perf_appender.datePattern='.'yyyy-MM-dd
 log4j.appender.perf_appender.append=true
 log4j.appender.perf_appender.layout=org.apache.log4j.PatternLayout
@@ -49,6 +54,7 @@ log4j.category.org.apache.ranger.perf=DEBUG, perf_appender
 # patch_logger
 log4j.appender.patch_logger=org.apache.log4j.DailyRollingFileAppender
 log4j.appender.patch_logger.file=${logdir}/ranger_db_patch.log
+log4j.appender.patch_logger.MaxBackupIndex=5
 log4j.appender.patch_logger.datePattern='.'yyyy-MM-dd
 log4j.appender.patch_logger.append=true
 log4j.appender.patch_logger.layout=org.apache.log4j.PatternLayout
@@ -63,6 +69,7 @@ log4j.additivity.org.apache.ranger.patch=false
 # sql_appender
 log4j.appender.sql_appender=org.apache.log4j.DailyRollingFileAppender
 log4j.appender.sql_appender.file=${logdir}/ranger_admin_sql.log
+log4j.appender.sql_appender.MaxBackupIndex=5
 log4j.appender.sql_appender.datePattern='.'yyyy-MM-dd
 log4j.appender.sql_appender.append=true
 log4j.appender.sql_appender.layout=org.apache.log4j.PatternLayout
