@@ -22,7 +22,7 @@ elif [[ "$CURRENT_SCRIPT" == "deploy.sh" ]]; then
   PB_PREFIX="deploy"
   DEPLOY_MODE=$DEPLOY_MODE_COMP
 elif [[ "$CURRENT_SCRIPT" == "deploy-config.sh" ]]; then
-  SCRIPT_SUPPORT="all common db tls console manager monitor monitor-proxy zookeeper hadoop spark hive impala impala-proxy hue livy krb-kdc ranger solr superset jupyterhub"
+  SCRIPT_SUPPORT="all common console manager monitor monitor-proxy zookeeper hadoop spark hive impala impala-proxy hue livy krb-kdc ranger solr superset jupyterhub"
   PB_PREFIX="deploy"
   DEPLOY_MODE=$DEPLOY_MODE_CFG_ONLY
 fi
