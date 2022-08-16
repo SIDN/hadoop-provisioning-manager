@@ -6,6 +6,8 @@ tls_etc_dir: "{{ config_root }}/tls"
 tls_cert:
   # pem file with cert and all required intermediate certs
   crt: ~/tls/star.sidnlabs.nl.chain.pem 
+  # public key crt only
+  crt_only: ~/tls/star.sidnlabs.nl.crt 
   # key file also in pem format
   key: ~/tls/star.sidnlabs.nl.key
 
@@ -26,3 +28,7 @@ tls_remote_pub_chain: hadoop_tls_pub_chain.pem
 # new name of the tls_cert.key on the cluster nodes
 # NO NEED TO CHANGE THIS.
 tls_remote_priv_key: hadoop_tls_priv.key
+
+# new name of the tls_cert.crt_only on the cluster nodes
+# NO NEED TO CHANGE THIS.
+tls_remote_pub_key: hadoop_tls_pub.crt
