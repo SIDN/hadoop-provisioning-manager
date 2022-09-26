@@ -19,11 +19,11 @@
     - { name: 'httpfs-env.sh.j2', dest: '{{ hadoop_etc_dir }}/httpfs-env.sh', perm: '0755' }
   become: yes
 
-- name: Set HDFS datanode cgroup cpu-shares
-  shell: >
-      systemctl set-property hdfs_datanode.service CPUShares={{ hadoop_cgroups.cpu_shares.hdfs_datanode }}
-  when: ('hadoop' in groups and inventory_hostname in groups['hadoop'])
-  become: yes
+# - name: Set HDFS datanode cgroup cpu-shares
+#   shell: >
+#       systemctl set-property hdfs_datanode.service CPUShares={{ hadoop_cgroups.cpu_shares.hdfs_datanode }}
+#   when: ('hadoop' in groups and inventory_hostname in groups['hadoop'])
+#   become: yes
     
 - name: YARN configuration
   ansible.builtin.template:
