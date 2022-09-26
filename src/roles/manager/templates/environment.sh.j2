@@ -5,6 +5,10 @@
 
 # set systemwide envs
 
+{% if ansible_distribution == "RedHat" %}
+export PATH="/usr/lib/jvm/java/bin:$PATH"
+{% endif %}
+
 export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
 export HADOOP_HOME={{ stack_root }}/hadoop-latest
 

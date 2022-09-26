@@ -8,6 +8,10 @@
 
 #-Djava.security.auth.login.config={{ ranger_etc_dir }}/ranger-solr-jaas.conf
 
+{% if ansible_distribution == "RedHat" %}
+export PATH="/usr/lib/jvm/java/bin:$PATH"
+{% endif %}
+
 export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
 
 export JAVA_OPTS="-Dlog4j2.formatMsgNoLookups=true -Djava.net.preferIPv4Stack=true"
