@@ -1,3 +1,13 @@
+# create hadoop cfg directory
+- name: Create cfg directory
+  file:
+    path: "{{ hadoop_etc_dir }}"
+    state: directory
+    owner: root
+    group: "{{ hadoop_os_group }}"
+    mode: '0755'
+  become: yes
+  
 - name: Hadoop configuration
   ansible.builtin.template:
     src: "../templates/{{ item.name }}"
