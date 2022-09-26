@@ -5,11 +5,11 @@
     mode: '0755'
   become: yes  
   
-- name: Set Impala executor cgroup cpu-shares
-  shell: >
-      systemctl set-property impala_impalad.service CPUShares={{ impala_cgroups.cpu_shares.impalad }}
-  when: ('hadoop' in groups and inventory_hostname in groups['hadoop'])
-  become: yes
+# - name: Set Impala executor cgroup cpu-shares
+#   shell: >
+#       systemctl set-property impala_impalad.service CPUShares={{ impala_cgroups.cpu_shares.impalad }}
+#   when: ('hadoop' in groups and inventory_hostname in groups['hadoop'])
+#   become: yes
   
 - name: Copy shared configuration files
   ansible.builtin.copy:
