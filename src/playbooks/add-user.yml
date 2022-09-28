@@ -14,7 +14,7 @@
 # create user on worker nodes, do not create home dir and do not set password
 # user needs to be on each worker node when running secure kerberized cluster
 # aklso add to ranger server so rangersync can pickup the new user
-- hosts: hadoop:ranger:!gateway
+- hosts: hadoop:hdfs_primary_nn:hdfs_secondary_nn:ranger:!gateway
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
     - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
