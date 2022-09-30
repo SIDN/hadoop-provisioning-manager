@@ -563,9 +563,23 @@ The following example command deleted all data older than 7 days.
 
 A cleanup service is created during the deployment of Solr, the cleanup service will remove old data from Solr every night at 01:00.
 The max allowed age of the Solr data can be configured in the Solr configuration file.
+
+
+# Cluster management
+
+## Replacing the TLS certificate
+
+When the existing TLS certificate needs to be replaced (because it might expire soon), do the following:
+
+- Copy the new TLS to the correct location on the management server.
+- ./deploy.sh tls
+- ./stop.sh all
+- ./start.sh all
+- ./do.sh enable-hdfs-ranger-plugin
+
+The last step is required because otherwise the Ranger HDFS plugin will not be able to connect to the updated Ranger Admin service.   
  
- 
-## Tips
+# Tips
  
 ### Make sure the database and Kerberos KDC are running before deploying other components
  
