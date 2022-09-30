@@ -8,4 +8,4 @@
   remote_user: hadoop-mgr
   tasks:
     - name: Enable Ranger HDFS plugin
-      import_playbook: ../roles/hadoop/task/ranger-hdfs-plugin-enable.yml
+      include_tasks: ../roles/hadoop/tasks/ranger-hdfs-plugin-enable.yml
