@@ -25,6 +25,10 @@ elif [[ "$CURRENT_SCRIPT" == "deploy-config.sh" ]]; then
   SCRIPT_SUPPORT="all common console manager monitor monitor-proxy zookeeper hadoop spark hive impala impala-proxy hue livy krb-kdc ranger solr superset jupyterhub"
   PB_PREFIX="deploy"
   DEPLOY_MODE=$DEPLOY_MODE_CFG_ONLY
+elif [[ "$CURRENT_SCRIPT" == "do.sh" ]]; then
+  SCRIPT_SUPPORT="enable-hdfs-ranger-plugin"
+  PB_PREFIX="do"
+  DEPLOY_MODE=""
 fi
 
 function show_usage()

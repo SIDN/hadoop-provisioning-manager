@@ -32,3 +32,5 @@ ranger_usersync_interval_min: 5
 ranger_download_url:
   # Different guava jar is required by ranger
   guava: "https://repo1.maven.org/maven2/org/apache/hadoop/thirdparty/hadoop-shaded-guava/1.1.1/hadoop-shaded-guava-1.1.1.jar"
+  # need htrace-core4 to be able to run enable-hdfs-plugin.sh 
+  htrace: "https://repo1.maven.org/maven2/org/apache/htrace/htrace-core4/4.2.0-incubating/htrace-core4-4.2.0-incubating.ja"

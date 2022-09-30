@@ -86,7 +86,7 @@
   register: stat_download_jar
   delegate_to: localhost
   connection: local
-  
+
 - name: Download new guava jar
   get_url:
       url: "{{ ranger_download_url.guava }}"
@@ -98,6 +98,27 @@
 - name: Fix missing Guava class, copy correct jar to remote
   copy:
       src: "{{ download_root }}/{{ ranger_download_url.guava | basename }}"
+      dest: "{{ stack_root }}/ranger-hdfs-plugin-latest/install/lib/"
+  become: yes
+  
+- name: Check if htrace jar is already on management node
+  stat:
+    path: "{{ download_root }}/{{ ranger_download_url.htrace | basename }}"
+  register: stat_download_jar
+  delegate_to: localhost
+  connection: local
+
+- name: Download new htrace jar
+  get_url:
+      url: "{{ ranger_download_url.htrace }}"
+      dest: "{{ download_root }}"
+  when: not stat_download_jar.stat.exists
+  delegate_to: localhost
+  connection: local
+  
+- name: Fix missing htrace class, copy correct jar to remote
+  copy:
+      src: "{{ download_root }}/{{ ranger_download_url.htrace | basename }}"
       dest: "{{ stack_root }}/ranger-hdfs-plugin-latest/install/lib/"
   become: yes
 

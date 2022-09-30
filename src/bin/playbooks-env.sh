@@ -29,6 +29,9 @@ export PB_KRB_PRIN=krb-principal.yml
 export PB_KRB_KT=krb-keytab.yml
 export PB_TLS=tls.yml
 
+# general commands
+export PB_DO_ENALBLE_HDFS_RANGER_PLUGIN=enable-hdfs-ranger-plugin.yml
+
 # general cfg vars
 export HOSTS_FILE="hosts"
 export VAULT_PASSWD_FILE=".vault_pass"
@@ -173,6 +176,9 @@ function run_playbooks()
         ;;
         client-config)
           run_playbook "$PB_PREFIX-$PB_CLIENT_CONFIG"
+        ;;
+        enable-hdfs-ranger-plugin)
+          run_playbook "$PB_PREFIX-$PB_DO_ENALBLE_HDFS_RANGER_PLUGIN"
         ;;
         host-gateway)
           # only deploy components on the gateway nodes
