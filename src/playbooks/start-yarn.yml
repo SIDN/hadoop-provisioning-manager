@@ -41,7 +41,7 @@
         mkdir -p {{ item }};
         chown {{ hadoop_os_user.yarn }}:{{ hadoop_os_group }} {{ item }}
       loop:
-        - "/sys/fs/cgroup/cpu,cpuacct/hadoop-yarn"
+        - "/sys/fs/cgroup/cpu/hadoop-yarn"
         - "/sys/fs/cgroup/memory/hadoop-yarn"
       become: yes
 
