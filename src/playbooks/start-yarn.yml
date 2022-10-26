@@ -33,17 +33,17 @@
   vars:
     service_name: yarn_nodemanager
   tasks:
-    # # create cgroup dir, this does not work correct with the normale "file" module
-    # # remove old cgroup directories, Yarn will reinitialze under the new directory
-    # - name: Create cgroup directory
-    #   ansible.builtin.shell: |
-    #     rm -rf {{ item }};
-    #     mkdir -p {{ item }};
-    #     chown {{ hadoop_os_user.yarn }}:{{ hadoop_os_group }} {{ item }}
-    #   loop:
-    #     - "/sys/fs/cgroup/cpu,cpuacct/hadoop-yarn"
-    #     - "/sys/fs/cgroup/memory/hadoop-yarn"
-    #   become: yes
+    # create cgroup dir, this does not work correct with the normale "file" module
+    # remove old cgroup directories, Yarn will reinitialze under the new directory
+    - name: Create cgroup directory
+      ansible.builtin.shell: |
+        rm -rf {{ item }};
+        mkdir -p {{ item }};
+        chown {{ hadoop_os_user.yarn }}:{{ hadoop_os_group }} {{ item }}
+      loop:
+        - "/sys/fs/cgroup/cpu,cpuacct/hadoop-yarn"
+        - "/sys/fs/cgroup/memory/hadoop-yarn"
+      become: yes
 
     - name: "Start {{ service_name }}"
       include_tasks: startup/tasks/generic-service.yml     
