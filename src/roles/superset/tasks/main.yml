@@ -58,15 +58,6 @@
     mode: '0755'
   become: yes
   
-- name: Add Kerberos KT renewer call to startup script
-  ansible.builtin.blockinfile:
-    path: '{{ stack_root }}/apache-superset-{{ version.superset }}/bin/docker-bootstrap.sh'
-    insertbefore: '/usr/bin/run-server.sh'
-    block: |
-        # create keberos session for Impala database access
-         kinit -kt $KRB_KEYTAB $KRB_PRINCIPAL
-  become: yes
-  
 - name: Create Systemd units and timer
   ansible.builtin.template:
     src: ../templates/{{ item }}
@@ -80,7 +71,18 @@
 - name: Systemctl Reload Daemons
   shell: systemctl daemon-reload
   become: yes
-
+  
+- name: Check if dhparam.pem is already created
+  stat:
+    path: "{{ superset_etc_dir }}/nginx_dhparam.pem"
+  register: stat_nginx_dhparam
+  
+- name: Create dhparam.pem for Nginx proxy
+  shell: >
+    openssl dhparam -out {{ superset_etc_dir }}/nginx_dhparam.pem 2048
+  become: yes  
+  when: not stat_nginx_dhparam.stat.exists
+  
 - name: Recursively change ownership superset directory
   ansible.builtin.file:
     path: '{{ stack_root }}/apache-superset-{{ version.superset }}'
@@ -96,20 +98,11 @@
       dest: '{{ stack_root }}/apache-superset-latest'
       state: link
   become: yes
-  
-- name: Check if  dhparam.pem is already created
-  stat:
-    path: "{{ superset_etc_dir }}/nginx_dhparam.pem"
-  register: stat_nginx_dhparam
-  
-- name: Create dhparam.pem for Nginx proxy
-  shell: >
-    openssl dhparam -out {{ superset_etc_dir }}/nginx_dhparam.pem 2048
-  become: yes  
-  when: not stat_nginx_dhparam.stat.exists
         
 - name: Include create database
   include_tasks: tasks/database.yml
   
 - name: Include build docker image 
   include_tasks: tasks/docker-build.yml
+  
+
