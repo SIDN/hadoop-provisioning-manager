@@ -50,15 +50,6 @@
       - docker-compose
     state: latest
   become: yes
-  
-- name: Copy docker control scripts
-  ansible.builtin.copy:
-    src: '{{ item }}'
-    dest: '{{ stack_root }}/apache-superset-{{ version.superset }}/bin'
-    mode: 'preserve'
-  with_fileglob:
-    - "{{ download_root }}/superset/docker/*"
-  become: yes
     
 - name: Create Keberos KT renewer script
   ansible.builtin.template:
