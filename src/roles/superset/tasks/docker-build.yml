@@ -30,6 +30,7 @@
 - name: Checkout Superset version
   shell: >
     cd {{ download_root }}/superset;
+    git pull;
     git checkout {{ version.superset }};
   delegate_to: localhost
   connection: local
