@@ -59,7 +59,9 @@ version:
   jupyterhub: '2.3.1'
   jupyterlab: '3.4.3'
   
-  
 
+# set path for python2 on the remote systems here
+# python2 is only required for impala-shell  
+python2_bin_path: '/usr/bin/python2'
 # location where custom virtualenvs are created
 python_venv_dir: '{{ stack_root }}/hadoop-venvs'
