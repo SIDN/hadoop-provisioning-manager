@@ -2,12 +2,14 @@
 - name: Check for Git repo
   ansible.builtin.stat:
     path: '{{ download_root }}/superset'
+  delegate_to: localhost
+  connection: local
   register: git_repo
-  become: yes
   
 - name: Fech Git repository
   shell: git clone {{ superset_download_url }} {{ download_root }}/superset
-  become: yes
+  delegate_to: localhost
+  connection: local
   when: not git_repo.stat.exists
 
 # build docker image with kerberos support
