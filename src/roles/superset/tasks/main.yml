@@ -38,9 +38,11 @@
 # create secret key only 1 time duing install, cannot change the key otherwise 
 # db connections are nog longer usable
 - name: Create secret key
-  shell: >
+  shell: |
       openssl rand -base64 42 > {{ superset_etc_dir }}/secret_key
+      chown {{ superset_os_user }}:{{ superset_os_group }} {{ superset_etc_dir }}/secret_key
   when: not stat_secret_key.stat.exists
+  become: yes
 
 - name: Install package dependencies
   ansible.builtin.package:
