@@ -10,12 +10,12 @@
     dest: "{{ mgtm_console_content_dir }}/client-config/{{ item | basename | replace('.j2', '') }}"
     mode: '0644'
   loop:
-    - roles/hadoop-config/templates/core-site.xml.j2
-    - roles/hadoop-config/templates/hdfs-site.xml.j2
-    - roles/hadoop-config/templates/yarn-site.xml.j2
-    - roles/hadoop-config/templates/ssl-client.xml.j2
-    - roles/hive-config/templates/hive-site.xml.j2
-    - roles/kerberos-kdc-config/templates/krb5.conf.j2
+    - ../../roles/hadoop-config/templates/core-site.xml.j2
+    - ../../roles/hadoop-config/templates/hdfs-site.xml.j2
+    - ../../roles/hadoop-config/templates/yarn-site.xml.j2
+    - ../../roles/hadoop-config/templates/ssl-client.xml.j2
+    - ../../roles/hive-config/templates/hive-site.xml.j2
+    - ../../roles/kerberos-kdc-config/templates/krb5.conf.j2
     
 - name: Delete old archive
   ansible.builtin.file:
