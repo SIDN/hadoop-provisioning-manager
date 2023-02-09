@@ -73,5 +73,6 @@ EXPOSE 8000
 
 COPY entrypoint.sh /
 
-ENTRYPOINT ["sh","/entrypoint.sh"]
+ENTRYPOINT ["jupyterhub", "-f {{ jupyterhub_etc_dir }}/jupyterhub_config.py"]
+#CMD ["-f {{ jupyterhub_etc_dir }}/jupyterhub_config.py"]
 #CMD ["jupyterhub", "-f", "{{ jupyterhub_etc_dir }}/jupyterhub_config.py"]
