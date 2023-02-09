@@ -26,6 +26,7 @@
     mode: '0644'
   loop:
     - ../templates/Dockerfile.j2
+    - ../templates/entrypoint.sh.j2
     - ../templates/requirements.txt.j2
     - ../templates/examples/impyla-example.ipynb.j2
     - ../templates/examples/pyspark-example.ipynb.j2

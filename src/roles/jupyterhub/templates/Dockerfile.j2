@@ -71,4 +71,7 @@ RUN pip3 install -r jupyterhub-user-requirements.txt
 
 EXPOSE 8000
 
-CMD ["jupyterhub", "-f", "{{ jupyterhub_etc_dir }}/jupyterhub_config.py"]
+COPY entrypoint.sh /
+
+ENTRYPOINT ["sh","/entrypoint"]
+#CMD ["jupyterhub", "-f", "{{ jupyterhub_etc_dir }}/jupyterhub_config.py"]

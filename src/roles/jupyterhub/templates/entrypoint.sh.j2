@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# check to see if database needs upgrade.
+jupyterhub upgrade-db
+
+# start
+jupyterhub -f {{ jupyterhub_etc_dir }}/jupyterhub_config.py
