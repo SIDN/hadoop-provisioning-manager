@@ -42,6 +42,9 @@
 - name: Hue
   import_playbook: deploy-hue.yml
   
+- name: Jupyterhub
+  import_playbook: deploy-jupyterhub.yml
+  
 - name: Ranger
   import_playbook: deploy-ranger.yml
 
