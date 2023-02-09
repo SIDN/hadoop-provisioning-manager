@@ -41,13 +41,17 @@
     src:  ../templates/{{ item.src }}
     dest: /etc/systemd/system/{{ item.name }}.service
     mode: '0644'
-    enabled: yes
   loop:
       - { src: 'systemd_solr_service.j2', name: 'solr'}
   
 - name: Systemctl Reload Daemons
   shell: systemctl daemon-reload
   
+- name: Enable SOLR service
+  ansible.builtin.service:
+    name: "{{ item.name }}.service"
+    enabled: yes
+    
 - name: Check if the Apache solr is already downloaded
   stat:
     path: "{{ download_root }}/solr-{{ version.solr }}.tgz"
