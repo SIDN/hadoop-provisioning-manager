@@ -52,6 +52,7 @@
 - name: Initialize Hive db (CREATE)
   shell: >
     source {{ hive_etc_dir }}/hive-env.sh; 
+    source {{ hadoop_etc_dir }}/hadoop-env.sh; 
     {{ stack_root }}/apache-hive-latest/bin/schematool -dbType postgres -initSchema
   when: stat_metastore_db.rowcount == 0
 
