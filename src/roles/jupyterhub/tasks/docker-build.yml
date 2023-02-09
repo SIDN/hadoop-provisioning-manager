@@ -1,23 +1,23 @@
-# - name: Check if Jupyterhub docker image already exists
-#   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub.*{{ version.jupyterhub }} | wc -l"
-#   register: docker_img_exists
-#   delegate_to: localhost
-#   connection: local
-#   become: yes
-# 
-# - name: Show Jupyterhub docker image already exists
-#   ansible.builtin.debug:
-#     msg: Jupyterhub image detect {{ docker_img_exists.stdout }}
-#   delegate_to: localhost
-#   connection: local
-#   become: yes
-# 
-# - name: Create docker build directory
-#   file:
-#     path: "{{ cache_root }}/jupyterhub"
-#     state: directory
-#   delegate_to: localhost
-#   connection: local
+- name: Check if Jupyterhub docker image already exists
+  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub.*{{ version.jupyterhub }} | wc -l"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  become: yes
+
+- name: Show Jupyterhub docker image already exists
+  ansible.builtin.debug:
+    msg: Jupyterhub image detect {{ docker_img_exists.stdout }}
+  delegate_to: localhost
+  connection: local
+  become: yes
+
+- name: Create docker build directory
+  file:
+    path: "{{ cache_root }}/jupyterhub"
+    state: directory
+  delegate_to: localhost
+  connection: local
   
 - name: Create Dockerfile
   ansible.builtin.template:
