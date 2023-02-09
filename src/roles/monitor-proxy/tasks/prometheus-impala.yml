@@ -1,12 +1,21 @@
 # Create a non-Kerberos proxy to allow prometheus to scrape
 # metrics from kerberos protected services
 
-- name: Install required python package(s)
+- name: Install required python package(s) for RHEL
   ansible.builtin.package:
     name:
       - python3-requests-gssapi
     state: latest
   become: yes
+  when: ansible_distribution == 'RedHat'
+  
+- name: Install required python package(s) for Ubuntu
+  ansible.builtin.package:
+    name:
+      - python3-requests-kerberos
+    state: latest
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Copy Exporter
   ansible.builtin.copy:
