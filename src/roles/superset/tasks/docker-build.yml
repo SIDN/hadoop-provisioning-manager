@@ -42,7 +42,7 @@
   ansible.builtin.lineinfile:
     path: '{{ download_root }}/superset/Dockerfile'
     insertbefore: '{{ item }}'
-    line: 'RUN echo "match: {{ item}}" && apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install krb5-user vim'
+    line: 'RUN echo "match: {{ item}}" && apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get -y install krb5-user vim'
     state: present
   delegate_to: localhost
   connection: local
