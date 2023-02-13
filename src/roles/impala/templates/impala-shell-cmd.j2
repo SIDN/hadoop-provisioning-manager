@@ -4,7 +4,7 @@
 # Pushed to: {{  inventory_hostname }}
 {% if ansible_distribution == "RedHat" %}
 KRB_CC_CACHE='/tmp/krb5cc_$UID'
-{%% else }
+{% else %}
 KRB_CC_CACHE='/tmp/krb5cc_$(id -u)'
 {% endif %}
 
