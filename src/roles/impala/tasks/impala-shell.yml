@@ -39,10 +39,18 @@
   connection: local
   become: yes
   
+  
+  - name: Tag Prometheus server docker image
+    command: "docker image tag prom/prometheus:v{{ version.prometheus }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
+    delegate_to: localhost
+    connection: local
+    when: docker_img_exists.stdout | int == 0
+  
 - name: Create Docker image on controller server
   shell: >
-    cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell;
-    TAG={{ version.impala }} docker build -t apache/impala-shell:{{ version.impala }} .
+    cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell
+    docker build -t apache/impala-shell:{{ version.impala }} .
+    docker image tag apache/impala-shell:{{ version.impala }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }}
   delegate_to: localhost
   connection: local
   when: docker_img_exists.stdout | int == 0
