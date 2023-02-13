@@ -136,7 +136,7 @@
   connection: local
   
 - name: Check if Docker image already exists
-  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala\\s.*{{ version.impala }} | wc -l"
+  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala\\\\s.*{{ version.impala }} | wc -l"
   register: docker_img_exists
   delegate_to: localhost
   connection: local

@@ -4,14 +4,14 @@
 # Pushed to: {{  inventory_hostname }}
 
 {% if ansible_distribution == "RedHat" %}
-KRB_CC_CACHE='/tmp/krb5cc_$UID'
+KRB_CC_CACHE="/tmp/krb5cc_$UID"
 {% else %}
-KRB_CC_CACHE='/tmp/krb5cc_$(id -u)'
+KRB_CC_CACHE="/tmp/krb5cc_$(id -u)"
 {% endif %}
 
 docker run --interactive --tty --rm \
   --name "impala_$1" \
-{% if (ansible_distribution == "RedHat" %}
+{% if ansible_distribution == "RedHat" %}
   -v /var/lib/sss/pubconf/krb5.include.d:/var/lib/sss/pubconf/krb5.include.d \
 {% endif %}
   -v /etc/krb5.conf:/etc/krb5.conf \
