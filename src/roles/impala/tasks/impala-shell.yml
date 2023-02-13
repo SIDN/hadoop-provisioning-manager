@@ -24,7 +24,6 @@
       dest: "{{ stack_root }}"
   delegate_to: localhost
   connection: local
-  when: not stat_impala_src.stat.exists
   
 - name: Create DockerFile
   ansible.builtin.template:
