@@ -1,9 +1,6 @@
 # need different binaries for rhel and ubuntu   
 # fact_os_package is used to determine which package to download
 
-- name: Install Impala-shell client
-  include_tasks: impala-shell.yml
-  
 - name: Determine OS package (RHEL)
   set_fact:
      fact_os_package: rhel79
@@ -13,6 +10,9 @@
   set_fact:
      fact_os_package: ubuntu
   when: ansible_distribution == 'Ubuntu'
+  
+- name: Install Impala-shell client
+  include_tasks: impala-shell.yml
   
 - name: Install Impala common config
   include_tasks: impala-common.yml

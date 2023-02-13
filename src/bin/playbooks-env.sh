@@ -15,6 +15,7 @@ export PB_SOLR=solr.yml
 export PB_RANGER=ranger.yml
 export PB_HIVE=hive.yml
 export PB_IMPALA=impala.yml
+export PB_IMPALA_SHELL=impala-shell.yml
 export PB_IMPALA_PROXY=impala-proxy.yml
 export PB_HUE=hue.yml
 export PB_SUPERSET=superset.yml
@@ -143,6 +144,9 @@ function run_playbooks()
         ;;
         impala)
           run_playbook "$PB_PREFIX-$PB_IMPALA"
+        ;;
+        impala-shell)
+          run_playbook "$PB_PREFIX-$PB_IMPALA_SHELL"
         ;;
         impala-proxy)
           run_playbook "$PB_PREFIX-$PB_IMPALA_PROXY"
