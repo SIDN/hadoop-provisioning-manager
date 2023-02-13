@@ -64,3 +64,4 @@
     src: "../templates/impala-shell-cmd.j2"
     dest: "{{ stack_root }}/apache-impala-latest/bin/impala-shell"
     mode: '0755'
+  become: yes
