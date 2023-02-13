@@ -89,7 +89,7 @@
 - name: Create symlinks to deamons
   file:
       src: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}/bin/impalad"
-      dest: "{{ stack_root }}apache-impala-ubuntu-{{ version.impala }}/bin/{{ item }}"
+      dest: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}/bin/{{ item }}"
       state: link
   loop:
     - catalogd
@@ -97,6 +97,70 @@
   become: yes
   become_user: "{{ impala_os_user }}"
   when: not (inventory_hostname in groups['gateway']) 
+
+# create Docker images for Impala daemons
+- name: Check if the Apache Impala src is already downloaded
+  stat:
+    path: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
+  register: stat_impala_src
+  delegate_to: localhost
+  connection: local
+  
+- name: Download Apache Impala
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ repository_url }}/impala/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
+  delegate_to: localhost
+  connection: local
+  when: not stat_impala_src.stat.exists
+  
+- name: Extract Impala 
+  ansible.builtin.unarchive:
+      src: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
+      creates: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}"
+      dest: "{{ cache_root }}"
+  delegate_to: localhost
+  connection: local
+  
+- name: Create DockerFile and Entrypoint script
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/{{ item.dst }}"
+    mode: '0664'
+  loop:
+    - { src: 'impala_Dockerfile.j2', dst: 'Dockerfile' }
+    - { src: 'impala-entrypoint.sh.j2', dst: 'entrypoint.sh' }
+  delegate_to: localhost
+  connection: local
+  
+- name: Check if Docker image already exists
+  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala.*{{ version.impala }} | wc -l"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  become: yes
+  
+- name: Create Docker image on controller server
+  shell: >
+    cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala;
+    docker build -t apache/impala:{{ version.impala }} .;
+    docker image tag apache/impala:{{ version.impala }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }};
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+    
+- name: Push Impala docker image to registry
+  shell: >
+    docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }}
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+
+- name: Pull Impala image to host
+  shell: >
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }}
 
 - name: Create Container start script
   ansible.builtin.template:
