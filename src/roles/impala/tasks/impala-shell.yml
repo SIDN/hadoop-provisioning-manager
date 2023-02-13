@@ -6,11 +6,12 @@
   connection: local
   
 # Extract Impala in cache dir on mgmt node
-- name: Copy Apache Impala to cache on manager
-  ansible.builtin.copy:
-    src: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
-    dest: "{{ cache_root }}"
-    mode: '0644'
+- name: Download Apache Impala
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ repository_url }}/impala/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
   delegate_to: localhost
   connection: local
   when: not stat_impala_src.stat.exists
