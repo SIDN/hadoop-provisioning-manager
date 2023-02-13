@@ -128,10 +128,10 @@
   ansible.builtin.template:
     src: "../templates/{{ item.src }}"
     dest: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/{{ item.dst }}"
-    mode: '0664'
+    mode: '{{ item.perm }}'
   loop:
-    - { src: 'impala_Dockerfile.j2', dst: 'Dockerfile' }
-    - { src: 'impala-entrypoint.sh.j2', dst: 'entrypoint.sh' }
+    - { src: 'impala_Dockerfile.j2', dst: 'Dockerfile', perm: '0664'}
+    - { src: 'impala-entrypoint.sh.j2', dst: 'entrypoint.sh', perm: '0755' }
   delegate_to: localhost
   connection: local
   
