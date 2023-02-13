@@ -15,9 +15,15 @@
   become: yes
   
 # RHEL 7.5 deps
-yum install http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.119.2-1.911c772.el7_8.noarch.rpm
-yum install http://mirror.centos.org/centos/7/extras/x86_64/Packages/slirp4netns-0.4.3-4.el7_8.x86_64.rpm
-yum install http://mirror.centos.org/centos/7/extras/x86_64/Packages/fuse-overlayfs-0.7.2-6.el7_8.x86_64.rpm  
+- name: Install older dependencies voro Docker on RHEL 7.9
+  ansible.builtin.shell: |
+    yum install http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.119.2-1.911c772.el7_8.noarch.rpm
+    yum install http://mirror.centos.org/centos/7/extras/x86_64/Packages/slirp4netns-0.4.3-4.el7_8.x86_64.rpm
+    yum install http://mirror.centos.org/centos/7/extras/x86_64/Packages/fuse-overlayfs-0.7.2-6.el7_8.x86_64.rpm  
+  become: yes
+  when: >
+   (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") 
+   and not (inventory_hostname in groups['gateway']) 
     
 - name: install package dependencies
   ansible.builtin.package:
