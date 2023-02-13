@@ -12,4 +12,4 @@ docker run --interactive --tty --rm \
 {% endif %}
   -v /etc/krb5.conf:/etc/krb5.conf \
   -v $KRB_CC_CACHE:$KRB_CC_CACHE \
-  {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }} $@
+  {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }} 
