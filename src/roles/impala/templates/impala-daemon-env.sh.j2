@@ -13,8 +13,8 @@ export PATH=$IMPALA_HOME/bin:$IMPALA_HOME/impala-shell:$PATH
 # Add directories containing dynamic libraries required by the daemons that
 # are not on the system library paths.
 LD_LIBRARY_PATH={{ stack_root }}/apache-impala-latest/lib
-LD_LIBRARY_PATH+=:$JAVA_HOME/lib/amd64/
-LD_LIBRARY_PATH+=:$JAVA_HOME/lib/amd64/server/
+LD_LIBRARY_PATH+=:$JAVA_HOME/lib/
+LD_LIBRARY_PATH+=:$JAVA_HOME/lib/server/
 
 # need native hadoop libs for short-circuit reads on hdfs data node
 LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/hadoop/hadoop-latest/lib/native"
