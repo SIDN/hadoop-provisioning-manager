@@ -18,5 +18,3 @@
       include_role:
         name: impala-shell
       when: var_deploy_comp | bool
-
-  
