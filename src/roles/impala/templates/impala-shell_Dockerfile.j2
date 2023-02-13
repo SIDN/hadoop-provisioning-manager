@@ -1,4 +1,4 @@
-FROM python:3.8.16-slim-bullseye
+FROM python:3.6-slim-bullseye
 
 WORKDIR {{ stack_root }}/apache-impala-latest
 
@@ -16,4 +16,4 @@ RUN ln -s /usr/lib/x86_64-linux-gnu/libsasl2.so.2 /usr/lib/x86_64-linux-gnu/libs
 
 COPY . .
 
-ENTRYPOINT ["{{ stack_root }}/apache-impala-latest/bin/impala-shell"]
+ENTRYPOINT ["{{ stack_root }}/apache-impala-latest/impala-shell"]
