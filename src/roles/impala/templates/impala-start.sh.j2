@@ -15,4 +15,11 @@ docker run --interactive --tty --rm \
   -v {{ impala_etc_dir }}:{{ impala_etc_dir }} \
   -v {{ impala_log_dir }}:{{ impala_log_dir }} \
   -v {{ tls_etc_dir }}:{{ tls_etc_dir }} \
+  {% for dir_name in impalad_scratch_dirs %}
+  -v {{ dir_name | split(':') | first }}:{{ dir_name | split(':') | first }} \
+  {% endfor %}
+  -v /usr/local/hadoop/hadoop-latest/lib/native:/usr/local/hadoop/hadoop-latest/lib/native \
   {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }} $1
+
+
+  
