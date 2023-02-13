@@ -78,3 +78,18 @@
   loop_control:
     loop_var: daemon
   become: yes
+
+- name: Create environment files Docker
+  ansible.builtin.template:
+    src: ../templates/impala-daemon-env.sh.j2
+    dest: "{{ impala_etc_dir }}/impala-daemon-{{ daemon }}-env.sh"
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+    mode: '0755'
+  loop:
+    - statestored
+    - impalad
+    - catalogd
+  loop_control:
+    loop_var: daemon
+  become: yes

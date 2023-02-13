@@ -132,7 +132,6 @@
   loop:
     - { src: 'impala_Dockerfile.j2', dst: 'Dockerfile', perm: '0664'}
     - { src: 'impala-entrypoint.sh.j2', dst: 'entrypoint.sh', perm: '0755' }
-    - { src: 'impala-daemon-env.sh.j2', dst: 'impala-daemon-env.sh', perm: '0755' }
   delegate_to: localhost
   connection: local
 

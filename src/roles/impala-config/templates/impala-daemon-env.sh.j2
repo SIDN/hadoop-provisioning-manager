@@ -37,4 +37,9 @@ export CLASSPATH
 # see: https://logging.apache.org/log4j/2.x/security.html
 export JAVA_TOOL_OPTIONS="-Dlog4j2.formatMsgNoLookups=true -Djava.security.auth.login.config=$IMPALA_CONF_DIR/solr-jaas.conf $JAVA_TOOL_OPTIONS"
 
+{% if daemon == 'catalogd' %}
+export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xmx{{ impala_heap.catalogd }}"
+{% elif daemon == 'impalad' %}
+export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xmx{{ impala_heap.impalad }}"
+{% endif %}
 

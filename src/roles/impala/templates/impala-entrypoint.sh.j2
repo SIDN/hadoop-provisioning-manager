@@ -5,17 +5,16 @@
 
 echo "Starting Impala service: $1"
 
-. {{ stack_root }}/apache-impala-latest/impala-daemon-env.sh
-
 if [[ $1 -eq "impalad" ]]
 then
-  export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xmx{{ impala_heap.impalad }}"
+  . {{ impala_etc_dir }}/impala-daemon-impalad-env.sh
   {{ stack_root }}/apache-impala-latest/bin/impalad -flagfile {{ impala_etc_dir }}/impalad_flags
 elif [[ $1 -eq "statestored" ]]
 then
+  . {{ impala_etc_dir }}/impala-daemon-statestored-env.sh
   {{ stack_root }}/apache-impala-latest/bin/statestored -flagfile {{ impala_etc_dir }}/statestored_flags
 elif [[ $1 -eq "catalogd" ]]
 then
-  export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xmx{{ impala_heap.catalogd }}"
+  . {{ impala_etc_dir }}/impala-daemon-catalogd-env.sh
   {{ stack_root }}/apache-impala-latest/bin/catalogd -flagfile {{ impala_etc_dir }}/catalogd_flags
 fi
