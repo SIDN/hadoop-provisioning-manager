@@ -47,8 +47,8 @@
     mode: '0644'
     enabled: yes
   loop:
-      - { src: 'systemd_ranger_admin_service.j2', name: 'ranger_admin'}
-      - { src: 'systemd_ranger_usersync_service.j2', name: 'ranger_usersync'}
+    - { src: 'systemd_ranger_admin_service.j2', name: 'ranger_admin'}
+    - { src: 'systemd_ranger_usersync_service.j2', name: 'ranger_usersync'}
   become: yes
     
 - name: Systemctl Reload Daemons
