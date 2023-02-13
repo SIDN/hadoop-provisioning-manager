@@ -169,4 +169,5 @@
     mode: '0755'
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
+  become: yes
       
