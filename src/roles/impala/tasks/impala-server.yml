@@ -124,7 +124,7 @@
   delegate_to: localhost
   connection: local
   
-- name: Create DockerFile and Entrypoint script
+- name: Create Container scripts
   ansible.builtin.template:
     src: "../templates/{{ item.src }}"
     dest: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/{{ item.dst }}"
@@ -132,9 +132,10 @@
   loop:
     - { src: 'impala_Dockerfile.j2', dst: 'Dockerfile', perm: '0664'}
     - { src: 'impala-entrypoint.sh.j2', dst: 'entrypoint.sh', perm: '0755' }
+    - { src: 'impala-daemon-env.sh.j2', dst: 'impala-daemon-env.sh', perm: '0755' }
   delegate_to: localhost
   connection: local
-  
+
 # - name: Check if Docker image already exists
 #   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala\\\\s.*{{ version.impala }} | wc -l"
 #   register: docker_img_exists
@@ -162,15 +163,14 @@
   shell: >
     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }}
 
-- name: Create Container start and env script
+- name: Create Container start script
   ansible.builtin.template:
-    src: "../templates/{{ item.src }}"
-    dest: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/{{ item.dst }}"
-    mode: '{{ item.perm }}'
-  loop:
-    - { src: 'impala-start.sh.j2', dst: 'impala-start.sh', perm: '0755'}
-    - { src: 'impala-daemon-env.sh.j2', dst: 'impala-daemon-env.sh', perm: '0755' }
-  delegate_to: localhost
-  connection: local
+    src: "../templates/impala-start.sh.j2"
+    dest: "{{ stack_root }}/apache-impala-latest/bin/impala-start.sh"
+    mode: '0755'
+  become: yes
+ 
+    
+  
   
       
