@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which java))))"
+export IMPALA_HOME={{ stack_root }}/apache-impala-latest
+export IMPALA_CONF_DIR={{ impala_etc_dir }}
+export HADOOP_CONF_DIR={{ hadoop_etc_dir }}
+export HIVE_CONF_DIR={{ hive_etc_dir }}
+export PATH=$IMPALA_HOME/bin:$IMPALA_HOME/impala-shell:$PATH
+
+# Add directories containing dynamic libraries required by the daemons that
+# are not on the system library paths.
+LD_LIBRARY_PATH={{ stack_root }}/apache-impala-latest/lib
+LD_LIBRARY_PATH+=:$JAVA_HOME/lib/amd64/
+LD_LIBRARY_PATH+=:$JAVA_HOME/lib/amd64/server/
+
+# need native hadoop libs for short-circuit reads on hdfs data node
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/hadoop/hadoop-latest/lib/native"
+
+# Configs should be first on classpath
+CLASSPATH=$IMPALA_CONF_DIR
+
+# Append all of the jars in /opt/impala/lib to the classpath.
+for jar in {{ stack_root }}/apache-impala-latest/lib/*.jar
+do
+  CLASSPATH+=:$jar
+done
+
+export LD_LIBRARY_PATH
+export CLASSPATH
+
+# tell Impala JVM where to find jaas cfg for solr, otherwise cannot
+# connect to solr which is kerberized
+# mitigation for: CVE-2021-44228 (Log4jShell)
+# see: https://logging.apache.org/log4j/2.x/security.html
+export JAVA_TOOL_OPTIONS="-Dlog4j2.formatMsgNoLookups=true -Djava.security.auth.login.config=$IMPALA_CONF_DIR/solr-jaas.conf $JAVA_TOOL_OPTIONS"
+
+
