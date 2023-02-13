@@ -55,13 +55,13 @@
   become: yes  
   when: not (inventory_hostname in groups['gateway']) 
   
-- name: Enable services
-  ansible.builtin.service:
-    name: "{{ item }}"
-    enabled: yes
-  loop:
-    - ranger_admin
-    - ranger_usersync    
+# - name: Enable services
+#   ansible.builtin.service:
+#     name: "{{ item }}"
+#     enabled: yes
+#   loop:
+#     - ranger_admin
+#     - ranger_usersync    
   
 - name: Check if the Apache ranger src is already downloaded
   stat:
