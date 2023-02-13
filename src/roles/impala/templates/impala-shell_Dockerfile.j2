@@ -1,6 +1,6 @@
 FROM python:3.8.16-slim-bullseye
 
-WORKDIR /impala-shell
+WORKDIR {{ stack_root }}/apache-impala-latest
 
 RUN apt-get update \
 && apt-get install krb5-user libsasl2-modules-gssapi-mit libsasl2-2 locales -y \
@@ -16,4 +16,4 @@ RUN ln -s /usr/lib/x86_64-linux-gnu/libsasl2.so.2 /usr/lib/x86_64-linux-gnu/libs
 
 COPY . .
 
-ENTRYPOINT ["/impala-shell/impala-shell"]
+ENTRYPOINT ["{{ stack_root }}/apache-impala-latest/bin/impala-shell"]
