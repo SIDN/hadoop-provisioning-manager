@@ -27,6 +27,7 @@ LD_LIBRARY_PATH+=:/opt/gcc/gcc-native-7.5.0/lib64
 {% else %}
 LD_LIBRARY_PATH+=:/opt/gcc/gcc-native-10.4.0/lib64
 {% endif %}
+{% endif %}
 
 # add newer native glic to LD_LIBRARY_PATH when running on ubuntu 18
 {% if (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") %}
