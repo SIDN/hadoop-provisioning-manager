@@ -21,3 +21,12 @@
     shell: "{{ fact_login_shell }}"
     system: yes
   become: yes
+
+# add user to group docker on gateway so user can start impala-shell container  
+- name: Add user to group docker
+  user:
+    name: '{{ provision_user }}'
+    groups: docker
+    append: yes
+  become: yes
+  when: inventory_hostname in groups['gateway']

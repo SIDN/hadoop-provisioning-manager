@@ -128,7 +128,7 @@ assert num_frontend_jars == 1
 shutil.copytree(os.path.join(IMPALA_HOME, "www"), os.path.join(OUTPUT_DIR, "www"))
 
 
-shutil.rmtree(os.path.join(IMPALA_HOME, "shell/build/impala-shell-" + args.version + '-RELEASE', 'lib', 'thrift', 'lib'))
+#shutil.rmtree(os.path.join(IMPALA_HOME, "shell/build/impala-shell-" + args.version + '-RELEASE', 'lib', 'thrift', 'lib'))
 #/git/apache-impala-4.0.0/shell/build/impala-shell-4.0.0-RELEASE/lib/thrift/lib/
 
 shutil.copytree(os.path.join(IMPALA_HOME, "shell/build/impala-shell-" + args.version + '-RELEASE'), os.path.join(OUTPUT_DIR, "impala-shell"))

@@ -1,10 +1,9 @@
-- name: Add Docker-CE stable repo
+  - name: Add Docker-CE stable repo
   yum_repository:
     name: docker-ce-stable
     description: Docker CE Stable Repo
     baseurl: "{{ docker_repo.rhel79 }}"
   become: yes
-  when: (ansible_distribution == "RedHat") 
     
 #   become: yes
 - name: Remove conflicting container packages
@@ -14,7 +13,11 @@
       - buildah
     state: absent
   become: yes
-  when: (ansible_distribution == "RedHat") 
+  
+# RHEL 7.5 deps
+yum install http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.119.2-1.911c772.el7_8.noarch.rpm
+yum install http://mirror.centos.org/centos/7/extras/x86_64/Packages/slirp4netns-0.4.3-4.el7_8.x86_64.rpm
+yum install http://mirror.centos.org/centos/7/extras/x86_64/Packages/fuse-overlayfs-0.7.2-6.el7_8.x86_64.rpm  
     
 - name: install package dependencies
   ansible.builtin.package:

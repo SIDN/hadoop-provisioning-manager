@@ -1,6 +1,21 @@
-- name: Create Impala common config
+# need different binaries for rhel and ubuntu   
+# fact_os_package is used to determine which package to download
+- name: Determine OS package (RHEL)
+  set_fact:
+     fact_os_package: rhel79
+  when: ansible_distribution == 'RedHat'
+
+- name: Determine OS package (Ubuntu)
+  set_fact:
+     fact_os_package: ubuntu
+  when: ansible_distribution == 'Ubuntu'
+  
+- name: Install Impala common config
   include_tasks: impala-common.yml
 
-- name: Create Impala server config
+- name: Install Impala server
   include_tasks: impala-server.yml
   when: not (inventory_hostname in groups['gateway'])    
+
+- name: Install Impala-shell client
+  include_tasks: impala-shell.yml

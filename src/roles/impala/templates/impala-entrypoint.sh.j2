@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+echo "Starting Impala service: $1"
+
+if [[ $1 -eq "impalad" ]]
+then
+  . {{ impala_etc_dir }}/impala-impalad-env.sh
+  /impala/bin/impalad -flagfile {{ impala_etc_dir }}/impalad_flags
+elif [[ $1 -eq "statestored" ]]
+then
+  . {{ impala_etc_dir }}/impala-statestored-env.sh
+  /impala/bin/statestored -flagfile {{ impala_etc_dir }}/statestored_flags
+elif [[ $1 -eq "catalogd" ]]
+then
+  . {{ impala_etc_dir }}/impala-catalogd-env.sh
+  /impala/bin/catalogd -flagfile {{ impala_etc_dir }}/catalogd_flags
+fi

@@ -1,0 +1,20 @@
+ROM debian:bullseye-slim
+
+WORKDIR {{ stack_root }}/apache-impala-latest
+
+RUN apt-get update \
+&& apt-get install krb5-user libsasl2-modules-gssapi-mit \
+ libsasl2-2 locales openjdk-11-jre libssl-dev -y \
+ && apt-get clean
+
+
+ENV LD_LIBRARY_PATH \
+ /usr/lib/jvm/java-11-openjdk-amd64/lib/server:\
+ /usr/lib/jvm/java-11-openjdk-amd64/lib:\
+ /opt/gcc-native-10.4.0/lib64:\
+ {{ stack_root }}/apache-impala-latest/lib/
+
+COPY . .
+
+ENTRYPOINT ["{{ stack_root }}/apache-impala-latest/bin/impalad"]
+

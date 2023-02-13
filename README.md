@@ -1,5 +1,8 @@
 # SIDN Labs Hadoop Provisioning
 
+The master branche is used for active development and may not be stable.  
+Download releases for stable builds.
+
 SIDN Labs Hadoop Provisioning Manager is a set of tools to make is easier to deploy a Big Data analytics cluster. The analytics cluster has support for well known components.
 
 - Apache Hadoop

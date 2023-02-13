@@ -1,3 +1,41 @@
+- name: Create scratch directories for Impalad
+  file:
+    path: "{{ item.split(':')[0] }}"
+    state: directory
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+    mode: '0755'
+  loop: '{{ impalad_scratch_dirs }}'
+  become: yes  
+  when: inventory_hostname in groups['impala']
+        and not (inventory_hostname in groups['gateway']) 
+
+# only install gcc when deployment target is RHEL 7.x
+- name: Add RHEL native gcc compiler/libs
+  include_tasks: rhel7-add-gcc.yml
+  when: >
+   (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") 
+   and not (inventory_hostname in groups['gateway']) 
+
+# Ubuntu 18 is missing required gcc libs, install gcc 9 libs
+- name: Add Ubuntu native gcc 9 libs repository
+  apt_repository: 
+    repo: 'ppa:ubuntu-toolchain-r/test'
+    state: present
+  become: yes  
+  when: >
+   (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
+   and not (inventory_hostname in groups['gateway']) 
+
+- name: Install Ubuntu native gcc 9 libs
+  ansible.builtin.package:
+    name:
+      - libstdc++-9-dev
+  become: yes  
+  when: >
+   (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
+   and not (inventory_hostname in groups['gateway']) 
+   
 - name: create ranger policycache directory
   file:
     path: "{{ impala_etc_dir }}/policycache"
@@ -11,6 +49,19 @@
   ansible.builtin.template:
     src: "../templates/systemd_service.j2"
     dest: "/etc/systemd/system/impala_{{ item.name }}.service"
+    mode: '0664'
+  loop:
+    - { name: 'impalad', group_name: 'hadoop' }
+    - { name: 'catalogd', group_name: 'impala_catalog' }
+    - { name: 'statestored', group_name: 'impala_statestore' }
+  become: yes
+  when: (inventory_hostname in groups[item.group_name])
+        and not (inventory_hostname in groups['gateway'])
+        
+- name: Create Systemd services Docker container
+  ansible.builtin.template:
+    src: "../templates/systemd_service_docker.j2"
+    dest: "/etc/systemd/system/impala_{{ item.name }}_docker.service"
     mode: '0664'
   loop:
     - { name: 'impalad', group_name: 'hadoop' }
@@ -37,8 +88,8 @@
 
 - name: Create symlinks to deamons
   file:
-      src: "{{ stack_root }}/apache-impala-rhel79-{{ version.impala }}/bin/impalad"
-      dest: "{{ stack_root }}/apache-impala-rhel79-{{ version.impala }}/bin/{{ item }}"
+      src: "{{ stack_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}/bin/impalad"
+      dest: "{{ stack_root }}apache-impala-{{ fact_os_package }}-{{ version.impala }}/bin/{{ item }}"
       state: link
   loop:
     - catalogd
@@ -47,5 +98,9 @@
   become_user: "{{ impala_os_user }}"
   when: not (inventory_hostname in groups['gateway']) 
 
-
+- name: Create Container start script
+  ansible.builtin.template:
+    src: "../templates/impala-start.sh.j2"
+    dest: "{{ stack_root }}/apache-impala-latest/bin/impala-start.sh"
+    mode: '0755'
       

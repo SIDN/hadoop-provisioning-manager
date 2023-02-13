@@ -1,0 +1,75 @@
+#
+# Impala 4+ is built using GCC 7.5.0 and associacted GLIBC versions
+# RHEL does not have packages for these libs, we need to install 
+# a non standard glic to be able to run impala binaries
+#
+- name: Create gcc directory
+  file:
+    path: /opt/gcc
+    state: directory
+    mode: '0755'
+  become: yes
+
+- name: Check if need to install GCC version 7.5.0 
+  set_fact:
+     fact_gcc_version: "7.5.0"
+  when: version.impala is version('4.2.0', '<')
+  
+- name: Check if need to install GCC version 10.4.0 
+  set_fact:
+     fact_gcc_version: "10.4.0"
+  when: version.impala is version('4.2.0', '>=')
+  
+- name: Check if gcc is already downloaded
+  stat:
+    path: "{{ download_root }}/gcc-native-{{ fact_gcc_version }}-rhel79.tar.gz"
+  register: stat_gcc
+  delegate_to: localhost
+  connection: local
+    
+- name: Download gcc
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ repository_url }}/impala/gcc-native-{{ fact_gcc_version }}-rhel79.tar.gz"
+  delegate_to: localhost
+  connection: local
+  when: not stat_gcc.stat.exists
+
+- name: Check if gcc is already on remote
+  stat:
+    path: "{{ cache_root }}/gcc-native-{{ fact_gcc_version }}-rhel79.tar.gz"
+  register: stat_remote_gcc
+
+- name: Copy gcc to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/gcc-native-{{ fact_gcc_version }}-rhel79.tar.gz"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  when: not stat_remote_gcc.stat.exists
+
+- name: Check if gcc is already extracted
+  stat:
+    path: /opt/gcc/gcc-native-{{ fact_gcc_version }}
+  register: gcc_extract
+  become: yes
+  
+- name: Extract gcc 
+  ansible.builtin.unarchive:
+      src: "{{ cache_root }}/gcc-native-{{ fact_gcc_version }}-rhel79.tar.gz"
+      remote_src: true
+      creates: "/opt/gcc/gcc-native-{{ fact_gcc_version }}-rhel79"
+      dest: /opt/gcc/
+  become: yes
+  when: not gcc_extract.stat.exists
+  
+- name: Create symlinks to shared libs
+  file:
+      src: "{{ item.src }}"
+      dest: "{{ item.dst }}"
+      state: link
+  loop:
+    - { src: '/usr/lib64/libcrypto.so', dst: '/usr/lib64/libcrypto.so.1.0.0' }
+    - { src: '/usr/lib64/libssl.so', dst: '/usr/lib64/libssl.so.1.0.0' }
+  become: yes

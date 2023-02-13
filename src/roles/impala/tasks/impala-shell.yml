@@ -1,0 +1,49 @@
+# Extract Impala in cache dir on mgmt node
+- name: Extract Impala 
+  ansible.builtin.unarchive:
+      src: "{{ download_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+      remote_src: true
+      creates: "{{ cache_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}"
+      dest: "{{ stack_root }}"
+  delegate_to: localhost
+  connection: local
+  
+- name: Create DockerFile
+  ansible.builtin.template:
+    src: "../templates/impala-shell_Dockerfile.j2"
+    dest: "{{ cache_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}/impala-shell/Dockerfile"
+    mode: '0664'
+  delegate_to: localhost
+  connection: local
+  
+- name: Check if Docker image already exists
+  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell.*{{ version.impala }} | wc -l"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  become: yes
+  
+- name: Create Docker image on controller server
+  shell: >
+    cd {{ cache_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}/impala-shell;
+    TAG={{ version.impala }} docker build -t apache/impala-shell:{{ version.impala }} .
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+    
+- name: Push Impala docker image to registry
+  shell: >
+    docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }}
+  delegate_to: localhost
+  connection: local
+  when: docker_img_exists.stdout | int == 0
+
+- name: Pull Impala image to host
+  shell: >
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }}
+
+- name: Create Container start script
+  ansible.builtin.template:
+    src: "../templates/impala-shell-cmd.j2"
+    dest: "{{ stack_root }}/apache-impala-latest/bin/impala-shell"
+    mode: '0755'

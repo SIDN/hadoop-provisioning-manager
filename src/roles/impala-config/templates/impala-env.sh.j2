@@ -22,7 +22,10 @@ LD_LIBRARY_PATH+=:$JAVA_HOME/jre/lib/amd64/server/
 
 # add newer glic to LD_LIBRARY_PATH when running on rhel7
 {% if (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") %}
+{% if version.impala is version('4.2.0', '<') %}
 LD_LIBRARY_PATH+=:/opt/gcc/gcc-native-7.5.0/lib64
+{% else %}
+LD_LIBRARY_PATH+=:/opt/gcc/gcc-native-10.4.0/lib64
 {% endif %}
 
 # add newer native glic to LD_LIBRARY_PATH when running on ubuntu 18

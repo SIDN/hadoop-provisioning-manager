@@ -1,0 +1,19 @@
+FROM python:3.8.16-slim-bullseye
+
+WORKDIR /impala-shell
+
+RUN apt-get update \
+&& apt-get install krb5-user libsasl2-modules-gssapi-mit libsasl2-2 locales -y \
+&& apt-get clean
+
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN ln -s /usr/lib/x86_64-linux-gnu/libsasl2.so.2 /usr/lib/x86_64-linux-gnu/libsasl2.so.3
+
+COPY . .
+
+ENTRYPOINT ["/impala-shell/impala-shell"]
