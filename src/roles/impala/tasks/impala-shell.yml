@@ -20,7 +20,7 @@
   ansible.builtin.unarchive:
       src: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
       creates: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}"
-      dest: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}"
+      dest: "{{ cache_root }}"
   delegate_to: localhost
   connection: local
   
