@@ -1,6 +1,6 @@
 - name: Check if the Apache Impala src is already downloaded
   stat:
-    path: "{{ download_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+    path: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
   register: stat_impala_src
   delegate_to: localhost
   connection: local
@@ -8,27 +8,27 @@
 # Extract Impala in cache dir on mgmt node
 - name: Copy Apache Impala to cache on manager
   ansible.builtin.copy:
-    src: "{{ download_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+    src: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
     dest: "{{ cache_root }}"
     mode: '0644'
   delegate_to: localhost
   connection: local
-  when: not stat_remote_impala_src.stat.exists
+  when: not stat_impala_src.stat.exists
   
 - name: Extract Impala 
   ansible.builtin.unarchive:
-      src: "{{ download_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+      src: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
       remote_src: true
-      creates: "{{ cache_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}"
+      creates: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}"
       dest: "{{ stack_root }}"
   delegate_to: localhost
   connection: local
-  when: not stat_remote_impala_src.stat.exists
+  when: not stat_impala_src.stat.exists
   
 - name: Create DockerFile
   ansible.builtin.template:
     src: "../templates/impala-shell_Dockerfile.j2"
-    dest: "{{ cache_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}/impala-shell/Dockerfile"
+    dest: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell/Dockerfile"
     mode: '0664'
   delegate_to: localhost
   connection: local
@@ -42,7 +42,7 @@
   
 - name: Create Docker image on controller server
   shell: >
-    cd {{ cache_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}/impala-shell;
+    cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell;
     TAG={{ version.impala }} docker build -t apache/impala-shell:{{ version.impala }} .
   delegate_to: localhost
   connection: local
