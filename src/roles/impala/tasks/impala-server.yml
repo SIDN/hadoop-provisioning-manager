@@ -103,4 +103,6 @@
     src: "../templates/impala-start.sh.j2"
     dest: "{{ stack_root }}/apache-impala-latest/bin/impala-start.sh"
     mode: '0755'
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
       
