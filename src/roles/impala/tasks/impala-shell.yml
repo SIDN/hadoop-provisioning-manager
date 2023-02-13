@@ -1,4 +1,20 @@
+- name: Check if the Apache Impala src is already downloaded
+  stat:
+    path: "{{ download_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+  register: stat_impala_src
+  delegate_to: localhost
+  connection: local
+  
 # Extract Impala in cache dir on mgmt node
+- name: Copy Apache Impala to cache on manager
+  ansible.builtin.copy:
+    src: "{{ download_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
+    dest: "{{ cache_root }}"
+    mode: '0644'
+  delegate_to: localhost
+  connection: local
+  when: not stat_remote_impala_src.stat.exists
+  
 - name: Extract Impala 
   ansible.builtin.unarchive:
       src: "{{ download_root }}/apache-impala-{{ fact_os_package }}-{{ version.impala }}.tar.gz"
@@ -7,6 +23,7 @@
       dest: "{{ stack_root }}"
   delegate_to: localhost
   connection: local
+  when: not stat_remote_impala_src.stat.exists
   
 - name: Create DockerFile
   ansible.builtin.template:
