@@ -41,9 +41,9 @@
   
 - name: Create Docker image on controller server
   shell: >
-    cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell
-    docker build -t apache/impala-shell:{{ version.impala }} .
-    docker image tag apache/impala-shell:{{ version.impala }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }}
+    cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell;
+    docker build -t apache/impala-shell:{{ version.impala }} .;
+    docker image tag apache/impala-shell:{{ version.impala }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }};
   delegate_to: localhost
   connection: local
   when: docker_img_exists.stdout | int == 0
