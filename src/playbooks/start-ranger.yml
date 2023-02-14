@@ -40,7 +40,7 @@
       shell: >
           echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
           curl --negotiate -u : -H "Content-type: application/json"
-          -d '{{ lookup('file','roles/ranger/files/ranger_impala_service.json') }}'
+          -d '{{ lookup('file','../roles/ranger/files/ranger_impala_service.json') }}'
           --fail -X POST https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/
       delegate_to: localhost
       connection: local
@@ -68,7 +68,7 @@
       shell: >
           echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
           curl --negotiate -u : -H "Content-type: application/json"
-          -d '{{ lookup('template','roles/ranger/templates/ranger_hdfs_service.json.j2') | to_json }}'
+          -d '{{ lookup('template','../roles/ranger/templates/ranger_hdfs_service.json.j2') | to_json }}'
           --fail -X POST https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/
       delegate_to: localhost
       connection: local
