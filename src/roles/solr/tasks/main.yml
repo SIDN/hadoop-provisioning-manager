@@ -49,7 +49,7 @@
   
 - name: Enable SOLR service
   ansible.builtin.service:
-    name: "{{ item.name }}.service"
+    name: "solr.service"
     enabled: yes
     
 - name: Check if the Apache solr is already downloaded
