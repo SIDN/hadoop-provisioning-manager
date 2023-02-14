@@ -234,6 +234,9 @@
     - { name: 'install.properties.j2', dest: '{{ stack_root }}/apache-ranger-admin-latest/install.properties' }
   become: yes
 
-- name: Run setup
-  shell: "{{ stack_root }}/apache-ranger-admin-latest/setup.sh"
+- name: Run Admin setup
+  shell: >
+    cd {{ stack_root }}/apache-ranger-admin-latest;
+    python3 ./dba_script.py -q;
+    python3 ./db_setup.py;
   become: yes  
