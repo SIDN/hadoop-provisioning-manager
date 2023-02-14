@@ -1,3 +1,14 @@
+- name: Create configuration files
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+    owner: "{{ ranger_os_user }}"
+    group: "{{ ranger_os_group }}"
+  loop:
+    - { name: 'install.properties.j2', dest: '{{ stack_root }}/apache-ranger-admin-latest/install.properties' }
+  become: yes
+
 - name: Run Admin setup
   shell: >
     export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))";
@@ -231,21 +242,4 @@
       force: yes
   become: yes
   
-- name: Create configuration files
-  ansible.builtin.template:
-    src: "../templates/{{ item.name }}"
-    dest: "{{ item.dest }}"
-    mode: '0644'
-    owner: "{{ ranger_os_user }}"
-    group: "{{ ranger_os_group }}"
-  loop:
-    - { name: 'install.properties.j2', dest: '{{ stack_root }}/apache-ranger-admin-latest/install.properties' }
-  become: yes
 
-- name: Run Admin setup
-  shell: >
-    export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))";
-    cd {{ stack_root }}/apache-ranger-admin-latest;
-    python3 ./dba_script.py -q;
-    python3 ./db_setup.py;
-  become: yes  
