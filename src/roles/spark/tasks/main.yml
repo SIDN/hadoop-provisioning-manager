@@ -5,7 +5,7 @@
 
 - name: Include Spark server
   include_tasks: spark-server.yml
-  when: not (inventory_hostname in groups['ranger'])    
+  #when: not (inventory_hostname in groups['ranger'])    
   
 - name: Include Create default Python virtual environment
   include_tasks: spark-default-py-venv.yml
