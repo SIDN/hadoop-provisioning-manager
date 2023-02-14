@@ -52,7 +52,7 @@
 - name: Download Apache Livy
   get_url:
       url: "{{ livy_download_url }}"
-      dest: "{{ download_root }}/{{ item | basename }}"
+      dest: "{{ download_root }}/{{ livy_download_url | basename }}"
   delegate_to: localhost
   connection: local
   when: not stat_livy_src.stat.exists
