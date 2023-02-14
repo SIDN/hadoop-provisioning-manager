@@ -33,6 +33,12 @@
     line: "data_directory = '{{ db_data_dir }}'"
   become: yes
   when: not postgres_initialized.stat.exists
+  
+- name: Listen on {{ db_server_listen }}
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ version.postgresql }}/main/postgresql.conf"
+    regexp: '^#listen_addresses ='
+    line: "listen_addresses = '{{ db_server_listen }}'"
 
 - name: Initialize PostgreSQL
   shell: >
