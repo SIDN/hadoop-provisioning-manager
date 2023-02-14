@@ -51,7 +51,7 @@ version:
   hue: '20220610-140101'  #'20220301-140101'
   ranger: '2.2.0'
   solr: '8.11.2'
-  livy: v0.8.0'
+  livy: 0.8.0'
   prometheus: '2.33.5'
   prometheus_node_exporter: 1.3.1
   grafana: '8.4.3'

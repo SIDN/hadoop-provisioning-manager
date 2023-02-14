@@ -15,3 +15,6 @@ livy_heap: 1g
 livy_conf_options:
     livy.server.port: 8998
     livy.server.session.timeout: 1h
+    
+# URL where to download Livy
+livy_download_url: "https://downloads.sidnlabs.nl/hadoop/apache-livy-{{ version.livy }}-scala-2.12.15/apache-livy-{{ version.livy }}-incubating-SNAPSHOT-bin.zip"

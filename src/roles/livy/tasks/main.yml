@@ -51,10 +51,8 @@
     
 - name: Download Apache Livy
   get_url:
-      url: "{{ item }}"
+      url: "{{ livy_download_url }}"
       dest: "{{ download_root }}/{{ item | basename }}"
-  loop:
-    - http://hadoop-build-rhel79.sidnlabs.nl/rel/apache-livy-{{ version.livy }}-incubating-SNAPSHOT-bin.zip
   delegate_to: localhost
   connection: local
   when: not stat_livy_src.stat.exists

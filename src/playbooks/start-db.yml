@@ -1,6 +1,8 @@
 # only start db that is part of the cluster
 # an existing external db must be started out of bounds
 - hosts: database
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/db_vars.yml"
   remote_user: hadoop-mgr
   become: yes
   vars:
