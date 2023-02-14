@@ -15,7 +15,14 @@
   register: stat_python
   delegate_to: localhost
   connection: local
-
+  
+- name: Install required packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - krb5-devel
+    state: latest
+  become: yes
+  
 - name: Download Python
   get_url:
       url: "{{ item }}"
