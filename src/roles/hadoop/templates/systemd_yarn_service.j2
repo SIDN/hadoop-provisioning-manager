@@ -3,7 +3,7 @@
 # Hadoop conf dir: {{ hadoop_etc_dir }}
 
 [Unit]
-Description=Hadoop {{ item }}
+Description=Hadoop {{ item.name }}
 After=network.target
 StartLimitIntervalSec=0
 
@@ -11,8 +11,8 @@ StartLimitIntervalSec=0
 Type=forking
 User={{ hadoop_os_user.yarn }}
 Group={{ hadoop_os_group }}
-ExecStart=/bin/bash -c 'source {{ hadoop_etc_dir }}/yarn-env.sh; {{ stack_root }}/hadoop-latest/bin/yarn --daemon start {{ item }}'
-ExecStop=/bin/bash -c 'source  {{ hadoop_etc_dir }}/yarn-env.sh; {{ stack_root }}/hadoop-latest/bin/yarn --daemon stop {{ item }}'
+ExecStart=/bin/bash -c 'source {{ hadoop_etc_dir }}/yarn-env.sh; {{ stack_root }}/hadoop-latest/bin/yarn --daemon start {{ item.name }}'
+ExecStop=/bin/bash -c 'source  {{ hadoop_etc_dir }}/yarn-env.sh; {{ stack_root }}/hadoop-latest/bin/yarn --daemon stop {{ item.name }}'
 Restart=always
 RestartSec=60
 
