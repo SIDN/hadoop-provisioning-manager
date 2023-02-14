@@ -88,10 +88,11 @@
   delegate_to: localhost
   connection: local
 
-- name: Download Apache Hadoop
+- name: Download Apache Hadoop {{ version.hadoop }}
   get_url:
     url: "{{ item }}"
     dest: "{{ download_root }}/{{ item | basename }}"
+    timeout: 3600
   loop:
     - "{{ hadoop_download_url }}"
   delegate_to: localhost

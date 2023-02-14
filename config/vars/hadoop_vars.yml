@@ -166,7 +166,8 @@ yarn_fair_scheduler_options:
     aclAdministerApps: '*'
 
 # URL where to download Apache Hadoop package
-hadoop_download_url: "https://archive.apache.org/dist/hadoop/common/hadoop-{{ version.hadoop }}/hadoop-{{ version.hadoop }}.tar.gz"
+hadoop_download_url: "https://dlcdn.apache.org/hadoop/common/hadoop-{{ version.hadoop }}/hadoop-{{ version.hadoop }}.tar.gz"
+#hadoop_download_url: "https://archive.apache.org/dist/hadoop/common/hadoop-{{ version.hadoop }}/hadoop-{{ version.hadoop }}.tar.gz"
 
 # URL where to get the metric-core jar that is compatible with the spark shuffle service
 # when version.hadoop < 3.2
