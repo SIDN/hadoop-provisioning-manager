@@ -1,3 +1,11 @@
+- name: Run Admin setup
+  shell: >
+    export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))";
+    cd {{ stack_root }}/apache-ranger-admin-latest;
+    python3 ./dba_script.py -q;
+    python3 ./db_setup.py;
+  become: yes  
+  
 - name: Create OS group
   ansible.builtin.group:
     name: "{{ ranger_os_group }}"
@@ -236,6 +244,7 @@
 
 - name: Run Admin setup
   shell: >
+    export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))";
     cd {{ stack_root }}/apache-ranger-admin-latest;
     python3 ./dba_script.py -q;
     python3 ./db_setup.py;
