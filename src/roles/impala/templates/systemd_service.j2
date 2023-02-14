@@ -10,7 +10,7 @@ StartLimitIntervalSec=0
 {% if item.name == 'impalad' %}
 Slice=impala_impalad.slice
 {% endif %}
-Type=simple
+#Type=simple
 User={{ impala_os_user }}
 Group={{ impala_os_group }}
 ExecStart={{ stack_root }}/apache-impala-latest/bin/impala-start.sh {{ item.name }}

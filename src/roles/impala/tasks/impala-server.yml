@@ -1,3 +1,10 @@
+- name: Add user {{  impala_os_user }} to group docker
+  user:
+    name: '{{ impala_os_user }}'
+    groups: docker
+    append: yes
+  become: yes
+  
 - name: Create scratch directories for Impalad
   file:
     path: "{{ item.split(':')[0] }}"
