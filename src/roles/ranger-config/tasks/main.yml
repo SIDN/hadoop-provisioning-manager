@@ -26,8 +26,7 @@
     - { name: 'ranger-ugsync-site.xml.j2', dest: '{{ ranger_etc_dir }}/ranger-ugsync-site.xml' }
     - { name: 'ranger-ugsync-default.xml.j2', dest: '{{ ranger_etc_dir }}/ranger-ugsync-default.xml' }
     - { name: 'log4j.properties.j2', dest: '{{ ranger_etc_dir }}/log4j.properties' }
-    - { name: 'access-logrotate.conf.j2', dest: '/etc/logrotate.d/ranger-admin-access-log' }
-    
+    - { name: 'access-logrotate.conf.j2', dest: '/etc/logrotate.d/ranger-admin-access-log' }  
   become: yes
   
 - name: Copy default security-applicationContext.xml

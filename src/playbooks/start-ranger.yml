@@ -28,6 +28,8 @@
       register: service_check  
       retries: 5
       delay: 30
+      delegate_to: localhost
+      connection: local
         
     # - name: Impala service status
     #   debug: 
@@ -40,6 +42,8 @@
           curl --negotiate -u : -H "Content-type: application/json"
           -d '{{ lookup('file','roles/ranger/files/ranger_impala_service.json') }}'
           --fail -X POST https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/
+      delegate_to: localhost
+      connection: local
       when: service_check.stdout.find('Not found') != -1
       
       
@@ -50,10 +54,14 @@
           curl --negotiate -u : -H "Content-type: application/json"
           -X GET https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/name/hdfs
       register: service_check  
+      delegate_to: localhost
+      connection: local
     
     - name: HDFS service status
       debug: 
         msg: "HDFS service not found!"
+      delegate_to: localhost
+      connection: local
       when: service_check.stdout.find('Not found') != -1
           
     - name: Create new HDFS service
@@ -62,5 +70,7 @@
           curl --negotiate -u : -H "Content-type: application/json"
           -d '{{ lookup('template','roles/ranger/templates/ranger_hdfs_service.json.j2') | to_json }}'
           --fail -X POST https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/
+      delegate_to: localhost
+      connection: local
       when: service_check.stdout.find('Not found') != -1
   
