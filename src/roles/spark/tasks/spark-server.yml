@@ -54,7 +54,7 @@
   delegate_to: localhost
   connection: local
     
-- name: Download Apache Spark
+- name: Download Apache Spark {{ version.spark }}
   get_url:
       url: "{{ item }}"
       dest: "{{ download_root }}/{{ item | basename }}"
@@ -64,7 +64,7 @@
   connection: local
   when: not stat_spark_src.stat.exists
 
-- name: Check if the Apache Spark src is already on remote
+- name: Check if the Apache Spark src is already on remote ({{ spark_download_url | basename }})
   stat:
     path: "{{ cache_root }}/{{ spark_download_url | basename }}"
   register: stat_remote_spark_src
