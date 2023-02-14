@@ -39,6 +39,19 @@
     path: "/etc/postgresql/{{ version.postgresql }}/main/postgresql.conf"
     regexp: '^#listen_addresses ='
     line: "listen_addresses = '{{ db_server_listen }}'"
+    
+    
+- name: Allow md5 connection for the all users
+  postgresql_pg_hba:
+    dest: "/etc/postgresql/{{ version.postgresql }}/main/pg_hba.conf"
+    contype: host
+    databases: all
+    method: md5
+    users: all
+    address: all
+    create: true
+  become: yes
+  become_user: postgres
 
 - name: Initialize PostgreSQL
   shell: >
@@ -46,3 +59,5 @@
   become: yes
   become_user: postgres
   when: not postgres_initialized.stat.exists
+
+

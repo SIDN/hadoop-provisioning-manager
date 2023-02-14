@@ -47,3 +47,15 @@
     postgresql-{{ version.postgresql }}-setup initdb
   become: yes
   when: not postgres_initialized.stat.exists
+
+- name: Allow md5 connection for the all users
+  postgresql_pg_hba:
+    dest: "{{ db_data_dir }}/pg_hba.conf"
+    contype: host
+    databases: all
+    method: md5
+    users: all
+    address: all
+    create: true
+  become: yes
+  become_user: postgres
