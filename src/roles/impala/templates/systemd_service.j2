@@ -13,7 +13,7 @@ Slice=impala_impalad.slice
 Type=simple
 User={{ impala_os_user }}
 Group={{ impala_os_group }}
-ExecStart=/bin/bash -c 'source {{ impala_etc_dir }}/impala-{{ item.name }}-env.sh; {{ stack_root }}/apache-impala-latest/bin/{{ item.name }} -flagfile {{ impala_etc_dir }}/{{ item.name }}_flags'
+ExecStart={{ stack_root }}/apache-impala-latest/bin/impala-start.sh {{ item.name }}
 Restart=always
 RestartSec=60
 

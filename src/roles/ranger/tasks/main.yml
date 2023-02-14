@@ -240,4 +240,5 @@
     cd {{ stack_root }}/apache-ranger-admin-latest;
     python3 ./dba_script.py -q;
     python3 ./db_setup.py;
+    rm -f {{ stack_root }}/apache-ranger-admin-latest/install.properties;
   become: yes  

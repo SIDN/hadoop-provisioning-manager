@@ -122,7 +122,6 @@
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: absent    
-  become: yes  
   with_items: '{{ psql_jar.files }}'
   become: yes
   

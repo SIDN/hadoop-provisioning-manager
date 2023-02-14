@@ -58,18 +58,6 @@
   when: (inventory_hostname in groups[item.group_name])
         and not (inventory_hostname in groups['gateway'])
         
-- name: Create Systemd services Docker container
-  ansible.builtin.template:
-    src: "../templates/systemd_service_docker.j2"
-    dest: "/etc/systemd/system/impala_{{ item.name }}_docker.service"
-    mode: '0664'
-  loop:
-    - { name: 'impalad', group_name: 'hadoop' }
-    - { name: 'catalogd', group_name: 'impala_catalog' }
-    - { name: 'statestored', group_name: 'impala_statestore' }
-  become: yes
-  when: (inventory_hostname in groups[item.group_name])
-        and not (inventory_hostname in groups['gateway'])
   
 - name: Systemctl Reload Daemons
   shell: systemctl daemon-reload
