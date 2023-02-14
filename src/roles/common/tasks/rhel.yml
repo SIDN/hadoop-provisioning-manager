@@ -54,7 +54,7 @@
   ansible.builtin.package:
     name:
       - python-virtualenv
-      - python3-virtualenv
+      #- python3-virtualenv
       - python36-pexpect
       - krb5-libs
       - krb5-workstation

@@ -2,46 +2,42 @@
 # This files installs base files, for data, name- nodes and gateways
 # the data, name- nodes files are deployed with hadoop-server.yml
 # 
+- name: Include Hadoop common installation
+  include_tasks: tasks/hadoop-common.yml
+  when: not (inventory_hostname in groups['ranger'])    
 
+- name: Include Hadoop server installation
+  include_tasks: tasks/hadoop-server.yml
+  when: not (inventory_hostname in groups['gateway']) 
+    and not (inventory_hostname in groups['ranger'])
+
+# need hadoop config before installation of ranger  
+- name: Include Hadoop configuration
+  include_tasks: ../hadoop-config/tasks/main.yml
+  when: not (inventory_hostname in groups['ranger'])
+
+# make sure to create the users on the ranger server so it is picked up by ranger
+- name: Include Hadoop Ranger user create
+  include_tasks: tasks/hadoop-ranger-user.yml
+  when: inventory_hostname in groups['ranger']
+  
+# install ranger HDFS plugin only on the name nodes
+- name: Include Ranger Plugin installation
+  include_tasks: tasks/ranger-hdfs-plugin.yml
+  when: > 
+    (('hdfs_primary_nn' in groups and inventory_hostname in groups['hdfs_primary_nn']) 
+    or ('hdfs_secondary_nn' in groups and inventory_hostname in groups['hdfs_secondary_nn']))
+    and not (inventory_hostname in groups['gateway']) 
+    and not (inventory_hostname in groups['ranger'])
+
+# do not install prometheus exporter in the gateway node
+- name: Include Prometheus Exporter installation
+  include_tasks: tasks/prometheus-exporter.yml
+  when: not (inventory_hostname in groups['gateway']) 
+    and not (inventory_hostname in groups['ranger'])
+    
 - name: Include Yarn Server installation
   include_tasks: tasks/yarn-server.yml
   when: not (inventory_hostname in groups['gateway']) 
     and not (inventory_hostname in groups['ranger'])
-    
-# 
-# - name: Include Hadoop common installation
-#   include_tasks: tasks/hadoop-common.yml
-#   when: not (inventory_hostname in groups['ranger'])    
-# 
-# - name: Include Hadoop server installation
-#   include_tasks: tasks/hadoop-server.yml
-#   when: not (inventory_hostname in groups['gateway']) 
-#     and not (inventory_hostname in groups['ranger'])
-# 
-# # need hadoop config before installation of ranger  
-# - name: Include Hadoop configuration
-#   include_tasks: ../hadoop-config/tasks/main.yml
-#   when: not (inventory_hostname in groups['ranger'])
-# 
-# # make sure to create the users on the ranger server so it is picked up by ranger
-# - name: Include Hadoop Ranger user create
-#   include_tasks: tasks/hadoop-ranger-user.yml
-#   when: inventory_hostname in groups['ranger']
-# 
-# # install ranger HDFS plugin only on the name nodes
-# - name: Include Ranger Plugin installation
-#   include_tasks: tasks/ranger-hdfs-plugin.yml
-#   when: > 
-#     (('hdfs_primary_nn' in groups and inventory_hostname in groups['hdfs_primary_nn']) 
-#     or ('hdfs_secondary_nn' in groups and inventory_hostname in groups['hdfs_secondary_nn']))
-#     and not (inventory_hostname in groups['gateway']) 
-#     and not (inventory_hostname in groups['ranger'])
-# 
-# # do not install prometheus exporter in the gateway node
-# - name: Include Prometheus Exporter installation
-#   include_tasks: tasks/prometheus-exporter.yml
-#   when: not (inventory_hostname in groups['gateway']) 
-#     and not (inventory_hostname in groups['ranger'])
-    
-
 
