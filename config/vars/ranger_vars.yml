@@ -8,6 +8,8 @@ ranger_etc_dir: "{{ config_root }}/ranger"
 # Location of ranger logging
 ranger_log_dir: /var/log/ranger
 
+ranger_admin_password: "{{ vault_ranger_admin_password }}"
+
 # port where ranger admin site will be listening
 ranger_admin_port: 6182
 
