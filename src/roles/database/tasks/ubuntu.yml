@@ -11,7 +11,7 @@
       - postgresql-{{ version.postgresql }}
       - postgresql-contrib
       - libpq-dev
-      - postgresql-server-dev-14
+      - postgresql-server-dev-{{ version.postgresql }}
       - libpostgresql-jdbc-java
       - python3-psycopg2
     state: latest
@@ -36,7 +36,7 @@
 
 - name: Initialize PostgreSQL
   shell: >
-    /usr/lib/postgresql/14/bin/initdb -D {{ db_data_dir }}
+    /usr/lib/postgresql/{{ version.postgresql }}/bin/initdb -D {{ db_data_dir }}
   become: yes
   become_user: postgres
   when: not postgres_initialized.stat.exists
