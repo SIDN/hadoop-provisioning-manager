@@ -16,5 +16,6 @@
         - "{{ cache_root }}"
         - "{{ stack_root }}"
         - "{{ hadoop_dfs_datanode_data_dir }}"
+      become: yes
 
 
