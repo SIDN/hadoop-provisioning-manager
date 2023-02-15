@@ -3,12 +3,13 @@
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
 
-{% if ansible_distribution == "RedHat" %}
-export PATH="/usr/lib/jvm/java/bin:$PATH"
-{% endif %}
+# {% if ansible_distribution == "RedHat" %}
+# export PATH="/usr/lib/jvm/java/bin:$PATH"
+# {% endif %}
 
-export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
-export IMPALA_HOME={{ stack_root }}/apache-impala-latest
+#export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
+#export IMPALA_HOME={{ stack_root }}/apache-impala-latest
+
 export IMPALA_CONF_DIR={{ impala_etc_dir }}
 export HADOOP_CONF_DIR={{ hadoop_etc_dir }}
 export HIVE_CONF_DIR={{ hive_etc_dir }}
@@ -16,48 +17,48 @@ export PATH=$IMPALA_HOME/bin:$IMPALA_HOME/impala-shell:$PATH
 
 # Add directories containing dynamic libraries required by the daemons that
 # are not on the system library paths.
-LD_LIBRARY_PATH={{ stack_root }}/apache-impala-latest/lib
-LD_LIBRARY_PATH+=:$JAVA_HOME/jre/lib/amd64/
-LD_LIBRARY_PATH+=:$JAVA_HOME/jre/lib/amd64/server/
+# LD_LIBRARY_PATH={{ stack_root }}/apache-impala-latest/lib
+# LD_LIBRARY_PATH+=:$JAVA_HOME/jre/lib/amd64/
+# LD_LIBRARY_PATH+=:$JAVA_HOME/jre/lib/amd64/server/
 
 # add newer glic to LD_LIBRARY_PATH when running on rhel7
-{% if (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") %}
-{% if version.impala is version('4.2.0', '<') %}
-LD_LIBRARY_PATH+=:/opt/gcc/gcc-native-7.5.0/lib64
-{% else %}
-LD_LIBRARY_PATH+=:/opt/gcc/gcc-native-10.4.0/lib64
-{% endif %}
-{% endif %}
+# {% if (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") %}
+# {% if version.impala is version('4.2.0', '<') %}
+# LD_LIBRARY_PATH+=:/opt/gcc/gcc-native-7.5.0/lib64
+# {% else %}
+# LD_LIBRARY_PATH+=:/opt/gcc/gcc-native-10.4.0/lib64
+# {% endif %}
+# {% endif %}
 
 # add newer native glic to LD_LIBRARY_PATH when running on ubuntu 18
-{% if (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") %}
-LD_LIBRARY_PATH+=:/usr/lib/gcc/x86_64-linux-gnu/9
-{% endif %}
-
-# need native hadoop libs for short-circuit reads on hdfs data node
-LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/hadoop/hadoop-latest/lib/native"
-
-# Configs should be first on classpath
-CLASSPATH=$IMPALA_CONF_DIR
+# {% if (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") %}
+# LD_LIBRARY_PATH+=:/usr/lib/gcc/x86_64-linux-gnu/9
+# {% endif %}
+# 
+# # need native hadoop libs for short-circuit reads on hdfs data node
+# LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/hadoop/hadoop-latest/lib/native"
+# 
+# # Configs should be first on classpath
+# CLASSPATH=$IMPALA_CONF_DIR
 
 # Append all of the jars in /opt/impala/lib to the classpath.
-for jar in {{ stack_root }}/apache-impala-latest/lib/*.jar
-do
-  CLASSPATH+=:$jar
-done
-
-export LD_LIBRARY_PATH
-export CLASSPATH
+# for jar in {{ stack_root }}/apache-impala-latest/lib/*.jar
+# do
+#   CLASSPATH+=:$jar
+# done
+# 
+# export LD_LIBRARY_PATH
+# export CLASSPATH
 
 # tell Impala JVM where to find jaas cfg for solr, otherwise cannot
 # connect to solr which is kerberized
 # mitigation for: CVE-2021-44228 (Log4jShell)
 # see: https://logging.apache.org/log4j/2.x/security.html
-export JAVA_TOOL_OPTIONS="-Dlog4j2.formatMsgNoLookups=true -Djava.security.auth.login.config=$IMPALA_CONF_DIR/solr-jaas.conf $JAVA_TOOL_OPTIONS"
-
-{% if daemon == 'catalogd' %}
-export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xmx{{ impala_heap.catalogd }}"
-{% elif daemon == 'impalad' %}
-export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xmx{{ impala_heap.impalad }}"
-{% endif %}
+# export JAVA_TOOL_OPTIONS="-Dlog4j2.formatMsgNoLookups=true -Djava.security.auth.login.config=$IMPALA_CONF_DIR/solr-jaas.conf $JAVA_TOOL_OPTIONS"
+# 
+# {% if daemon == 'catalogd' %}
+# export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xmx{{ impala_heap.catalogd }}"
+# {% elif daemon == 'impalad' %}
+# export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Xmx{{ impala_heap.impalad }}"
+# {% endif %}
 
