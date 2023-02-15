@@ -39,7 +39,7 @@ impala_haproxy:
   jdbc_port: 21050     # normal port, connects to least busiest impala server
   jdbc_port_ss: 21051  # port for sticky sessions such as required by Hue
   shell_port: 21000
-  stats_port: 25000
+  stats_port: 25001
 
 # Writable scratch directories where impala
 # can write temp query data

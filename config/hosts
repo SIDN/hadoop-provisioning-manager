@@ -132,6 +132,8 @@ hadoop-dev4.example.nl
 
 # deploy HAproxy for Impala HA, this deploys loadbalancer for the Impala executors
 # Only 1 host allowed in this group
+# do not deploy on host where already Impala executor is deployed.
+# this causes port conflict, both listen on 25000 by default.
 [impala_ha_proxy]
 hadoop-dev4.example.nl
 
