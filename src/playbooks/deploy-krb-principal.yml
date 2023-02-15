@@ -30,7 +30,7 @@
         /usr/sbin/kadmin.local -q 'addprinc -randkey hdfs/{{ item }}@{{ kerberos_realm }}'
       become: yes
       loop: "{{ groups['all'] }}"
-      loop: "{{ query('inventory_hostnames', 'all:!gateway:!manager') }}"
+      loop: "{{ query('inventory_hostnames', 'all:') }}"
     
     - name: Create httpfs service principals
       shell: >
@@ -42,7 +42,7 @@
       shell: >
         /usr/sbin/kadmin.local -q 'addprinc -randkey yarn/{{ item }}@{{ kerberos_realm }}'
       become: yes
-      loop: "{{ query('inventory_hostnames', 'all:!gateway:!manager') }}"
+      loop: "{{ query('inventory_hostnames', 'all') }}"
     
     - name: Create spark service principals
       shell: >
