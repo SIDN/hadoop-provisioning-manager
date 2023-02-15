@@ -82,6 +82,8 @@
       dest: "{{ stack_root }}/apache-impala-latest"
       state: link
   become: yes
+  when: inventory_hostname in groups['impala']
+        and not (inventory_hostname in groups['gateway']) 
 
 # somehow /usr/lib/x86_64-linux-gnu/libsasl2.so.3 is not available
 # on Ubunut. And impala-shell will crash without it.
