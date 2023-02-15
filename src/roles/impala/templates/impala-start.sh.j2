@@ -9,7 +9,7 @@ KRB_CC_CACHE="/tmp/krb5cc_$UID"
 KRB_CC_CACHE="/tmp/krb5cc_$(id -u)"
 {% endif %}
 
-docker run --interactive --tty --rm \
+docker run --rm \
   --net=host \
   --name "impala_$1" \
 {% if ansible_distribution == "RedHat" %}

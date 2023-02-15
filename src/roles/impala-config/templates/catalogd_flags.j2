@@ -25,6 +25,10 @@
 -authorization_provider=ranger
 -abort_on_failed_audit_event=false
 
+-catalog_topic_mode=minimal
+-invalidate_tables_timeout_s=3600
+-hms_event_polling_interval_s=0
+
 {% for key, value in impala_catalogd_options.items() %}
 -{{ key }}={{ value | string | lower }}
 {% endfor %}

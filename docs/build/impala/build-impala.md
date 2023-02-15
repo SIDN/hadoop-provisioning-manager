@@ -4,25 +4,43 @@ see: https://cwiki.apache.org/confluence/display/IMPALA/Building+Impala
 
 # Download
 
+```
 wget https://dlcdn.apache.org/impala/4.0.0/apache-impala-4.2.0.tar.gz
 tar xvfz apache-impala-4.2.0.tar.gz
 cd apache-impala-4.2.0
+```
 
+set home
+```
 export IMPALA_HOME=`pwd`
+```
 
 # 1 time
+```
 ./bin/bootstrap_system.sh
 apt-get install python3.6
 -- make py 3.6 default default
 https://hackersandslackers.com/multiple-python-versions-ubuntu-20-04/
 
 apt-get install python3.6-dev
+```
 
 # always
+
+Make sure to use apache hive and not Hive from toolchain.
+```
+export USE_APACHE_HIVE=true;
+```
+
+set environment
+```
 . ./bin/impala-config.sh
+```
 
-
+build release binaries
+````
 ./buildall.sh -noclean -skiptests -notests  -release
+```
 
 # create package
 
