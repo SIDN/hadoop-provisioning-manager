@@ -12,7 +12,7 @@
   
 - name: "Print result of check: Docker already present"
   ansible.builtin.debug:
-    msg: Docker already present: {{ is_docker_exist.rc == 0 }}
+    msg: "Docker already present: {{ is_docker_exist.rc == 0 }}"
 
 - name: Create docker cfg directory
   file:
