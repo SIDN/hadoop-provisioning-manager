@@ -448,10 +448,16 @@
   remote_user: hadoop-mgr
   become: yes
   tasks:
+    - name: Check config dir exists
+      stat:
+        path: "{{ superset_etc_dir }}"
+      register: stat_cfg_dir
+
     - name: Delete old keytabs
       ansible.builtin.file:
         path: "{{ superset_etc_dir }}/superset.keytab"
         state: absent      
+      when: stat_cfg_dir.stat.exists
 
     - name: Create Superset service keytabs 
       expect:
@@ -461,6 +467,7 @@
             - "xst -k {{ superset_etc_dir }}/superset.keytab superset/{{ inventory_hostname }}@{{ kerberos_realm }}"
             - "quit"
           Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+      when: stat_cfg_dir.stat.exists
 
     - name: Change file ownership, group and permissions
       ansible.builtin.file:
@@ -468,6 +475,7 @@
         owner: "{{ superset_os_user }}"
         group: "{{ superset_os_group }}"
         mode: '0440'  
+      when: stat_cfg_dir.stat.exists
 
 
 # HTTP keytab on jupyterhub host
@@ -480,10 +488,16 @@
   remote_user: hadoop-mgr
   become: yes
   tasks:
+    - name: Check config dir exists
+      stat:
+        path: "{{ jupyterhub_etc_dir }}"
+      register: stat_cfg_dir
+      
     - name: Delete old keytab
       ansible.builtin.file:
         path: "{{ jupyterhub_etc_dir }}/http.keytab"
         state: absent
+      when: stat_cfg_dir.stat.exists
     
     - name: Copy http keytab
       ansible.builtin.copy:
@@ -491,6 +505,7 @@
         dest: "{{ jupyterhub_etc_dir }}/{{ item.dest }}"
       loop:
         - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
+      when: stat_cfg_dir.stat.exists
         
     - name: Create jupyterhub service keytabs 
       expect:
@@ -500,6 +515,7 @@
             - "xst -k {{ jupyterhub_etc_dir }}/jupyterhub.keytab jupyterhub/{{ inventory_hostname }}@{{ kerberos_realm }}"
             - "quit"
           Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+      when: stat_cfg_dir.stat.exists
           
     - name: Change file ownership, group and permissions
       ansible.builtin.file:
@@ -510,5 +526,6 @@
       loop:
         - http.keytab
         - jupyterhub.keytab
+      when: stat_cfg_dir.stat.exists
 
        
