@@ -2,7 +2,6 @@
 - hosts: all!manager
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
-    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
   remote_user: hadoop-mgr
   tasks:
       # Create new uer in kerberos database
@@ -15,4 +14,6 @@
         - "{{ config_root }}"
         - "{{ cache_root }}"
         - "{{ stack_root }}"
+        - {{ hadoop_dfs_datanode_data_dir }}
+
 

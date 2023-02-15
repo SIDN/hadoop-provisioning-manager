@@ -44,6 +44,6 @@
   
             
 - name: Impala Proxy
-  import_playbook: start-impala-proxy.yml
+  import_playbook: deploy-impala-proxy.yml
 
   
