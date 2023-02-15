@@ -156,7 +156,7 @@
 - name: Pull Impala image to host
   shell: >
     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }}
-
+      
 - name: Create Container start script
   ansible.builtin.template:
     src: "../templates/impala-start.sh.j2"
