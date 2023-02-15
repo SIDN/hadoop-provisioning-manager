@@ -14,23 +14,23 @@
     - "{{ prov_cfg_dir }}/vars/docker_vars.yml"
   remote_user: hadoop-mgr
   tasks:
-    # - name: Include component deploy
-    #   include_role:
-    #     name: docker
-    #   when: var_deploy_comp | bool
-    # 
-    # - name: Include configuration deploy
-    #   include_role:
-    #     name: docker-config
-    #   when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
-    # 
-    #   # shared config must always be generated before config deploy
-    #   # the gateway node is an exception, this host does not need impala config
-    # - name: Include component deploy
-    #   include_role:
-    #     name: shared-config
-    #   when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool) 
-    #         and inventory_hostname not in groups['gateway']
+    - name: Include component deploy
+      include_role:
+        name: docker
+      when: var_deploy_comp | bool
+    
+    - name: Include configuration deploy
+      include_role:
+        name: docker-config
+      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
+    
+      # shared config must always be generated before config deploy
+      # the gateway node is an exception, this host does not need impala config
+    - name: Include component deploy
+      include_role:
+        name: shared-config
+      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool) 
+            and inventory_hostname not in groups['gateway']
       
     - name: Include component deploy
       include_role:
