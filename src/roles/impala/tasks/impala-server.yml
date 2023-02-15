@@ -81,17 +81,17 @@
     - "{{ impala_log_dir }}"
   become: yes
 
-- name: Create symlinks to deamons
-  file:
-      src: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}/bin/impalad"
-      dest: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}/bin/{{ item }}"
-      state: link
-  loop:
-    - catalogd
-    - statestored
-  become: yes
-  become_user: "{{ impala_os_user }}"
-  when: not (inventory_hostname in groups['gateway']) 
+# - name: Create symlinks to deamons
+#   file:
+#       src: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}/bin/impalad"
+#       dest: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}/bin/{{ item }}"
+#       state: link
+#   loop:
+#     - catalogd
+#     - statestored
+#   become: yes
+#   become_user: "{{ impala_os_user }}"
+#   when: not (inventory_hostname in groups['gateway']) 
 
 # create Docker images for Impala daemons
 - name: Check if the Apache Impala src is already downloaded
