@@ -20,4 +20,4 @@ fi
 
 echo "Clean hosts"
 
-run_playbook "clean-all.yml"
+run_playbook "destroy-all.yml"

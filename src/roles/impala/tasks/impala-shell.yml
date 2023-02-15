@@ -1,29 +1,29 @@
-- name: Check if the Apache Impala src is already downloaded
-  stat:
-    path: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
-  register: stat_impala_src
-  delegate_to: localhost
-  connection: local
-  
-# Extract Impala in cache dir on mgmt node
-- name: Download Apache Impala
-  get_url:
-      url: "{{ item }}"
-      dest: "{{ download_root }}/{{ item | basename }}"
-  loop:
-    - "{{ repository_url }}/impala/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
-  delegate_to: localhost
-  connection: local
-  when: not stat_impala_src.stat.exists
-  
-- name: Extract Impala 
-  ansible.builtin.unarchive:
-      src: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
-      creates: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}"
-      dest: "{{ cache_root }}"
-  delegate_to: localhost
-  connection: local
-  
+# - name: Check if the Apache Impala src is already downloaded
+#   stat:
+#     path: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
+#   register: stat_impala_src
+#   delegate_to: localhost
+#   connection: local
+# 
+# # Extract Impala in cache dir on mgmt node
+# - name: Download Apache Impala
+#   get_url:
+#       url: "{{ item }}"
+#       dest: "{{ download_root }}/{{ item | basename }}"
+#   loop:
+#     - "{{ repository_url }}/impala/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
+#   delegate_to: localhost
+#   connection: local
+#   when: not stat_impala_src.stat.exists
+# 
+# - name: Extract Impala 
+#   ansible.builtin.unarchive:
+#       src: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
+#       creates: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}"
+#       dest: "{{ cache_root }}"
+#   delegate_to: localhost
+#   connection: local
+# 
 - name: Create DockerFile
   ansible.builtin.template:
     src: "../templates/impala-shell_Dockerfile.j2"
