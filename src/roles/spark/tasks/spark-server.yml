@@ -138,3 +138,12 @@
     - { name: 'upload-spark-jars.sh.j2', dest: 'upload-spark-jars.sh'}
   become: yes  
   when: not (inventory_hostname in groups['gateway']) 
+  
+
+- name: Install required Python3 Kerberos packages
+  ansible.builtin.package:
+    name:
+      - python3-kerberos
+    state: latest
+  become: yes  
+  when: ansible_distribution == 'Ubuntu'
