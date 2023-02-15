@@ -57,7 +57,7 @@
   
 - name: Create Impala component directory
   file:
-    path: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}"
+    path: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}/bin"
     state: directory
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
