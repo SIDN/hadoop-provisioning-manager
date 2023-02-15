@@ -1,117 +1,18 @@
 # create Kerberos user  
-- hosts: kerberos_kdc
+- hosts: all!manager
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
     - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
   remote_user: hadoop-mgr
   tasks:
       # Create new uer in kerberos database
-    - name: Create Kerberos user
-      shell: >
-          kadmin.local -q 'addprinc -requires_preauth -pw {{ create_password }} {{ create_user }}@{{ kerberos_realm }}'
-      become: yes
-      
-# create user on worker nodes, do not create home dir and do not set password
-# user needs to be on each worker node when running secure kerberized cluster
-# aklso add to ranger server so rangersync can pickup the new user
-- hosts: hadoop:hdfs_primary_nn:hdfs_secondary_nn:ranger:!gateway
-  vars_files:
-    - "{{ prov_cfg_dir }}/vars/all.yml"
-    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
-  remote_user: hadoop-mgr
-  tasks:
-    - name: Determine OS specific config (RHEL)
-      set_fact:
-         fact_login_shell: /sbin/nologin
-      when: ansible_distribution == 'RedHat'
-         
-    - name: Determine OS specific config (Ubuntu)
-      set_fact:
-         fact_login_shell: /usr/sbin/nologin
-      when: ansible_distribution == 'Ubuntu'
-          
-    - name: Create New User
-      ansible.builtin.user:
-        name: "{{ create_user }}"
-      become: yes
-      
-    # when no entry in passwd then the user already existed and is managed
-    # by external system such as ldap.
-    - name: Get all user info
-      getent:
-        database: passwd
-      
-    # update local user
-    - name: Update user
-      ansible.builtin.user:
-        name: "{{ create_user }}"
-        group: "{{ ranger_sync_group_name }}"
-        shell: '{{ fact_login_shell }}'
-      when: (create_user in ansible_facts.getent_passwd)
-      become: yes
-    
-    # only update group for ldap based user
-    - name: Update user groups
-      ansible.builtin.user:
-        name: "{{ create_user }}"
-        groups: "{{ ranger_sync_group_name }}"
-        append: yes
-      when: (create_user not in ansible_facts.getent_passwd)
-      become: yes
+    - name: Delete directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ download_root }}"
+        - "{{ config_root }}"
+        - "{{ cache_root }}"
+        - "{{ stack_root }}"
 
-# create user on worker nodes, do create home dir and do set password
-- hosts: gateway
-  vars_files:
-    - "{{ prov_cfg_dir }}/vars/all.yml"
-    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
-    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
-  remote_user: hadoop-mgr
-  tasks:
-    - name: Create New User
-      ansible.builtin.user:
-        name: "{{ create_user }}"
-        group: "{{ ranger_sync_group_name }}"
-        password: "{{ create_password | password_hash('sha512') }}"
-        create_home: yes
-      become: yes
-      when: create_type == 'normal'
-      
-    - name: Update user groups
-      ansible.builtin.user:
-        name: "{{ create_user }}"
-        groups: "{{ ranger_sync_group_name }}"
-        append: yes
-      become: yes
-      when: create_type == 'normal'
-    
-    # Add little help file for new users  
-    - name: Create README file
-      copy:
-        dest: '/home/{{ create_user }}/README'
-        owner: "{{ create_user }}"
-        group: "{{ ranger_sync_group_name }}"
-        content: |
-          # Create a new keytab with the following command:
-          
-          ktutil
-          ktutil:  addent -password -p {{ create_user }}@{{ kerberos_realm }} -k 1 -e aes256-cts
-          Password for {{ create_user }}@{{ kerberos_realm }}: [enter your password]
-          ktutil:  wkt /home/{{ create_user }}/{{ create_user }}.keytab
-          ktutil:  quit
-      become: yes
-      when: create_type == 'normal'
-
-- hosts: hdfs_primary_nn[0]
-  vars_files:
-    - "{{ prov_cfg_dir }}/vars/all.yml"
-    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
-    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
-    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
-  remote_user: hadoop-mgr
-  tasks:    
-    - name: Create HDFS home directory for user
-      shell: >
-          source {{ hadoop_etc_dir }}/hadoop-env.sh;
-          kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
-          hdfs dfs -mkdir -p /user/{{ create_user }} && hdfs dfs -chown {{ create_user }}:{{ ranger_sync_group_name }} /user/{{ create_user }} && hdfs dfs -chmod 755 /user/{{ create_user }};
-      become: yes

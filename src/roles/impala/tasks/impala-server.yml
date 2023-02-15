@@ -17,31 +17,31 @@
   when: inventory_hostname in groups['impala']
         and not (inventory_hostname in groups['gateway']) 
 
-# only install gcc when deployment target is RHEL 7.x
-- name: Add RHEL native gcc compiler/libs
-  include_tasks: rhel7-add-gcc.yml
-  when: >
-   (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") 
-   and not (inventory_hostname in groups['gateway']) 
-
-# Ubuntu 18 is missing required gcc libs, install gcc 9 libs
-- name: Add Ubuntu native gcc 9 libs repository
-  apt_repository: 
-    repo: 'ppa:ubuntu-toolchain-r/test'
-    state: present
-  become: yes  
-  when: >
-   (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
-   and not (inventory_hostname in groups['gateway']) 
-
-- name: Install Ubuntu native gcc 9 libs
-  ansible.builtin.package:
-    name:
-      - libstdc++-9-dev
-  become: yes  
-  when: >
-   (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
-   and not (inventory_hostname in groups['gateway']) 
+# # only install gcc when deployment target is RHEL 7.x
+# - name: Add RHEL native gcc compiler/libs
+#   include_tasks: rhel7-add-gcc.yml
+#   when: >
+#    (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") 
+#    and not (inventory_hostname in groups['gateway']) 
+# 
+# # Ubuntu 18 is missing required gcc libs, install gcc 9 libs
+# - name: Add Ubuntu native gcc 9 libs repository
+#   apt_repository: 
+#     repo: 'ppa:ubuntu-toolchain-r/test'
+#     state: present
+#   become: yes  
+#   when: >
+#    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
+#    and not (inventory_hostname in groups['gateway']) 
+# 
+# - name: Install Ubuntu native gcc 9 libs
+#   ansible.builtin.package:
+#     name:
+#       - libstdc++-9-dev
+#   become: yes  
+#   when: >
+#    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
+#    and not (inventory_hostname in groups['gateway']) 
    
 - name: create ranger policycache directory
   file:

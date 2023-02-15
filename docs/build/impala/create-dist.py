@@ -45,7 +45,7 @@ BINUTILS_HOME = os.path.join(
     IMPALA_TOOLCHAIN_PACKAGES_HOME, "binutils-{0}".format(IMPALA_BINUTILS_VERSION))
 STRIP = os.path.join(BINUTILS_HOME, "bin/strip")
 KUDU_HOME = os.environ["IMPALA_KUDU_HOME"]
-KUDU_LIB_DIR = os.path.join(KUDU_HOME, "release/lib64")
+KUDU_LIB_DIR = os.path.join(KUDU_HOME, "release/lib")
 
 # Ensure the output directory exists and is empty.
 if os.path.exists(OUTPUT_DIR):
@@ -130,6 +130,11 @@ shutil.copytree(os.path.join(IMPALA_HOME, "www"), os.path.join(OUTPUT_DIR, "www"
 
 #shutil.rmtree(os.path.join(IMPALA_HOME, "shell/build/impala-shell-" + args.version + '-RELEASE', 'lib', 'thrift', 'lib'))
 #/git/apache-impala-4.0.0/shell/build/impala-shell-4.0.0-RELEASE/lib/thrift/lib/
+
+copy_file_into_dir('/root/.m2/repository/org/apache/thrift/libthrift/0.16.0/libthrift-0.16.0.jar', LIB_DIR)
+copy_file_into_dir('/root/.m2/repository/org/apache/thrift/libthrift/0.11.0/libthrift-0.11.0.jar', LIB_DIR)
+copy_file_into_dir('/root/.m2/repository/org/apache/thrift/libthrift/0.9.3/libthrift-0.9.3.jar', LIB_DIR)
+
 
 shutil.copytree(os.path.join(IMPALA_HOME, "shell/build/impala-shell-" + args.version + '-RELEASE'), os.path.join(OUTPUT_DIR, "impala-shell"))
 #/git/apache-impala-4.0.0/shell/build/impala-shell-4.0.0-RELEASE
