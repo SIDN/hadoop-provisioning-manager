@@ -43,9 +43,6 @@
 
 - name: Impala
   import_playbook: start-impala.yml
-  
-- name: Impala Proxy
-  import_playbook: start-impala-proxy.yml
 
 - name: Livy
   import_playbook: start-livy.yml
