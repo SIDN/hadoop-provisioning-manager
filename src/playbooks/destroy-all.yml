@@ -1,11 +1,11 @@
-# create Kerberos user  
+
 - hosts: all:!manager
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
     - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
   remote_user: hadoop-mgr
   tasks:
-      # Create new uer in kerberos database
+
     - name: Delete directories
       ansible.builtin.file:
         path: "{{ item }}"
@@ -16,6 +16,10 @@
         - "{{ cache_root }}"
         - "{{ stack_root }}"
         - "{{ hadoop_dfs_datanode_data_dir }}"
+        - "{{ hadoop_dfs_namenode_name_dir }}"
+        - "{{ hadoop_dfs_namenode_checkpoint_dir }}"
+        - "{{ hadoop_dfs_journalnode_edits_dir }}"
+        - "{{ yarn_node_manager_logdir }}"
       become: yes
 
 
