@@ -83,14 +83,6 @@
         append: yes
       become: yes
       when: create_type == 'normal'
-      
-    - name: Add user to Docker group
-      ansible.builtin.user:
-        name: "{{ create_user }}"
-        groups: docker
-        append: yes
-      become: yes
-      when: create_type == 'normal'
     
     # Add little help file for new users  
     - name: Create README file

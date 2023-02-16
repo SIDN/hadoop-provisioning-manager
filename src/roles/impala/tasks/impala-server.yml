@@ -17,32 +17,6 @@
   when: inventory_hostname in groups['impala']
         and not (inventory_hostname in groups['gateway']) 
 
-# # only install gcc when deployment target is RHEL 7.x
-# - name: Add RHEL native gcc compiler/libs
-#   include_tasks: rhel7-add-gcc.yml
-#   when: >
-#    (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7") 
-#    and not (inventory_hostname in groups['gateway']) 
-# 
-# # Ubuntu 18 is missing required gcc libs, install gcc 9 libs
-# - name: Add Ubuntu native gcc 9 libs repository
-#   apt_repository: 
-#     repo: 'ppa:ubuntu-toolchain-r/test'
-#     state: present
-#   become: yes  
-#   when: >
-#    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
-#    and not (inventory_hostname in groups['gateway']) 
-# 
-# - name: Install Ubuntu native gcc 9 libs
-#   ansible.builtin.package:
-#     name:
-#       - libstdc++-9-dev
-#   become: yes  
-#   when: >
-#    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18") 
-#    and not (inventory_hostname in groups['gateway']) 
-   
 - name: create ranger policycache directory
   file:
     path: "{{ impala_etc_dir }}/policycache"
@@ -81,18 +55,6 @@
     - "{{ impala_log_dir }}"
   become: yes
 
-# - name: Create symlinks to deamons
-#   file:
-#       src: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}/bin/impalad"
-#       dest: "{{ stack_root }}/apache-impala-ubuntu-{{ version.impala }}/bin/{{ item }}"
-#       state: link
-#   loop:
-#     - catalogd
-#     - statestored
-#   become: yes
-#   become_user: "{{ impala_os_user }}"
-#   when: not (inventory_hostname in groups['gateway']) 
-
 # create Docker images for Impala daemons
 - name: Check if the Apache Impala src is already downloaded
   stat:
@@ -130,13 +92,6 @@
   delegate_to: localhost
   connection: local
 
-# - name: Check if Docker image already exists
-#   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala\\\\s.*{{ version.impala }} | wc -l"
-#   register: docker_img_exists
-#   delegate_to: localhost
-#   connection: local
-#   become: yes
-  
 - name: Create Docker image on controller server
   shell: >
     cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }};
@@ -164,7 +119,3 @@
     mode: '0755'
   become: yes
  
-    
-  
-  
-      
