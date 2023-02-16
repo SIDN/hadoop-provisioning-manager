@@ -1,67 +1,83 @@
-# - name: Check if the Apache Impala src is already downloaded
-#   stat:
-#     path: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
-#   register: stat_impala_src
-#   delegate_to: localhost
-#   connection: local
-# 
-# # Extract Impala in cache dir on mgmt node
-# - name: Download Apache Impala
-#   get_url:
-#       url: "{{ item }}"
-#       dest: "{{ download_root }}/{{ item | basename }}"
-#   loop:
-#     - "{{ repository_url }}/impala/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
-#   delegate_to: localhost
-#   connection: local
-#   when: not stat_impala_src.stat.exists
-# 
-# - name: Extract Impala 
-#   ansible.builtin.unarchive:
-#       src: "{{ download_root }}/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
-#       creates: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}"
-#       dest: "{{ cache_root }}"
-#   delegate_to: localhost
-#   connection: local
-# 
-- name: Create DockerFile
-  ansible.builtin.template:
-    src: "../templates/impala-shell_Dockerfile.j2"
-    dest: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell/Dockerfile"
-    mode: '0664'
-  delegate_to: localhost
-  connection: local
-  
-- name: Check if Docker image already exists
-  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell.*{{ version.impala }} | wc -l"
-  register: docker_img_exists
-  delegate_to: localhost
-  connection: local
-  become: yes
-  
-- name: Create Docker image on controller server
-  shell: >
-    cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell;
-    docker build -t apache/impala-shell:{{ version.impala }} .;
-    docker image tag apache/impala-shell:{{ version.impala }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }};
-  delegate_to: localhost
-  connection: local
-  when: docker_img_exists.stdout | int == 0
-    
-- name: Push Impala docker image to registry
-  shell: >
-    docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }}
-  delegate_to: localhost
-  connection: local
-  when: docker_img_exists.stdout | int == 0
 
-- name: Pull Impala image to host
-  shell: >
-    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }}
-
-- name: Create Container start script
-  ansible.builtin.template:
-    src: "../templates/impala-shell-cmd.j2"
-    dest: "{{ stack_root }}/apache-impala-latest/bin/impala-shell"
-    mode: '0755'
+- name: Install required packages (Ubuntu)
+  ansible.builtin.package:
+    name:
+      - libkrb5-dev
+    state: latest
   become: yes
+  when: ansible_distribution == 'Ubuntu'
+  
+- name: Enable rhel-7-server-optional-rpms (RHEL7)
+  shell: >
+    subscription-manager repos --enable=rhel-7-server-optional-rpms
+  become: yes  
+  when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
+
+- name: Install required packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - python3-devel
+    state: latest
+  become: yes
+  when: ansible_distribution == 'RedHat'
+  
+- name: Install required Python packages (Ubuntu)
+  pip:
+    name: 
+      - kerberos
+      - impala-shell
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+  
+- name: Install required Python packages (RHEL)
+  pip:
+    name: 
+      - impala-shell
+  become: yes
+  when: ansible_distribution == 'RedHat'
+
+# code below is for using the docker version of impala-shell
+# prefer the pypi version, because for docker the user must have permission
+# to run docker.
+
+# - name: Create DockerFile
+#   ansible.builtin.template:
+#     src: "../templates/impala-shell_Dockerfile.j2"
+#     dest: "{{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell/Dockerfile"
+#     mode: '0664'
+#   delegate_to: localhost
+#   connection: local
+# 
+# - name: Check if Docker image already exists
+#   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell.*{{ version.impala }} | wc -l"
+#   register: docker_img_exists
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+# 
+# - name: Create Docker image on controller server
+#   shell: >
+#     cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }}/impala-shell;
+#     docker build -t apache/impala-shell:{{ version.impala }} .;
+#     docker image tag apache/impala-shell:{{ version.impala }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }};
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
+# 
+# - name: Push Impala docker image to registry
+#   shell: >
+#     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }}
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
+# 
+# - name: Pull Impala image to host
+#   shell: >
+#     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala-shell:{{ version.impala }}
+# 
+# - name: Create Container start script
+#   ansible.builtin.template:
+#     src: "../templates/impala-shell-cmd.j2"
+#     dest: "{{ stack_root }}/apache-impala-latest/bin/impala-shell"
+#     mode: '0755'
+#   become: yes

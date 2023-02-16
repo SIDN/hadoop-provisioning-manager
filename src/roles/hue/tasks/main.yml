@@ -128,15 +128,15 @@
   connection: local
   when: docker_img_exists.stdout | int == 0
   
-- name: Download THRIFT patch
-  get_url:
-      url: "{{ item }}"
-      dest: "{{ download_root }}/{{ item | basename }}"
-  loop:
-    - "https://raw.githubusercontent.com/cloudera/hue/master/desktop/core/ext-py/thrift-0.16.0/src/transport/TSocket.py"
-  delegate_to: localhost
-  connection: local
-  when: docker_img_exists.stdout | int == 0
+# - name: Download THRIFT patch
+#   get_url:
+#       url: "{{ item }}"
+#       dest: "{{ download_root }}/{{ item | basename }}"
+#   loop:
+#     - "https://raw.githubusercontent.com/cloudera/hue/master/desktop/core/ext-py/thrift-0.16.0/src/transport/TSocket.py"
+#   delegate_to: localhost
+#   connection: local
+#   when: docker_img_exists.stdout | int == 0
   
 # hue 4.11.0 has bug that causes thrift 0.16.0 to fail ssl connections to impala
 # to fix this path thrift in image
