@@ -17,6 +17,8 @@
   ansible.builtin.package:
     name:
       - python3-devel
+      - cyrus-sasl
+      - cyrus-sasl-devel
     state: latest
   become: yes
   when: ansible_distribution == 'RedHat'
