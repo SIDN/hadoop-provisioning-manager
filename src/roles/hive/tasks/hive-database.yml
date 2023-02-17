@@ -54,7 +54,7 @@
     login_password: "{{ db_admin_password }}"
     login_user: postgres
     db: "{{ hive_db }}"
-    new_owner: {{ hive_db_user }}
+    new_owner: "{{ hive_db_user }}"
     obj_name: "{{ hive_db }}"
     obj_type: database
   
