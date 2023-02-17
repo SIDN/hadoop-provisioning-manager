@@ -13,6 +13,7 @@
     group: "{{ provision_user }}"
     mode: "755"
   loop:
+    - "{{ download_root }}"
     - "{{ cache_root }}"
     - "{{ cache_root }}/conf"
     - "{{ stack_root }}"
