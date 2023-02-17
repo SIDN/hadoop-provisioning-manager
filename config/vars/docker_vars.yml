@@ -4,6 +4,9 @@
 # port the docker registry will listen on 
 docker_registry_port: 2000
 
+# directory on hosts where docker data is stored
+docker_data_dir: /var/lib/docker
+
 # Docker installation repo
 docker_repo:
   rhel79: "https://download.docker.com/linux/centos/7/$basearch/stable"

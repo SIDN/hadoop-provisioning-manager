@@ -32,6 +32,12 @@
   become: yes
   when: not 'docker' in services
   
+- name: Create docker data directory
+  file:
+    path: "{{ docker_data_dir }}"
+    state: directory
+  become: yes
+  
 - name: Include Docker installation (RHEL)
   include_tasks: tasks/docker-redhat.yml
   when: (ansible_distribution == "RedHat") 
