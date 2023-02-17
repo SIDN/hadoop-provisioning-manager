@@ -19,7 +19,6 @@
            - "{{ hadoop_dfs_journalnode_edits_dir }}"
            - "{{ yarn_node_manager_logdir }}"
            - "{{ impalad_scratch_dirs }}"
-           - "{{ db_data_dir }}"
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
@@ -38,12 +37,14 @@
         name: postgresql-{{ version.postgresql }}
         state: stopped
       when: ansible_distribution == "RedHat"
+            and not db_use_existing
       
     - name: Stop Postgresql (Ubuntu)
       ansible.builtin.systemd: 
         name: postgresql
         state: stopped
       when: ansible_distribution == "Ubuntu"
+            and not db_use_existing
       
     - name: Remove required DB packages (RHEL)
       ansible.builtin.package:
@@ -57,6 +58,7 @@
         state: absent
       become: yes
       when: ansible_distribution == "RedHat"
+            and not db_use_existing
       
     - name: Remove required DB packages (Ubuntu)
       ansible.builtin.package:
@@ -67,12 +69,21 @@
           - postgresql-server-dev-{{ version.postgresql }}
           - libpostgresql-jdbc-java
           - python3-psycopg2
-        state:         state: absent
-
+        state: absent
       become: yes
       when: ansible_distribution == "Ubuntu"
-    
+            and not db_use_existing
+            
 
+    - name: Delete psql data directory
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop: 
+        - "{{ db_data_dir }}"
+      become: yes
+      when: not db_use_existing
+    
 
 - hosts: kerberos_kdc
   vars_files:
@@ -132,6 +143,6 @@
         state: absent
       loop: 
         - "{{ fact_kdc_cfg_dir }}"
-        - "{{ fact_kdc_db_dir }}""
+        - "{{ fact_kdc_db_dir }}"
       become: yes
       
