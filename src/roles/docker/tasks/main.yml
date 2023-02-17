@@ -13,6 +13,15 @@
 - name: "Print result of check: Docker already present"
   ansible.builtin.debug:
     msg: "Docker already present: {{ is_docker_exist.rc == 0 }}"
+    
+    
+- name: Mak sure Docker service is running
+  ansible.builtin.systemd:
+    name: docker
+    enabled: yes
+    state: started
+  become: yes
+  when: is_docker_exist.rc == 0
 
 - name: Create docker cfg directory
   file:
@@ -46,8 +55,9 @@
   command: systemctl daemon-reload
   become: yes
   
-- name: Enable service Docker
+- name: Enable and start service Docker
   ansible.builtin.systemd:
     name: docker
     enabled: yes
+    state: started
   become: yes

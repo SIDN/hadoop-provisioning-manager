@@ -65,6 +65,7 @@
   become: yes
 
 # install newer python version on data nodes and gateways using rhel 79
+#TODO: remove this when migrating to rhel8
 - name: Add newer Python version {{ version.python }}
   include_tasks: rhel7-add-python.yml
   when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "7"
