@@ -11,7 +11,6 @@
   include_tasks: rhel.yml
   when: ansible_distribution == "RedHat"
 
-
 - name: Listen on {{ db_server_listen }}
   ansible.builtin.lineinfile:
     path: "{{ db_data_dir }}/postgresql.conf"
@@ -31,6 +30,15 @@
     state: started
     enabled: yes
   when: ansible_distribution == "Ubuntu"
+  
+- name: Wait for Postgresql server to become active
+  wait_for:
+    host: "{{ groups['database'][0] }}"
+    port: 5432
+    delay: 5
+    timeout: 60
+  delegate_to: localhost
+  connection: local
 
 - name: Set postgres password
   postgresql_user:
