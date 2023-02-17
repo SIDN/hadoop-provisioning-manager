@@ -26,6 +26,13 @@
   become: yes
   when: not postgres_initialized.stat.exists
   
+- name: Initialize PostgreSQL
+  shell: >
+    /usr/lib/postgresql/{{ version.postgresql }}/bin/initdb -D {{ db_data_dir }}
+  become: yes
+  become_user: postgres
+  when: not postgres_initialized.stat.exists
+  
 - name: Change datadir in service unit to {{ db_data_dir }}
   ansible.builtin.lineinfile:
     path: "/etc/postgresql/{{ version.postgresql }}/main/postgresql.conf"
@@ -53,11 +60,6 @@
   become: yes
   become_user: postgres
 
-- name: Initialize PostgreSQL
-  shell: >
-    /usr/lib/postgresql/{{ version.postgresql }}/bin/initdb -D {{ db_data_dir }}
-  become: yes
-  become_user: postgres
-  when: not postgres_initialized.stat.exists
+
 
 
