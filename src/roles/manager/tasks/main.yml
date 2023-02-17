@@ -16,9 +16,26 @@
   ansible.builtin.package:
     name:
       - python3-psycopg2
+    state: latest
+  become: yes
+  
+# need to install apache2-utils/httpd-tools for the
+# htpassword util to generate auth cfg for web interfaces
+- name: Install required packages (Ubuntu)
+  ansible.builtin.package:
+    name:
       - apache2-utils
     state: latest
   become: yes
+  when:  ansible_distribution == "Ubuntu"
+  
+- name: Install required packages (RHEL)
+  ansible.builtin.package:
+    name:
+      - httpd-tools
+    state: latest
+  become: yes
+  when:  ansible_distribution == "RedHat"
 
 - name: Create Docker registry service
   ansible.builtin.template:

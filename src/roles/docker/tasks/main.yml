@@ -30,7 +30,7 @@
     state: directory
     mode: '0755'
   become: yes
-  when: "not 'docker' in services"
+  when: not 'docker' in services
   
 - name: Include Docker installation (RHEL)
   include_tasks: tasks/docker-redhat.yml
@@ -55,6 +55,7 @@
 - name: Systemctl Reload Daemons
   command: systemctl daemon-reload
   become: yes
+  when: not 'docker' in services
   
 - name: Enable and start service Docker
   ansible.builtin.systemd:
@@ -62,3 +63,4 @@
     enabled: yes
     state: started
   become: yes
+  when: not 'docker' in services

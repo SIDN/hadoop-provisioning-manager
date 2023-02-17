@@ -19,7 +19,7 @@
       add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
   become: yes
 
-- name: Install latest Docker
+- name: Install Docker packages
   apt:
     name: 
       - docker-ce
