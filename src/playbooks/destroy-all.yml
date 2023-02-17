@@ -1,5 +1,5 @@
 
-- hosts: all:!manager
+- hosts: all
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
     - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
