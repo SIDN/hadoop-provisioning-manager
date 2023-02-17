@@ -30,6 +30,6 @@
     name:
       - docker-ce
       - docker-ce-cli
-      - containerd.io
+      #- containerd.io
     state: latest
   become: yes

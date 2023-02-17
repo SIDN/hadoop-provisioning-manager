@@ -1,4 +1,4 @@
-FROM openjdk:8-slim-bullseye
+FROM ubuntu:22.04
 
 USER root
 
@@ -16,6 +16,7 @@ RUN apt-get update \
     npm \
     libkrb5-dev \
     krb5-user \
+    openjdk-8-jdk \
     vim \
     inetutils-telnet \
     iputils-ping \
