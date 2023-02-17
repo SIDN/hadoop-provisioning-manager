@@ -45,6 +45,9 @@
 - name: Jupyterhub
   import_playbook: deploy-jupyterhub.yml
   
+- name: Superset
+  import_playbook: deploy-superset.yml
+  
 - name: Ranger
   import_playbook: deploy-ranger.yml
 

@@ -25,10 +25,12 @@ class MetricServer(BaseHTTPRequestHandler):
     def do_GET(self):
         response = requests.get(endpoint, auth=HTTPSPNEGOAuth())
         if response.status_code == 200:
+            # remove single quote from metric names, prometheus does not like this.
+            clean_metrics = response.text.replace("'", "")
             self.send_response(200)
             self.send_header("Content-type", "text/plain")
             self.end_headers()
-            self.wfile.write(bytes(response.text, "utf-8"))
+            self.wfile.write(bytes(clean_metrics, "utf-8"))
         else:
             logging.info(f"Server ERROR received: { response.text }")
             self.send_response(500)
