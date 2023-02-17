@@ -24,10 +24,11 @@
     enabled: yes
   when: ansible_distribution == "RedHat"
   
+# restart pgsql to make sure all new cfg is used
 - name: Start and enable postgresql
   ansible.builtin.systemd: 
     name: postgresql
-    state: started
+    state: restarted
     enabled: yes
   when: ansible_distribution == "Ubuntu"
   
