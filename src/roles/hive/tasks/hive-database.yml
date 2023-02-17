@@ -48,6 +48,16 @@
   connection: local
   when: stat_metastore_db.rowcount == 0
   
+- name: Set database owner
+  postgresql_owner:
+    login_host: "{{ groups['database'][0] }}"
+    login_password: "{{ db_admin_password }}"
+    login_user: postgres
+    db: "{{ hive_db }}"
+    new_owner: {{ hive_db_user }}
+    obj_name: "{{ hive_db }}"
+    obj_type: database
+  
 # Create new Hive Metastore schema  
 - name: Initialize Hive db (CREATE)
   shell: >
