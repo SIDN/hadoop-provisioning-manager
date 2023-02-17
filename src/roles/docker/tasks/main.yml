@@ -1,3 +1,14 @@
+- name: Populate service facts
+  service_facts:
+
+- debug:
+    msg: Docker installed!
+  when: "'docker' in services"
+
+- debug:
+    msg: Docker NOT installed!
+  when: "not 'docker' in services"
+  
 - name: Install Docker Python dependencies
   pip:
     name:
