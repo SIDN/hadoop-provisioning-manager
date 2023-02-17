@@ -7,19 +7,24 @@
   tasks:
 
     - name: Delete directories
+      vars:
+         dirs:
+           - "{{ download_root }}"
+           - "{{ config_root }}"
+           - "{{ cache_root }}"
+           - "{{ stack_root }}"
+           - "{{ hadoop_dfs_datanode_data_dir }}"
+           - "{{ hadoop_dfs_namenode_name_dir }}"
+           - "{{ hadoop_dfs_namenode_checkpoint_dir }}"
+           - "{{ hadoop_dfs_journalnode_edits_dir }}"
+           - "{{ yarn_node_manager_logdir }}"
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
-      loop:
-        - "{{ download_root }}"
-        - "{{ config_root }}"
-        - "{{ cache_root }}"
-        - "{{ stack_root }}"
-        - "{{ hadoop_dfs_datanode_data_dir }}"
-        - "{{ hadoop_dfs_namenode_name_dir }}"
-        - "{{ hadoop_dfs_namenode_checkpoint_dir }}"
-        - "{{ hadoop_dfs_journalnode_edits_dir }}"
-        - "{{ yarn_node_manager_logdir }}"
+      loop: "{{ dirs | flatten }}"
+        
       become: yes
+      
+
 
 
