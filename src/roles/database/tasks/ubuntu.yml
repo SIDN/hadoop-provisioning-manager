@@ -40,6 +40,14 @@
 #     line: "data_directory = '{{ db_data_dir }}'"
 #   become: yes
 #   when: not postgres_initialized.stat.exists
+
+- name: Change data lcoation to {{ db_data_dir }}
+  ansible.builtin.lineinfile:
+    path: "{{ db_data_dir }}/postgresql.conf"
+    regexp: "^data_directory ="
+    line: "data_directory = '{{ db_data_dir }}'"
+  become: yes
+  when: not postgres_initialized.stat.exists
   
 - name: Listen on {{ db_server_listen }}
   ansible.builtin.lineinfile:
