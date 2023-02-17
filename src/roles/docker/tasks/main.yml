@@ -15,16 +15,6 @@
       - requests
       - docker
   become: yes
-  
-- name: Check if Docker is already present
-  shell: command -v docker >/dev/null 2>&1
-  register: is_docker_exist
-  ignore_errors: yes
-  
-- name: "Print result of check: Docker already present"
-  ansible.builtin.debug:
-    msg: "Docker already present: {{ is_docker_exist.rc == 0 }}"
-    
     
 - name: Mak sure Docker service is running
   ansible.builtin.systemd:
@@ -32,7 +22,7 @@
     enabled: yes
     state: started
   become: yes
-  when: is_docker_exist.rc == 0
+  when: "'docker' in services"
 
 - name: Create docker cfg directory
   file:
@@ -40,17 +30,17 @@
     state: directory
     mode: '0755'
   become: yes
-  when: is_docker_exist.rc == 1
+  when: "not 'docker' in services"
   
 - name: Include Docker installation (RHEL)
   include_tasks: tasks/docker-redhat.yml
   when: (ansible_distribution == "RedHat") 
-        and ( is_docker_exist.rc == 1)
+        and not 'docker' in services
   
 - name: Include Docker installation (Ubuntu)
   include_tasks: tasks/docker-ubuntu.yml
   when: (ansible_distribution == "Ubuntu") 
-         and ( is_docker_exist.rc == 1)
+         and not 'docker' in services
 
 - name: Add user '{{ provision_user }}' to group docker
   user:
