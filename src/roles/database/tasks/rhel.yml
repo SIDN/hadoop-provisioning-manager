@@ -47,6 +47,12 @@
     postgresql-{{ version.postgresql }}-setup initdb
   become: yes
   when: not postgres_initialized.stat.exists
+  
+- name: Listen on {{ db_server_listen }}
+  ansible.builtin.lineinfile:
+    path: "{{ db_data_dir }}/postgresql.conf"
+    regexp: '^#listen_addresses ='
+    line: "listen_addresses = '{{ db_server_listen }}'"
 
 - name: Allow md5 connection for the all users
   postgresql_pg_hba:
