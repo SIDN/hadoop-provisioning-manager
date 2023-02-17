@@ -31,7 +31,7 @@
     enabled: yes
   when: ansible_distribution == "Ubuntu"
   
-- name: Wait for Postgresql server to become active
+- name: "Wait for Postgresql server ({{ groups['database'][0] }}) to become active"
   wait_for:
     host: "{{ groups['database'][0] }}"
     port: 5432

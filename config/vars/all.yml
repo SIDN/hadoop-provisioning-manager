@@ -38,7 +38,7 @@ repository_url: https://downloads.sidnlabs.nl/hadoop
 
 # Component versions to deploy
 version:
-  postgresql: '14'
+  postgresql: '15'
   python: '3.10'           # 3.10 is supported for RHEL 7.x
   java: '1.8.0'
   zookeeper: '3.8.0'
