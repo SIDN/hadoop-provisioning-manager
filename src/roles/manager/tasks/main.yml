@@ -55,12 +55,12 @@
     enabled: yes
   become: yes
 
-- name: Add user '{{ provision_user }}' to group docker
-  user:
-    name: '{{ provision_user }}'
-    groups: docker
-    append: yes
-  become: yes
+# - name: Add user '{{ provision_user }}' to group docker
+#   user:
+#     name: '{{ provision_user }}'
+#     groups: docker
+#     append: yes
+#   become: yes
   
   # start docker and registry otherwise isnatlling other dockerized
   # components on cluster will fail.

@@ -1,9 +1,11 @@
-- name: Add user {{  impala_os_user }} to group docker
+- name: Add users to group docker
   user:
-    name: '{{ impala_os_user }}'
+    name: "{{ item }}"
     groups: docker
     append: yes
   become: yes
+  loop:
+    - '{{ impala_os_user }}'
   
 - name: Create scratch directories for Impalad
   file:
@@ -99,6 +101,7 @@
     docker image tag apache/impala:{{ version.impala }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }};
   delegate_to: localhost
   connection: local
+  become: yes 
   #when: docker_img_exists.stdout | int == 0
     
 - name: Push Impala docker image to registry
@@ -106,12 +109,14 @@
     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }}
   delegate_to: localhost
   connection: local
+  become: yes 
   #when: docker_img_exists.stdout | int == 0
 
 - name: Pull Impala image to host
   shell: >
     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }}
-      
+  become: yes 
+    
 - name: Create Container start script
   ansible.builtin.template:
     src: "../templates/impala-start.sh.j2"
