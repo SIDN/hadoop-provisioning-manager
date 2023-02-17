@@ -24,6 +24,7 @@
   register: docker_img_exists
   delegate_to: localhost
   connection: local
+  become: yes
   
 - name: Show Grafana docker image already exists
   ansible.builtin.debug:
@@ -35,22 +36,26 @@
   command: "docker pull grafana/grafana-enterprise:{{ version.grafana }}"
   delegate_to: localhost
   connection: local
+  become: yes
   when: docker_img_exists.stdout | int == 0
 
 - name: Tag Grafana server docker image
   command: "docker image tag grafana/grafana-enterprise:{{ version.grafana }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}"
   delegate_to: localhost
   connection: local
+  become: yes
   when: docker_img_exists.stdout | int == 0
 
 - name: Push Grafana server docker image to registry
   command: "docker push {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}"
   delegate_to: localhost
   connection: local
+  become: yes
   when: docker_img_exists.stdout | int == 0
 
 - name: Pull Grafana image to monitor server
   command: "docker pull {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}"
+  become: yes
   
 - name: Create Grafana systemd unit
   ansible.builtin.template:

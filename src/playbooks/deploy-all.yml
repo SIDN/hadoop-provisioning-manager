@@ -51,7 +51,7 @@
 - name: Solr
   import_playbook: deploy-solr.yml
   
-# deploy keytabs only after all cfg dirs for services
+# deploy keytabs only after cfg dirs for all services
 # have been created
 - name: Kerberos keytabs
   import_playbook: deploy-krb-keytab.yml

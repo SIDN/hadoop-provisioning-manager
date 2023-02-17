@@ -44,6 +44,7 @@
   register: docker_img_exists
   delegate_to: localhost
   connection: local
+  become: yes
   
 - name: Show Prometheus docker image already exists
   ansible.builtin.debug:
@@ -55,23 +56,27 @@
   command: "docker pull prom/prometheus:v{{ version.prometheus }}"
   delegate_to: localhost
   connection: local
+  become: yes
   when: docker_img_exists.stdout | int == 0
 
 - name: Tag Prometheus server docker image
   command: "docker image tag prom/prometheus:v{{ version.prometheus }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
   delegate_to: localhost
   connection: local
+  become: yes
   when: docker_img_exists.stdout | int == 0
 
 - name: Push Prometheus server docker image to registry
   command: "docker push {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
   delegate_to: localhost
   connection: local
+  become: yes
   when: docker_img_exists.stdout | int == 0
 
 - name: Pull Prometheus image to monitor server
   command: "docker pull {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
-    
+  become: yes
+  
 - name: Create Prometheus systemd unit
   ansible.builtin.template:
     src: ../templates/systemd_prometheus_service.j2
