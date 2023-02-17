@@ -43,15 +43,15 @@
 
 - name: Change data location to {{ db_data_dir }}
   ansible.builtin.lineinfile:
-    path: "{{ db_data_dir }}/postgresql.conf"
-    regexp: "^#data_directory ="
+    path: "/etc/postgresql/{{ version.postgresql }}/main/postgresql.conf"
+    regexp: "^data_directory ="
     line: "data_directory = '{{ db_data_dir }}'"
   become: yes
   when: not postgres_initialized.stat.exists
   
 - name: Listen on {{ db_server_listen }}
   ansible.builtin.lineinfile:
-    path: "{{ db_data_dir }}/postgresql.conf"
+    path: "/etc/postgresql/{{ version.postgresql }}/main/postgresql.conf"
     regexp: '^#listen_addresses ='
     line: "listen_addresses = '{{ db_server_listen }}'"
     

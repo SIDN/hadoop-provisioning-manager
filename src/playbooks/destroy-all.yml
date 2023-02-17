@@ -40,7 +40,10 @@
       loop: "{{ dirs | flatten }}"
       become: yes
     
-
+# destroy db manually
+# sudo apt-get --purge remove postgresql-*
+# sudo rm -Rf /etc/postgresql /var/lib/postgresql
+# sudo rm -rf {{ db_data_dir }}
 - hosts: database
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
