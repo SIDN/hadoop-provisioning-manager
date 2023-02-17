@@ -56,7 +56,7 @@
 
 - name: Allow md5 connection for the all users
   postgresql_pg_hba:
-    dest: "{{ db_data_dir }}/pg_hba.conf"
+    dest: "/etc/postgresql/{{ version.postgresql }}/main/pg_hba.conf"
     contype: host
     databases: all
     method: md5
