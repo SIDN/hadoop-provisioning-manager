@@ -77,7 +77,16 @@
       become: yes
       when: ansible_distribution == "RedHat"
             and not db_use_existing
-      
+  
+    - name: Remove all Postgresql packages and data
+      shell: >
+        apt-get --purge remove postgresql-*;
+        rm -Rf /etc/postgresql /var/lib/postgresql;
+        rm -rf {{ db_data_dir }};
+      become: yes    
+      when: ansible_distribution == "Ubuntu"
+            and not db_use_existing
+        
     - name: Remove required DB packages (Ubuntu)
       ansible.builtin.package:
         name:

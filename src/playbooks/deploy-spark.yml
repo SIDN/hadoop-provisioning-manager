@@ -1,4 +1,23 @@
-- hosts: hadoop:spark_history:spark_thrift:gateway:ranger:jupyterhub
+# ranger must know about spark user, create spark user on
+# ranger server so it can be detected by ranger usersync
+- hosts: ranger
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/spark_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    - name: Include Create spark user on Ranger server
+      include_role:
+        name: create-system-user
+      vars:
+        new_user: "{{ spark_os_user }}"
+        new_group: "{{ ranger_sync_group_name }}"
+      when: (var_deploy_comp | bool) and (groups['superset'] | length > 0)
+      
+      
+- hosts: hadoop:spark_history:spark_thrift:gateway:jupyterhub
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
     - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"

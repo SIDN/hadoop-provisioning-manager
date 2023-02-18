@@ -1,8 +1,5 @@
 # SIDN Labs Hadoop Provisioning
 
-The master branche is used for active development and may not be stable.  
-Download releases for stable builds.
-
 SIDN Labs Hadoop Provisioning Manager is a set of tools to make is easier to deploy a Big Data analytics cluster. The analytics cluster has support for well known components.
 
 - Apache Hadoop
@@ -72,11 +69,11 @@ The default component versions are found in `config/vars/all/yml` these versions
 ## Binary packages
 
 Most of the components are downloaded in the form of compiled binaries from the official component project download sites. 
-Not all components, such as Apache Impala, provide compiled packages. The components listed below have be compiled for this project and the binary package has been made available on the SIDN download site. Only the listed version can be installed.
+Not all open source projects, such as Apache Impala, provide compiled packages. The components listed below have been compiled by us and the binary packages have been made available through the SIDN download site. Only the listed versions can be installed.
 
 | Name                     | Version |
 | ---------------------------- |-----------|  
-| Apache Impala    | 3.4.0 |
+| Apache Impala    | 4.20 |
 | Apache Ranger    | 2.2.0 |
 | Apache Livy    | 0.8.0  |
 
@@ -86,11 +83,11 @@ Both Redhat Enterprise Linux (RHEL) and Ubuntu are supported, although only a RH
 It is possible to create a mixed cluster, for example have the data nodes use RHEL and the gateways Ubuntu.
 
 - Redhat Enterprise Linux (RHEL) 7.9
-- Ubuntu 20.04 LTS (partial)
+- Ubuntu 20.04/22.04 LTS
 
 ## Redhat Enterprise Linux (RHEL)
 
-At the moment only RHEL 7.9 is fully supported.
+At the moment only RHEL 7.9 is fully supported and tested.
 
 ### Getting RHEL
 
@@ -152,7 +149,7 @@ A logical distribution of cluster roles across cluster host types, could look so
 | Management node               | manager, console, kerberos_kdc, ranger, database, monitor | 
 | controller node               | zookeeper (3x), hdfs_primary_nn, hdfs_secondary_nn, hdfs_journalnode, hdfs_httpfs, yarn_resource_mgr, yarn_timelineserver, spark_history, spark_thrift, hive (metastore), impala_statestore, impala_catalog, impala_ha_proxy, livy | 
 | data node                  | hadoop, impala | 
-| gateway node                  | gateway, hue | 
+| gateway node                  | gateway, hue, superset, jupyterhub | 
 
 
 ## Management host

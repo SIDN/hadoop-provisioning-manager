@@ -1,9 +1,12 @@
-- name: Create OS group
+- name: Create OS groups
   ansible.builtin.group:
-    name: "{{ ranger_os_group }}"
+    name: "{{ item }}"
     state: present
   become: yes
-  
+  loop:
+    - "{{ ranger_sync_group_name }}"
+    - "{{ ranger_os_group }}"
+    
 - name: Include Create OS user
   include_role:
     name: create-system-user

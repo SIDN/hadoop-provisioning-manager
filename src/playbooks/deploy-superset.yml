@@ -5,6 +5,7 @@
     - "{{ prov_cfg_dir }}/vars/all.yml"
     - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
     - "{{ prov_cfg_dir }}/vars/superset_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
   remote_user: hadoop-mgr
   tasks:
     - name: Include Create superset user on Ranger server
@@ -12,7 +13,7 @@
         name: create-system-user
       vars:
         new_user: "{{ superset_os_user }}"
-        new_group: "{{ superset_os_group }}"
+        new_group: "{{ ranger_sync_group_name }}"
       when: (var_deploy_comp | bool) and (groups['superset'] | length > 0)
         
 - hosts: superset
