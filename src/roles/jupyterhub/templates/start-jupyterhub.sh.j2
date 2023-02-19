@@ -5,7 +5,6 @@
 
 docker run --network host \
 --rm --name jupyterhub \
---restart=on-failure:10 \
 -p {{ jupyterhub_port }}:8000 \
 -v {{ config_root }}:{{ config_root }} \
 -v {{ jupyterhub_log_dir }}:{{ jupyterhub_log_dir }} \

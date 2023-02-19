@@ -6,7 +6,6 @@
 docker run --rm \
 --name hue \
 -p {{ hue_port }}:8888 \
---restart=on-failure:10 \
 -v {{ hue_etc_dir }}/hue.ini:/usr/share/hue/desktop/conf/z-hue.ini \
 -v {{ hue_etc_dir }}/hue-custom.ini:/usr/share/hue/desktop/conf/hue-custom.ini \
 -v {{ hue_etc_dir }}/log.conf:/usr/share/hue/desktop/conf/log.conf \
