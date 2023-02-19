@@ -108,7 +108,7 @@
 - name: Create Container start script
   ansible.builtin.template:
     src: "../templates/{{ item }}"
-    dest: "{{ stack_root }}/superset-latest/bin/{{ item | replace('.j2','') }}"
+    dest: "{{ stack_root }}/apache-superset-latest/bin/{{ item | replace('.j2','') }}"
     mode: '0755'
     owner: "{{ superset_os_user }}"
     group: "{{ superset_os_group }}"
