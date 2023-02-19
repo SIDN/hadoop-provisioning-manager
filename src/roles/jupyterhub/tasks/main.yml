@@ -63,7 +63,7 @@
 - name: Create Container start script
   ansible.builtin.template:
     src: "../templates/{{ item }}"
-    dest: "{{ stack_root }}/jupyerhub-latest/bin/{{ item | replace('.j2','') }}"
+    dest: "{{ stack_root }}/jupyterhub-latest/bin/{{ item | replace('.j2','') }}"
     mode: '0755'
     owner: "{{ jupyterhub_os_user }}"
     group: "{{ jupyterhub_os_group }}"
