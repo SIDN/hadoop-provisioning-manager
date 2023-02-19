@@ -14,8 +14,8 @@ User={{ superset_os_user }}
 Group={{ superset_os_group }}
 Type=exec
 
-ExecStart={{ stack_root }}/jupyterhub-latest/bin/start-superset.sh 
-ExecStop={{ stack_root }}/jupyterhub-latest/bin/stop-superset.sh 
+ExecStart={{ stack_root }}/apache-superset-latest/bin/start-superset.sh 
+ExecStop={{ stack_root }}/apache-superset-latest/bin/stop-superset.sh 
 
 [Install]
 WantedBy=multi-user.target
