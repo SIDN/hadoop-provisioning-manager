@@ -32,7 +32,7 @@
   
 - name: Create Jupyterhub component directory
   file:
-    path: "{{ stack_root }}/jupyterhub-{{ version.hue }}/bin"
+    path: "{{ stack_root }}/jupyterhub-{{ version.jupyterhub }}/bin"
     state: directory
     owner: "{{ jupyterhub_os_user }}"
     group: "{{ jupyterhub_os_group }}"
