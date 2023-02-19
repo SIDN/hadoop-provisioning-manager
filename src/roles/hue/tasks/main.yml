@@ -224,7 +224,10 @@
 
 - name: Create Container start script
   ansible.builtin.template:
-    src: "../templates/start-hue.sh.j2"
-    dest: "{{ stack_root }}/hue-latest/bin/start-hue.sh"
+    src: "../templates/{{ item }}"
+    dest: "{{ stack_root }}/hue-latest/bin/{{ item | replace('.j2','') }}"
     mode: '0755'
   become: yes
+  loop:
+    - start-hue.sh.j2
+    - stop-hue.sh.j2

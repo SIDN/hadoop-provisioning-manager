@@ -14,7 +14,7 @@ User={{ impala_os_user }}
 Group={{ impala_os_group }}
 ExecStart={{ stack_root }}/apache-impala-latest/bin/impala-start.sh {{ item.name }}
 
-ExecStop=/usr/bin/docker stop impala_{{ item.name }}
+ExecStop={{ stack_root }}/apache-impala-latest/bin/impala-stop.sh {{ item.name }}
 
 Restart=always
 RestartSec=60

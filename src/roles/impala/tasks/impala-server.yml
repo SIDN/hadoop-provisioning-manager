@@ -119,8 +119,11 @@
     
 - name: Create Container start script
   ansible.builtin.template:
-    src: "../templates/impala-start.sh.j2"
-    dest: "{{ stack_root }}/apache-impala-latest/bin/impala-start.sh"
+    src: "../templates/{{ item }}"
+    dest: "{{ stack_root }}/apache-impala-latest/bin/{{ item | replace('.j2','') }}"
     mode: '0755'
   become: yes
+  loop:
+    - impala-start.sh.j2
+    - impala-stop.sh.j2
  
