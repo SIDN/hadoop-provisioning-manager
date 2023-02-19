@@ -3,6 +3,9 @@
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
 
+# Run container with --network host to allow pysparj driver
+# to bind ports and be available for Yarn containers running on cluster
+
 docker run --network host \
 --rm --name jupyterhub \
 -p {{ jupyterhub_port }}:8000 \

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+
+docker-compose -f {{ stack_root }}/apache-superset-latest/docker-compose.yml up

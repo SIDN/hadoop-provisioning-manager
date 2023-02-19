@@ -1,5 +1,5 @@
 # Created on {{ ansible_date_time.iso8601 }}
-# Pushed to: {{  inventory_hostname }}
+# Pushed to: {{ inventory_hostname }}
 
 [Unit]
 Description=Apache Superset
@@ -14,8 +14,8 @@ User={{ superset_os_user }}
 Group={{ superset_os_group }}
 Type=exec
 
-ExecStart=/usr/bin/docker-compose -f {{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml up
-ExecStop=/usr/bin/docker-compose -f {{ stack_root }}/apache-superset-{{ version.superset }}/docker-compose.yml down -v --remove-orphans
+ExecStart={{ stack_root }}/jupyterhub-latest/bin/start-superset.sh 
+ExecStop={{ stack_root }}/jupyterhub-latest/bin/stop-superset.sh 
 
 [Install]
 WantedBy=multi-user.target

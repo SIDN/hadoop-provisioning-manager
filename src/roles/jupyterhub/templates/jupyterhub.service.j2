@@ -14,8 +14,6 @@ User={{ jupyterhub_os_user }}
 Group={{ jupyterhub_os_group }}
 Type=exec
 
-# Run container with --network host to allow pysparj driver
-# to bind ports and be available for Yarn containers running on cluster
 ExecStart={{ stack_root }}/jupyterhub-latest/bin/start-jupyterhub.sh 
 ExecStop={{ stack_root }}/jupyterhub-latest/bin/stop-jupyterhub.sh 
 
