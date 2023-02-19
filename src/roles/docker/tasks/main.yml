@@ -1,5 +1,8 @@
 - name: Populate service facts
   service_facts:
+    
+- debug:
+    msg: "{{ services }}"  
 
 - debug:
     msg: "Docker installed: {{ 'docker' in services }}"
