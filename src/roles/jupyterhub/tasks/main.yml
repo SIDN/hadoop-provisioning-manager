@@ -29,6 +29,23 @@
     - '{{ jupyterhub_log_dir }}'
   become: yes
   
+  
+- name: Create Jupyterhub component directory
+  file:
+    path: "{{ stack_root }}/jupyterhub-{{ version.hue }}/bin"
+    state: directory
+    owner: "{{ jupyterhub_os_user }}"
+    group: "{{ jupyterhub_os_group }}"
+    mode: '0755'
+  become: yes  
+
+- name: Create symlink latest Jupyterhub version
+  file:
+      src: "{{ stack_root }}/jupyterhub-{{ version.jupyterhub }}"
+      dest: "{{ stack_root }}/jupyterhub-latest"
+      state: link
+  become: yes
+  
 - name: Create Systemd unit
   ansible.builtin.template:
     src: ../templates/{{ item }}
@@ -42,6 +59,18 @@
   
 - name: Include build docker image 
   include_tasks: tasks/docker-build.yml
+  
+- name: Create Container start script
+  ansible.builtin.template:
+    src: "../templates/{{ item }}"
+    dest: "{{ stack_root }}/jupyerhub-latest/bin/{{ item | replace('.j2','') }}"
+    mode: '0755'
+    owner: "{{ jupyterhub_os_user }}"
+    group: "{{ jupyterhub_os_group }}"
+  become: yes
+  loop:
+    - start-jupyerhub.sh.j2
+    - stop-jupyerhub.sh.j2
 
 - name: Systemctl Reload Daemons
   shell: systemctl daemon-reload

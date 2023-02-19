@@ -122,6 +122,8 @@
     src: "../templates/{{ item }}"
     dest: "{{ stack_root }}/apache-impala-latest/bin/{{ item | replace('.j2','') }}"
     mode: '0755'
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
   become: yes
   loop:
     - impala-start.sh.j2

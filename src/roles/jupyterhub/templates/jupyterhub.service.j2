@@ -16,17 +16,8 @@ Type=exec
 
 # Run container with --network host to allow pysparj driver
 # to bind ports and be available for Yarn containers running on cluster
-ExecStart=/usr/bin/docker run --network host \
---rm --name jupyterhub \
--p {{ jupyterhub_port }}:8000 \
--v {{ config_root }}:{{ config_root }} \
--v {{ jupyterhub_log_dir }}:{{ jupyterhub_log_dir }} \
--v {{ jupyterhub_data_dir }}:/data \
--v {{ stack_root }}:{{ stack_root }} \
--v /etc/krb5.conf:/etc/krb5.conf {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:{{ version.jupyterhub }}
-
-
-ExecStop=/usr/bin/docker stop jupyterhub
+ExecStart={{ stack_root }}/jupyterhub-latest/bin/start-jupyterhub.sh 
+ExecStop={{ stack_root }}/jupyterhub-latest/bin/stop-jupyterhub.sh 
 
 [Install]
 WantedBy=multi-user.target
