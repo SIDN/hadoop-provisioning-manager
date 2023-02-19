@@ -69,8 +69,8 @@
     group: "{{ jupyterhub_os_group }}"
   become: yes
   loop:
-    - start-jupyerhub.sh.j2
-    - stop-jupyerhub.sh.j2
+    - start-jupyterhub.sh.j2
+    - stop-jupyterhub.sh.j2
 
 - name: Systemctl Reload Daemons
   shell: systemctl daemon-reload
