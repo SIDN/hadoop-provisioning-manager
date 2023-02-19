@@ -10,6 +10,7 @@ KRB_CC_CACHE="/tmp/krb5cc_$(id -u)"
 {% endif %}
 
 docker run --rm \
+  --restart=on-failure:10 \
   --net=host \
   --name "impala_$1" \
 {% if ansible_distribution == "RedHat" %}

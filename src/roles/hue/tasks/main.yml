@@ -27,6 +27,22 @@
     mode: '0777'
   become: yes
   
+- name: Create Hue component directory
+  file:
+    path: "{{ stack_root }}/hue-{{ version.hue }}/bin"
+    state: directory
+    owner: "{{ hue_os_user }}"
+    group: "{{ hue_os_group }}"
+    mode: '0755'
+  become: yes  
+
+- name: Create symlink latest Hue version
+  file:
+      src: "{{ stack_root }}/hue-{{ version.hue }}"
+      dest: "{{ stack_root }}/hue-latest"
+      state: link
+  become: yes
+  
 - name: Install package dependencies
   ansible.builtin.package:
     name:
@@ -206,3 +222,9 @@
 - name: Include create database task
   include_tasks: tasks/database.yml
 
+- name: Create Container start script
+  ansible.builtin.template:
+    src: "../templates/start-hue.sh.j2"
+    dest: "{{ stack_root }}/hue-latest/bin/start-hue.sh"
+    mode: '0755'
+  become: yes
