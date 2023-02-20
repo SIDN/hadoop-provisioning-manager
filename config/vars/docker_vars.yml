@@ -7,6 +7,10 @@ docker_registry_port: 2000
 # directory on hosts where docker data is stored
 # is only used on the manager node 
 # where docker image registry is located
+# NOTE: when changing this, all existing docker images on manager host will be lost
+# It is possible to move the Docker data from the old location (/var/lib/docker)
+# to the new location. Make sure to stop Docker before moving the data and
+# to restart Docker after the move is complete
 docker_data_dir: /var/lib/docker
 
 # Docker installation repo

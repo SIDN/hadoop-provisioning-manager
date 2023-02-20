@@ -58,10 +58,12 @@
   become: yes
   when: not 'docker.service' in services
   
+# make sure to restart docker other wise a new data location
+# might not be used.
 - name: Enable and start service Docker
   ansible.builtin.systemd:
     name: docker
     enabled: yes
-    state: started
+    state: restarted
   become: yes
   when: not 'docker.service' in services
