@@ -98,7 +98,7 @@
   shell: >
     cd {{ cache_root }}/apache-impala-ubuntu-{{ version.impala }};
     docker build -t apache/impala:{{ version.impala }} .;
-    docker image tag apache/impala:{{ version.impala }} {{ lookup('pipe', 'hostname -f') }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }};
+    docker image tag apache/impala:{{ version.impala }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }};
   delegate_to: localhost
   connection: local
   become: yes 
