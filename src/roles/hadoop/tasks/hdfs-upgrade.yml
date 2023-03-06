@@ -6,7 +6,7 @@
 
 - name: (Update HDFS cluster) Check file layout versions
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       {{ stack_root }}/hadoop-latest/bin/hdfs namenode -metadataVersion | grep "ersion: "
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes

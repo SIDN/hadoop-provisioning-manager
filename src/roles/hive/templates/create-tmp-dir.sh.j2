@@ -5,7 +5,7 @@
 
 TMP_DIR="/tmp/hive/"
 
-source {{ hadoop_etc_dir }}/hadoop-env.sh
+. {{ hadoop_etc_dir }}/hadoop-env.sh
 kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }}
 
 hdfs dfs -test -d $TMP_DIR

@@ -4,7 +4,7 @@
 # Pushed to: {{  inventory_hostname }}
 
 # Script for deleting older(er) SOLR data
-source {{ solr_etc_dir }}/solr-clean-env.sh
+. {{ solr_etc_dir }}/solr-clean-env.sh
 
 kinit -kt $SOLR_CLEANUP_KRB_KEYTAB $SOLR_CLEANUP_KRB_PRINCIPAL
 curl --negotiate -u : "https://${SOLR_CLEANUP_HOST}:${SOLR_CLEANUP_PORT}/solr/ranger_audits/update?commit=true" -H "Content-Type: text/xml" --data-binary "<delete><query>evtTime:[* TO NOW-${SOLR_CLEANUP_MAX_DAY}DAYS]</query></delete>"

@@ -5,8 +5,8 @@
 
 # Upload the Spark libraries to HDFS, this allows for faster starting of jobs and sharing of resources
 
-source {{ spark_etc_dir }}/spark-env.sh
-source {{ hadoop_etc_dir }}/hadoop-env.sh
+. {{ spark_etc_dir }}/spark-env.sh
+. {{ hadoop_etc_dir }}/hadoop-env.sh
 kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }}
 
 JARS_BASE_DIR="/user/{{ spark_os_user }}/jars"

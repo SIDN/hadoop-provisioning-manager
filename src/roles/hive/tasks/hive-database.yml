@@ -68,8 +68,8 @@
 # Create new Hive Metastore schema  
 - name: Initialize Hive db (CREATE)
   shell: >
-    source {{ hive_etc_dir }}/hive-env.sh;
-    source {{ hadoop_etc_dir }}/hadoop-env.sh;
+    . {{ hive_etc_dir }}/hive-env.sh;
+    . {{ hadoop_etc_dir }}/hadoop-env.sh;
     {{ stack_root }}/apache-hive-latest/bin/schematool -dbType postgres -initSchema;
   when: stat_metastore_db.rowcount == 0
 
@@ -119,7 +119,7 @@
 
 - name: Upgrade existing Hive db (UPDATE)
   shell: >
-    source {{ hive_etc_dir }}/hive-env.sh; 
+    . {{ hive_etc_dir }}/hive-env.sh; 
     {{ stack_root }}/apache-hive-latest/bin/schematool -dbType postgres -upgradeSchema
   become: yes  
   when: stat_metastore_db.rowcount == 1
@@ -127,7 +127,7 @@
 # Validate if current schema is correct
 - name: Validate Hive db
   shell: >
-    source {{ hive_etc_dir }}/hive-env.sh; 
+    . {{ hive_etc_dir }}/hive-env.sh; 
     {{ stack_root }}/apache-hive-latest/bin/schematool -dbType postgres -validate
   become: yes 
 

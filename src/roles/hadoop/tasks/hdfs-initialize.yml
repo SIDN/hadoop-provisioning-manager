@@ -3,7 +3,7 @@
 
 - name: (New HDFS cluster) Format namenode
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       {{ stack_root }}/hadoop-latest/bin/hdfs namenode -format -force {{ hadoop_fs_nameservices }}
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes
@@ -11,7 +11,7 @@
 
 - name: (New HDFS cluster) Initializing HA state in ZooKeeper
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       {{ stack_root }}/hadoop-latest/bin/hdfs zkfc -formatZK -force
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes
@@ -27,7 +27,7 @@
 # SNN steps below only
 - name: (New HDFS cluster) Bootstrap secondary namenode
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       {{ stack_root }}/hadoop-latest/bin/hdfs namenode -bootstrapStandby -force -nonInteractive
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes
@@ -36,7 +36,7 @@
 # create dirs, wait until snn has started
 - name: (New HDFS cluster) Create HDFS root directories
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
       {{ stack_root }}/hadoop-latest/bin/hdfs dfs -mkdir /user && hdfs dfs -chmod -R 775 /user;
       {{ stack_root }}/hadoop-latest/bin/hdfs dfs -mkdir /tmp && hdfs dfs -chmod -R 1777 /tmp;  

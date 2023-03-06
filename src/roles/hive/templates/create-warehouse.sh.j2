@@ -5,7 +5,7 @@
 
 HIVE_HOME_DIR=/user/{{ hive_os_user }}
 
-source {{ hadoop_etc_dir }}/hadoop-env.sh
+. {{ hadoop_etc_dir }}/hadoop-env.sh
 
 kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }} 
 hdfs dfs -test -d $HIVE_HOME_DIR/warehouse

@@ -3,7 +3,7 @@
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
 
-source {{ impala_etc_dir }}/prometheus-proxy-env-{{ daemon.service }}.sh
+. {{ impala_etc_dir }}/prometheus-proxy-env-{{ daemon.service }}.sh
 
 kinit -kt {{ impala_etc_dir }}/impala.keytab impala/{{ inventory_hostname }}@{{ kerberos_realm }}
 

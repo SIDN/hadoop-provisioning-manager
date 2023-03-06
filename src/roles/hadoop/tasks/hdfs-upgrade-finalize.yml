@@ -5,7 +5,7 @@
 
 - name: Check if upgrade is completed
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
       {{ stack_root }}/hadoop-latest/bin/hdfs dfsadmin -rollingUpgrade query
   become_user: "{{ hadoop_os_user.hdfs }}"
@@ -24,7 +24,7 @@
 # finalize only when upgrade has completed
 - name: Finalize upgrade
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
       {{ stack_root }}/hadoop-latest/bin/hdfs dfsadmin -rollingUpgrade finalize
   become_user: "{{ hadoop_os_user.hdfs }}"

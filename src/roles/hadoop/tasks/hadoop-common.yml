@@ -22,7 +22,7 @@
   register: reg_hadoop_dir
   
 - name: Check for existing HDFS cluster
-  shell: "source {{ hadoop_etc_dir }}/hadoop-env.sh; hadoop version | head -n 1 | cut -d' ' -f 2"
+  shell: ". {{ hadoop_etc_dir }}/hadoop-env.sh; hadoop version | head -n 1 | cut -d' ' -f 2"
   register: prev_hadoop_version
   when: reg_hadoop_dir.stat.exists
   

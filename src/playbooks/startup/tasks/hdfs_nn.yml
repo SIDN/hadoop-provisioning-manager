@@ -23,7 +23,7 @@
 # check if the znode for hdfs HA exists in Zookeeper, must be at path: /hadoop-ha
 - name: Check for HA state in ZooKeeper
   shell: >
-      source {{ zookeeper_etc_dir }}/zk-env.sh;
+      . {{ zookeeper_etc_dir }}/zk-env.sh;
       set +e;
       zkCli.sh stat /hadoop-ha
   register: zookeeper_ha_state_check
@@ -39,7 +39,7 @@
 # installed hdfs component. need to reinitialize ZooKeeper
 - name: Re-Initializing HA state in ZooKeeper
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       {{ stack_root }}/hadoop-latest/bin/hdfs zkfc -formatZK -nonInteractive
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes

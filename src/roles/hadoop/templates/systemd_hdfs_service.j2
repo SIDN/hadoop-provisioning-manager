@@ -15,7 +15,7 @@ Type=forking
 User={{ hadoop_os_user.hdfs }}
 Group={{ hadoop_os_group }}
 ExecStart=/bin/bash -c '{{ stack_root }}/hadoop-latest/bin/start_hdfs_service.sh {{ item.name }} {{ item.env }}'
-ExecStop=/bin/bash -c 'source {{ hadoop_etc_dir }}/{{ item.env }}; {{ stack_root }}/hadoop-latest/bin/hdfs --daemon stop {{ item.name }}'
+ExecStop=/bin/bash -c '. {{ hadoop_etc_dir }}/{{ item.env }}; {{ stack_root }}/hadoop-latest/bin/hdfs --daemon stop {{ item.name }}'
 Restart=always
 RestartSec=60
 

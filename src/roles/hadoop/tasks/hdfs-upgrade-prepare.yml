@@ -2,7 +2,7 @@
 
 - name: Create rollback image
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
       {{ stack_root }}/hadoop-latest/bin/hdfs dfsadmin -rollingUpgrade prepare
   become_user: "{{ hadoop_os_user.hdfs }}"
@@ -10,7 +10,7 @@
 
 - name: Wait until creating rollback image has been completed
   shell: >
-      source {{ hadoop_etc_dir }}/hadoop-env.sh;
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
       kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
       {{ stack_root }}/hadoop-latest/bin/hdfs dfsadmin -rollingUpgrade query
   become_user: "{{ hadoop_os_user.hdfs }}"

@@ -5,7 +5,7 @@
 
 # Create the directories for Spark on HDFS
 
-source {{ hadoop_etc_dir }}/hadoop-env.sh
+. {{ hadoop_etc_dir }}/hadoop-env.sh
 kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }}
 
 hadoop fs -test -d /user/{{ spark_os_user }}/{{ spark_history_fs_logdirectory }}

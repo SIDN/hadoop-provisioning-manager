@@ -48,7 +48,7 @@
   tasks:    
     - name: Delete HDFS home directory for user
       shell: >
-          source {{ hadoop_etc_dir }}/hadoop-env.sh;
+          . {{ hadoop_etc_dir }}/hadoop-env.sh;
           kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
           hdfs dfs -rm -r -f /user/{{ del_user }};
       become: yes
