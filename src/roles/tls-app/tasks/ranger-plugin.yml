@@ -1,0 +1,63 @@
+  - name: Delete old data
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: absent
+    with_items:
+      - "{{ tls_etc_dir }}/ranger-keystore.jks"
+      - "{{ tls_etc_dir }}/ranger-truststore.jks"
+      - "{{ tls_etc_dir }}/ranger-truststore.jcek"
+      - "{{ tls_etc_dir }}/ranger-keystore.jcek"
+      
+  - name: Create ranger keystore
+    copy:
+      src: "{{ tls_etc_dir }}/{{ tls_remote_truststore }}"
+      dest: "{{ tls_etc_dir }}/ranger-keystore.jks"
+      remote_src: yes
+    
+  - name: Create ranger truststore
+    copy:
+      src: "{{ tls_etc_dir }}/{{ tls_remote_truststore }}"
+      dest: "{{ tls_etc_dir }}/ranger-truststore.jks"
+      remote_src: yes
+  
+  - name: Change keystore alias to sslKeyStore
+    shell: >
+      keytool 
+      -changealias -alias 1 
+      -destalias sslKeyStore 
+      -v 
+      -keystore {{ tls_etc_dir }}/ranger-keystore.jks
+      -storepass {{ tls_remote_truststore_password }}
+      
+  - name: Change truststore alias to sslTrustStore
+    shell: >
+      keytool 
+      -changealias -alias 1 
+      -destalias sslTrustStore 
+      -v 
+      -keystore {{ tls_etc_dir }}/ranger-truststore.jks
+      -storepass {{ tls_remote_truststore_password }}
+
+  - name: Create truststore jcek
+    shell: >
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
+      hadoop credential create sslTrustStore 
+      -value {{ tls_remote_truststore_password }} 
+      -provider localjceks://file{{ tls_etc_dir }}/ranger-truststore.jcek
+
+  - name: Create keystore jcek
+    shell: >
+      . {{ hadoop_etc_dir }}/hadoop-env.sh;
+      hadoop credential create sslKeyStore 
+      -value {{ tls_remote_truststore_password }}
+      -provider localjceks://file{{ tls_etc_dir }}/ranger-keystore.jcek
+            
+  - name: Change file permissions
+    ansible.builtin.file:
+      path: "{{ item }}"
+      mode: '0644'  
+    with_items:
+      - "{{ tls_etc_dir }}/ranger-keystore.jcek"
+      - "{{ tls_etc_dir }}/ranger-truststore.jcek"
+      - "{{ tls_etc_dir }}/ranger-keystore.jks"
+      - "{{ tls_etc_dir }}/ranger-truststore.jks"
