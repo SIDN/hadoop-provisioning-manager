@@ -43,7 +43,7 @@ version:
   java: '1.8.0'
   zookeeper: '3.8.0'
   hadoop: '3.3.4'
-  spark: '3.3.1'
+  spark: '3.3.2'
   spark_hadoop: '3'      # works for 3.2 and newer
   spark_metrics: '4.2.9'   # needed when hadoop < 3.2
   hive: '3.1.3'
