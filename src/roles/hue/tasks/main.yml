@@ -123,6 +123,14 @@
   become: yes
   when: docker_img_exists.stdout | int == 0
   
+- name: Make sure default Docker container is not running now
+  shell: >
+    docker kill hue || echo "ignore error"
+  delegate_to: localhost
+  connection: local
+  become: yes
+  when: docker_img_exists.stdout | int == 0
+  
 # start docker comntainer so we can patch thrift
 - name: Start Hue Docker container
   shell: >
@@ -139,7 +147,7 @@
     host: localhost
     port: '{{ hue_port }}'
     delay: 5
-    timeout: 60
+    timeout: 120
   delegate_to: localhost
   connection: local
   when: docker_img_exists.stdout | int == 0
