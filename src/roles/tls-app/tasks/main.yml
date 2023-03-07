@@ -21,15 +21,18 @@
 #   become: yes
 #   when: inventory_hostname in groups['impala_ha_proxy']
   
+  
 - name: Install Haproxy TLS
-  include_tasks: ranger.yml
-  become: yes
-  when: inventory_hostname in groups['impala_ha_proxy']
+  block:
+    include_tasks: ranger.yml
+    become: yes
+    when: inventory_hostname in groups['impala_ha_proxy']
         
 - name: Install Ranger Admin TLS
-  include_tasks: ranger-admin.yml
-  become: yes
-  when: inventory_hostname in groups['ranger']
+  block:
+    include_tasks: ranger-admin.yml
+    become: yes
+    when: inventory_hostname in groups['ranger']
   
 #  ranger admin needs truststore with alias rangeradmin    
 # - hosts: ranger
@@ -64,14 +67,15 @@
   
   
 - name: Install Ranger Plugin TLS
-  include_tasks: ranger-plugin.yml
-  become: yes
-  when: (inventory_hostname in groups['impala']) 
-    or (inventory_hostname in groups['impala_catalog']) 
-    or (inventory_hostname in groups['hadoop']) 
-    or (inventory_hostname in groups['hdfs_primary_nn']) 
-    or (inventory_hostname in groups['hdfs_secondary_nn']) 
-  
+  block:
+    include_tasks: ranger-plugin.yml
+    become: yes
+    when: (inventory_hostname in groups['impala']) 
+      or (inventory_hostname in groups['impala_catalog']) 
+      or (inventory_hostname in groups['hadoop']) 
+      or (inventory_hostname in groups['hdfs_primary_nn']) 
+      or (inventory_hostname in groups['hdfs_secondary_nn']) 
+    
 # impala ranger plugin needs keystore with alias sslKeyStore
 # and trusstore with alias sslTrustStore
 # otherwise impala ranger plugin cannot connect to ranger
@@ -152,9 +156,10 @@
 # 
 
 - name: Install Monitor TLS
-  include_tasks: monitor.yml
-  become: yes
-  when: inventory_hostname in groups['monitor']
+  block:
+    include_tasks: monitor.yml
+    become: yes
+    when: inventory_hostname in groups['monitor']
   
 # 
 # - hosts: monitor
