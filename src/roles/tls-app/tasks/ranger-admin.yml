@@ -1,0 +1,25 @@
+#  ranger admin needs truststore with alias rangeradmin    
+- name: Remove old truststore
+  ansible.builtin.file:
+    path: "{{ tls_etc_dir }}/ranger-tls.jks"
+    state: absent
+  become: yes
+    
+- name: Copy keystore
+  ansible.builtin.copy:
+    src: "{{ tls_etc_dir }}/{{ tls_remote_truststore }}"
+    dest: "{{ tls_etc_dir }}/ranger-tls.jks"
+    remote_src: yes
+  become: yes
+
+- name: Update truststore with correct alias
+  shell: >
+    keytool 
+    -changealias 
+    -alias 1 
+    -destalias rangeradmin 
+    -v 
+    -keystore {{ tls_etc_dir }}/ranger-tls.jks
+    -storepass {{ tls_remote_truststore_password }}
+  become: yes
+  

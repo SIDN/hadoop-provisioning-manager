@@ -1,0 +1,7 @@
+# deploy standard tls cert cfg
+- name: TLS Generic
+  import_playbook: deploy-tls.yml
+      
+# deploy app specific TLS cfg
+- name: TLS App specific
+  import_playbook: deploy-tls-app.yml

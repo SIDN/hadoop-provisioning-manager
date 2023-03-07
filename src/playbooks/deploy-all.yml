@@ -1,6 +1,10 @@
 - name: Common
   import_playbook: deploy-common.yml
   
+# deploy standard tls cert cfg
+- name: TLS
+  import_playbook: deploy-tls.yml
+      
 - name: Manager
   import_playbook: deploy-manager.yml
   
@@ -18,9 +22,10 @@
 - name: Hadoop
   import_playbook: deploy-hadoop.yml
   
+# deploy app specific TLS cfg
 - name: TLS
-  import_playbook: deploy-tls.yml
-      
+  import_playbook: deploy-tls-apps.yml
+
 - name: Management Console
   import_playbook: deploy-console.yml
   

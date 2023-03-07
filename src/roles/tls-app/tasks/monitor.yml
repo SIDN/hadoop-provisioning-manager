@@ -1,0 +1,20 @@
+- name: Remove old truststore
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ tls_etc_dir }}/ssl.crt"
+    - "{{ tls_etc_dir }}/ssl.key"
+    
+- name: Copy keystore
+  ansible.builtin.copy:
+    src: "{{ tls_etc_dir }}/{{ item.src }}"
+    dest: "{{ tls_etc_dir }}/{{ item.dest }}"
+    remote_src: yes
+  loop:
+    - { src: '{{ tls_remote_pub_chain }}', dest: 'ssl.crt' }
+    - { src: '{{ tls_remote_priv_key }}', dest: 'ssl.key' }
+
+- name: Create dhparam (this may take some time)
+  shell: >
+    openssl dhparam -out {{ tls_etc_dir }}/dhparam.pem 2048
