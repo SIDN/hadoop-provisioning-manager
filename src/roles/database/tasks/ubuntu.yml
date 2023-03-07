@@ -30,7 +30,7 @@
   shell: >
     /usr/lib/postgresql/{{ version.postgresql }}/bin/initdb -D {{ db_data_dir }}
   become: yes
-  #become_user: postgres
+  become_user: postgres
   when: not postgres_initialized.stat.exists
   
 # - name: Change datadir in service unit to {{ db_data_dir }}
