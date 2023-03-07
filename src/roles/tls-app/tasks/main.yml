@@ -23,7 +23,7 @@
   
   
 - name: Install Haproxy TLS
-  import_tasks: ranger.yml
+  import_tasks: ha-proxy.yml
   become: yes
   when: inventory_hostname in groups['impala_ha_proxy']
         
