@@ -9,6 +9,6 @@
   tasks:
     - name: Include component deploy
       include_role:
-        name: tls
+        name: tls-base
       # do not install tls material on dedicated db server
       when: not (inventory_hostname in groups['database'] and db_use_existing)
