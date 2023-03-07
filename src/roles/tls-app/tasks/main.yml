@@ -1,11 +1,11 @@
-- name: Generate jks script
-  ansible.builtin.template:
-    src: ../templates/create-jks.sh.j2
-    dest: "{{ tls_etc_dir }}/create-jks.sh"
-    mode: '0755'
-  loop:
-    - { src: 'create-jks.sh.j2', dest: '{{ tls_etc_dir }}'}
-  become: yes
+# - name: Generate jks script
+#   ansible.builtin.template:
+#     src: ../templates/create-jks.sh.j2
+#     dest: "{{ tls_etc_dir }}/create-jks.sh"
+#     mode: '0755'
+#   loop:
+#     - { src: 'create-jks.sh.j2', dest: '{{ tls_etc_dir }}'}
+#   become: yes
 
 # create jks truststore, used by hdfs namenode (ssl-server.xml)
 - name: Run JKS script

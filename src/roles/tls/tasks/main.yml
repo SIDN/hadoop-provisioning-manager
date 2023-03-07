@@ -15,7 +15,7 @@
     - { "src": "{{ tls_cert.crt_only }}", dest: "{{ tls_remote_pub_key }}"}
     - { "src": "{{ tls_cert.key }}", dest: "{{ tls_remote_priv_key }}"}
   become: yes
-  
+
 - name: Generate jks script
   ansible.builtin.template:
     src: ../templates/create-jks.sh.j2
@@ -24,11 +24,3 @@
   loop:
     - { src: 'create-jks.sh.j2', dest: '{{ tls_etc_dir }}'}
   become: yes
-
-# create jks truststore, used by hdfs namenode (ssl-server.xml)
-- name: Run JKS script
-  shell: "{{ tls_etc_dir }}/create-jks.sh"
-  become: yes
-
-
-
