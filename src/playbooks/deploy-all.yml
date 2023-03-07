@@ -8,7 +8,7 @@
   import_playbook: deploy-db.yml
 
 - name: Kerberos KDC
-  import_playbook: deploy-kerberos-kdc.yml
+  import_playbook: deploy-krb-kdc.yml
   
 - name: Kerberos principals
   import_playbook: deploy-krb-principal.yml
