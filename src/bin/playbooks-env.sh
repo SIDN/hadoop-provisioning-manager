@@ -30,7 +30,7 @@ export PB_KRB_PRIN=krb-principal.yml
 export PB_KRB_KT=krb-keytab.yml
 export PB_TLS=tls.yml
 export PB_TLS_APP=tls-app.yml
-export PB_TLS_ALL=tls-all.yml
+export PB_TLS_BASE=tls-base.yml
 
 # general commands
 export PB_DO_ENALBLE_HDFS_RANGER_PLUGIN=enable-hdfs-ranger-plugin.yml
@@ -117,8 +117,8 @@ function run_playbooks()
         tls-app)
           run_playbook "$PB_PREFIX-$PB_TLS_APP"
         ;;
-        tls-all)
-          run_playbook "$PB_PREFIX-$PB_TLS_ALL"
+        tls-base)
+          run_playbook "$PB_PREFIX-$PB_TLS_BASE"
         ;;
         console)
           run_playbook "$PB_PREFIX-$PB_$PB_CONSOLE"

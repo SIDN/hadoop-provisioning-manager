@@ -1,14 +1,7 @@
-# copy tls matarial to all nodes, except the gateway nodes.
-- hosts: all
-  vars_files:
-    - "{{ prov_cfg_dir }}/vars/all.yml"
-    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
-    - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
-    - "{{ prov_cfg_dir }}/vars/db_vars.yml"
-  remote_user: hadoop-mgr
-  tasks:
-    - name: Include component deploy
-      include_role:
-        name: tls
-      # do not install tls material on dedicated db server
-      when: not (inventory_hostname in groups['database'] and db_use_existing)
+# deploy standard tls cert cfg
+- name: TLS Generic
+  import_playbook: deploy-tls-base.yml
+      
+# deploy app specific TLS cfg
+- name: TLS App specific
+  import_playbook: deploy-tls-app.yml

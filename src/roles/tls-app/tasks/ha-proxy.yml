@@ -1,0 +1,4 @@
+- name: Create haproxy TLS PEM
+  shell: >
+    cd {{ tls_etc_dir }};
+    cat {{ tls_remote_pub_key }} {{ tls_remote_priv_key }} > haproxy_tls_pub_chain.pem 
