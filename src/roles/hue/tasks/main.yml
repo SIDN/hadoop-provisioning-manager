@@ -119,7 +119,7 @@
 
 - name: Show Hue docker image already exists
   ansible.builtin.debug:
-    msg: Hue image detect: {{ docker_img_exists.images | length == 1 }}
+    msg: "Hue image detect: {{ docker_img_exists.images | length == 1 }}"
   delegate_to: localhost
   connection: local
   become: yes
