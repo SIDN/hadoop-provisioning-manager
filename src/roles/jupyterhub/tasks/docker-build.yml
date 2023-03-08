@@ -1,5 +1,20 @@
+# - name: Check if Jupyterhub docker image already exists
+#   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub.*{{ version.jupyterhub }} | wc -l"
+#   register: docker_img_exists
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+# 
+# - name: Show Jupyterhub docker image already exists
+#   ansible.builtin.debug:
+#     msg: Jupyterhub image detect {{ docker_img_exists.stdout }}
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+  
 - name: Check if Jupyterhub docker image already exists
-  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub.*{{ version.jupyterhub }} | wc -l"
+  docker_image_info:
+    name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:{{ version.jupyterhub }}"
   register: docker_img_exists
   delegate_to: localhost
   connection: local
@@ -7,7 +22,7 @@
 
 - name: Show Jupyterhub docker image already exists
   ansible.builtin.debug:
-    msg: Jupyterhub image detect {{ docker_img_exists.stdout }}
+    msg: "Jupyterhub image detect: {{ docker_img_exists.images | length == 1 }}"
   delegate_to: localhost
   connection: local
   become: yes

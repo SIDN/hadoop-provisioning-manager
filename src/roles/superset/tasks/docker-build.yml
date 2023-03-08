@@ -13,19 +13,35 @@
   when: not git_repo.stat.exists
 
 # build docker image with kerberos support
+# - name: Check if Superset docker image already exists
+#   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset.*{{ version.superset }} | wc -l"
+#   register: docker_img_exists
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+# 
+# - name: Show Superset docker image already exists
+#   ansible.builtin.debug:
+#     msg: Superset image detect {{ docker_img_exists.stdout }}
+#   delegate_to: localhost
+#   connection: local
+#   become: yes
+  
 - name: Check if Superset docker image already exists
-  shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset.*{{ version.superset }} | wc -l"
+  docker_image_info:
+    name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}"
   register: docker_img_exists
   delegate_to: localhost
   connection: local
   become: yes
-  
+
 - name: Show Superset docker image already exists
   ansible.builtin.debug:
-    msg: Superset image detect {{ docker_img_exists.stdout }}
+    msg: "Superset image detect: {{ docker_img_exists.images | length == 1 }}"
   delegate_to: localhost
   connection: local
-  become: yes
+  become: yes    
+  
   
 - name: Checkout Superset version
   shell: >
@@ -34,7 +50,7 @@
     git checkout {{ version.superset }};
   delegate_to: localhost
   connection: local
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
 
 # make each line unique by echoing the match line.
 # otherwise lineinfile will only insert the line once
@@ -49,7 +65,7 @@
   loop:
     - 'RUN mkdir /app'
     - 'RUN mkdir .+PYTHONPATH.+'
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
 
 - name: Add additional Python packages
   ansible.builtin.lineinfile:
@@ -61,7 +77,7 @@
   loop:
     - kerberos
     - impyla
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
     
 - name: Copy file with owner and permissions
   ansible.builtin.copy:
@@ -69,7 +85,7 @@
     dest: '{{ download_root }}/superset/docker/requirements-local.txt'
   delegate_to: localhost
   connection: local
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
 - name: Create Superset image on controller server
   shell: >
@@ -77,14 +93,14 @@
     TAG={{ version.superset }} docker build -t apache/superset:{{ version.superset }} .
   delegate_to: localhost
   connection: local
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
 
 - name: Tag Superset docker image
   shell: >
     docker image tag apache/superset:{{ version.superset }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
   delegate_to: localhost
   connection: local
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
 
 # deploy img to server  
 - name: Push Superset docker image to registry
@@ -92,7 +108,7 @@
     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
   delegate_to: localhost
   connection: local
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
 
 - name: Pull Superset image to Superset server
   shell: >
