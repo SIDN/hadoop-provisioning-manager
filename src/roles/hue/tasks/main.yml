@@ -155,7 +155,9 @@
     host: "{{ groups['manager'][0] }}"
     port: '{{ hue_port }}'
     delay: 5
+    connect_timeout: 15
     timeout: 120
+    msg: "Connection fail for: {{ groups['manager'][0] }}:{{ hue_port }}"
   delegate_to: localhost
   connection: local
   when: docker_img_exists.images | length == 0
@@ -193,7 +195,7 @@
   become: yes
   when: docker_img_exists.images | length == 0
   
-- name: Stop Hue Docker container without Kerberos
+- name: Stop patched Hue Docker container
   command: docker stop hue
   delegate_to: localhost
   connection: local
