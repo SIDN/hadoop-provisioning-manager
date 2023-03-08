@@ -93,6 +93,21 @@
     - { src: 'impala-entrypoint.sh.j2', dst: 'entrypoint.sh', perm: '0755' }
   delegate_to: localhost
   connection: local
+  
+- name: Check if Impala docker image already exists
+  docker_image_info:
+    name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }}"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  become: yes
+
+- name: Show Impala docker image already exists
+  ansible.builtin.debug:
+    msg: "Impala image detect: {{ docker_img_exists.images | length == 1 }}"
+  delegate_to: localhost
+  connection: local
+  become: yes    
 
 - name: Create Docker image on controller server
   shell: >
@@ -102,7 +117,7 @@
   delegate_to: localhost
   connection: local
   become: yes 
-  #when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
     
 - name: Push Impala docker image to registry
   shell: >
@@ -110,7 +125,7 @@
   delegate_to: localhost
   connection: local
   become: yes 
-  #when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
 
 - name: Pull Impala image to host
   shell: >
