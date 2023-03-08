@@ -108,10 +108,18 @@
   delegate_to: localhost
   connection: local
   become: yes
+  
+- name: Check if Hue docker image already exists
+  docker_image_info:
+    name: {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue.*{{ version.hue }}
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  become: yes
 
 - name: Show Hue docker image already exists
   ansible.builtin.debug:
-    msg: Hue image detect {{ docker_img_exists.stdout }}
+    msg: Hue image detect: {{ docker_img_exists.images | length == 1 }}
   delegate_to: localhost
   connection: local
   become: yes
@@ -121,7 +129,7 @@
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
 - name: Make sure default Docker container is not running now
   shell: >
@@ -129,7 +137,7 @@
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
 # start docker comntainer so we can patch thrift
 - name: Start Hue Docker container
@@ -138,7 +146,7 @@
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
 # make sure Docker container has had time to start
 # before updating the container
@@ -150,7 +158,7 @@
     timeout: 120
   delegate_to: localhost
   connection: local
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
 # - name: Download THRIFT patch
 #   get_url:
@@ -160,7 +168,7 @@
 #     - "https://raw.githubusercontent.com/cloudera/hue/master/desktop/core/ext-py/thrift-0.16.0/src/transport/TSocket.py"
 #   delegate_to: localhost
 #   connection: local
-#   when: docker_img_exists.stdout | int == 0
+#   when: docker_img_exists.images | length == 0
   
 # hue 4.11.0 has bug that causes thrift 0.16.0 to fail ssl connections to impala
 # to fix this path thrift in image
@@ -176,21 +184,21 @@
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
 - name: Commit Hue docker container changes
   command: docker commit hue gethue/hue:{{ version.hue }}
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
 - name: Stop Hue Docker container without Kerberos
   command: docker stop hue
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
 - name: Tag Hue docker image
   shell: >
@@ -198,7 +206,7 @@
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
 
  # push img to docker registry  
 - name: Push Hue docker image to registry
@@ -207,7 +215,7 @@
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
   
 # use task below to deploy img when no modification is required.    
