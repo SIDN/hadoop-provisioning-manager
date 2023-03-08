@@ -152,7 +152,7 @@
 # before updating the container
 - name: Wait for Hue Docker container to become active
   wait_for:
-    host: '{{ groups['manager'][0] }}'
+    host: "{{ groups['manager'][0] }}"
     port: '{{ hue_port }}'
     delay: 5
     timeout: 120
