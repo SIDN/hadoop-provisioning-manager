@@ -29,12 +29,12 @@
       zkCli.sh stat /hadoop-ha
   register: zookeeper_ha_state_check
   ignore_errors: yes
-  delegate_to: "{{ groups['zooKeeper'][0] }}"
+  delegate_to: "{{ groups['zookeeper'][0] }}"
   when: ('hdfs_primary_nn' in group_names)
   
 - name: Show HA state in ZooKeeper
   debug: 
-    msg: "HA state in ZooKeeper check {{ zookeeper_ha_state_check.stderr.find('Not found') == -1 }}"
+    msg: "HA state in ZooKeeper check: {{ zookeeper_ha_state_check.stderr.find('Not found') == -1 }}"
   when: ('hdfs_primary_nn' in group_names)
   
 # when reinstalling ZooKeeper there might not be ha state for an already
@@ -46,7 +46,7 @@
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes
   when: ('hdfs_primary_nn' in group_names)
-        and not (zookeeper_ha_state_check.stderr.find('Node does not exist') == -1)
+        and (zookeeper_ha_state_check.stderr.find('Node does not exist') >= 0)
   
 # Upgrade existing HDFS fs
 - name: Include Hadoop upgrade playbook
