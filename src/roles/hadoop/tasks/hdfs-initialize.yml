@@ -50,5 +50,5 @@
   ansible.builtin.systemd:
       state: started
       daemon_reload: yes
-      name: hdfs_namenode
+      name: hdfs_secondarynamenode
   when: inventory_hostname in groups['hdfs_secondary_nn']
