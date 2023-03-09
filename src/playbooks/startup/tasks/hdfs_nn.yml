@@ -34,7 +34,7 @@
   
 - name: Show HA state in ZooKeeper
   debug: 
-    msg: "HA state in ZooKeeper check: {{ zookeeper_ha_state_check.stderr.find('Not found') == -1 }}"
+    msg: "HA state in ZooKeeper check {{ zookeeper_ha_state_check.stderr.find('Not found') == -1 }}"
   when: ('hdfs_primary_nn' in group_names)
   
 # when reinstalling ZooKeeper there might not be ha state for an already
