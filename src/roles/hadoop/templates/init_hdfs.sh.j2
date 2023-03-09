@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+. {{ hadoop_etc_dir }}/hadoop-env.sh && \
+kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }}
+
+hadoop fs -test -d /user
+if [ $? != 0 ]
+then
+  echo "Create HDFS directory: /user"
+  hdfs dfs -mkdir /user && \
+  hdfs dfs -chmod -R 775 /user
+fi
+
+hadoop fs -test -d /tmp
+if [ $? != 0 ]
+then
+  echo "Create HDFS directory: /tmp"
+  hdfs dfs -mkdir /tmp && \
+  hdfs dfs -chmod -R 1777 /tmp
+fi
+

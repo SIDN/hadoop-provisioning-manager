@@ -157,5 +157,6 @@
     group: "{{ hadoop_os_group }}"
   loop:
       - { name: 'start_hdfs_service.sh.j2', dest: '{{ stack_root }}/hadoop-latest/bin/start_hdfs_service.sh', perm: '0755' }
+      - { name: 'init_hdfs.sh.j2', dest: '{{ stack_root }}/hadoop-latest/bin/init_hdfs_service.sh', perm: '0755' }
   become: yes
   
