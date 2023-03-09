@@ -55,12 +55,21 @@
   
 # if not Initializing new cluster or upgrading an existing cluster 
 # then do a normal start of the existing cluster.
-- name: (Existing HDFS cluster) Start name node
+- name: (Existing HDFS cluster) Start Primary name node
   ansible.builtin.systemd:
       state: started
       daemon_reload: yes
       name: hdfs_namenode
-  when: not reg_new.stat.exists and not reg_upgrade.stat.exists
+  when: ('hdfs_primary_nn' in group_names)
+       and (not reg_new.stat.exists and not reg_upgrade.stat.exists)
+       
+- name: (Existing HDFS cluster) Start Secondary name node
+  ansible.builtin.systemd:
+      state: started
+      daemon_reload: yes
+      name: hdfs_secondarynamenode
+  when: ('hdfs_secondary_nn' in group_names)
+       and (not reg_new.stat.exists and not reg_upgrade.stat.exists)
 
 # start failover Controller on name node
 - name: (All HDFS cluster) Start ZK Failover Controller daemon

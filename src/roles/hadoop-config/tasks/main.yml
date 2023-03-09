@@ -27,6 +27,7 @@
     - { name: 'workers.j2', dest: '{{ hadoop_etc_dir }}/workers', perm: '0644' }
     - { name: 'hadoop-env.sh.j2', dest: '{{ hadoop_etc_dir }}/hadoop-env.sh', perm: '0755' }
     - { name: 'httpfs-env.sh.j2', dest: '{{ hadoop_etc_dir }}/httpfs-env.sh', perm: '0755' }
+    - { name: 'prometheus-config.yml.j2', dest: '{{ hadoop_etc_dir }}/prometheus-config.yml', perm: '0644' }
   become: yes
 
 # - name: Set HDFS datanode cgroup cpu-shares
@@ -50,11 +51,11 @@
     - { name: 'container-executor.cfg.j2', dest: "{{ hadoop_etc_dir }}/container-executor.cfg", perm: '0440', owner: 'root', group: "{{ hadoop_os_group }}" }
   become: yes
   
-- name: Prometheus configuration
-  ansible.builtin.template:
-    src: ../templates/prometheus-config.yml
-    dest: "{{ hadoop_etc_dir }}"
-    mode: "0644"
-    owner: root
-    group: "{{ hadoop_os_group }}"
-  become: yes
+# - name: Prometheus configuration
+#   ansible.builtin.template:
+#     src: ../templates/prometheus-config.yml
+#     dest: "{{ hadoop_etc_dir }}"
+#     mode: "0644"
+#     owner: root
+#     group: "{{ hadoop_os_group }}"
+#   become: yes
