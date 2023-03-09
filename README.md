@@ -146,7 +146,7 @@ A logical distribution of cluster roles across cluster host types, could look so
 
 | Host type                     | Roles           | 
 | ---------------------------- |-----------------------| 
-| Management node               | manager, console, kerberos_kdc, ranger, database, monitor | 
+| Management node               | manager, console, kerberos_kdc, ranger, solr, database, monitor | 
 | controller node               | zookeeper (3x), hdfs_primary_nn, hdfs_secondary_nn, hdfs_journalnode, hdfs_httpfs, yarn_resource_mgr, yarn_timelineserver, spark_history, spark_thrift, hive (metastore), impala_statestore, impala_catalog, impala_ha_proxy, livy | 
 | data node                  | hadoop, impala | 
 | gateway node                  | gateway, hue, superset, jupyterhub | 
