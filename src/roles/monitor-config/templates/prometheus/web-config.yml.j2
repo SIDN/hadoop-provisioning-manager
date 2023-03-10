@@ -1,6 +1,8 @@
-# TLS and basic authentication configuration example.
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+# TLS and basic authentication configuration.
 #
-# Additionally, a certificate and a key file are needed.
 tls_server_config:
   cert_file: {{ tls_etc_dir }}/ssl.crt
   key_file: {{ tls_etc_dir }}/ssl.key

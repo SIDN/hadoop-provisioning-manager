@@ -66,6 +66,10 @@
 #     - ranger_admin
 #     - ranger_usersync    
   
+# The task "Admin setup" creates the database schema and requires
+# the psql jdbc driver to be present
+# path configured in ranger install.properties file.
+  
 - name: Check if the psql jdbc driver is already downloaded
   stat:
     path: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
