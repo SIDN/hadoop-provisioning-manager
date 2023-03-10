@@ -66,6 +66,37 @@
 #     - ranger_admin
 #     - ranger_usersync    
   
+- name: Check if the psql jdbc driver is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
+  register: jdbc_driver
+  delegate_to: localhost
+  connection: local
+    
+- name: Download psql jdbc driver
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ db_jdbc_driver_url }}"
+  delegate_to: localhost
+  connection: local
+  when: not jdbc_driver.stat.exists
+  
+- name: Copy psql jdbc driver to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
+    dest: "/usr/share/java"
+    mode: '0644'
+  become: yes  
+  
+- name: Create symlink to Postgresql jar
+  file:
+      src: "/usr/share/java/{{ db_jdbc_driver_url | basename }}"
+      dest: "/usr/share/java/postgresql-latest.jar"
+      state: link
+  become: yes
+  
 - name: Check if the Apache ranger src is already downloaded
   stat:
     path: "{{ download_root }}/ranger-{{ version.ranger  }}-admin.tar.gz"
@@ -144,30 +175,6 @@
     - admin
     - usersync
   become: yes
-  
-- name: Check if the psql jdbc driver is already downloaded
-  stat:
-    path: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
-  register: jdbc_driver
-  delegate_to: localhost
-  connection: local
-    
-- name: Download psql jdbc driver
-  get_url:
-      url: "{{ item }}"
-      dest: "{{ download_root }}/{{ item | basename }}"
-  loop:
-    - "{{ db_jdbc_driver_url }}"
-  delegate_to: localhost
-  connection: local
-  when: not jdbc_driver.stat.exists
-  
-- name: Copy psql jdbc driver to remote
-  ansible.builtin.copy:
-    src: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
-    dest: "/usr/share/java"
-    mode: '0644'
-  become: yes  
   
 - name: Create symlink to Postgresql jar
   file:
