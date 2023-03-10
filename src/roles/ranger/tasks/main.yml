@@ -145,21 +145,45 @@
     - usersync
   become: yes
   
-- name: Create symlink to Postgresql jar (RHEL)
-  file:
-      src: "/usr/share/java/postgresql-jdbc.jar"
-      dest: "{{ stack_root }}/apache-ranger-admin-latest/ews/webapp/WEB-INF/lib/postgresql.jar"
-      state: link
-  become: yes
-  when: ansible_distribution == "RedHat"
+- name: Check if the psql jdbc driver is already downloaded
+  stat:
+    path: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
+  register: jdbc_driver
+  delegate_to: localhost
+  connection: local
+    
+- name: Download psql jdbc driver
+  get_url:
+      url: "{{ item }}"
+      dest: "{{ download_root }}/{{ item | basename }}"
+  loop:
+    - "{{ db_jdbc_driver_url }}"
+  delegate_to: localhost
+  connection: local
+  when: not jdbc_driver.stat.exists
   
-- name: Create symlink to Postgresql jar (Ubuntu)
+- name: Copy psql jdbc driver to remote
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ db_jdbc_driver_url | basename }}"
+    dest: "/usr/share/java"
+    mode: '0644'
+  become: yes  
+  
+- name: Create symlink to Postgresql jar
   file:
-      src: "/usr/share/java/postgresql.jar"
+      src: "/usr/share/java/{{ db_jdbc_driver_url | basename }}"
       dest: "{{ stack_root }}/apache-ranger-admin-latest/ews/webapp/WEB-INF/lib/postgresql.jar"
       state: link
   become: yes
-  when: ansible_distribution == "Ubuntu"
+#  when: ansible_distribution == "RedHat"
+  
+# - name: Create symlink to Postgresql jar (Ubuntu)
+#   file:
+#       src: "/usr/share/java/postgresql.jar"
+#       dest: "{{ stack_root }}/apache-ranger-admin-latest/ews/webapp/WEB-INF/lib/postgresql.jar"
+#       state: link
+#   become: yes
+#   when: ansible_distribution == "Ubuntu"
     
 - name: Create db user
   postgresql_user:
