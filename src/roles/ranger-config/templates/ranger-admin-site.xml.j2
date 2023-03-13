@@ -23,7 +23,7 @@
 	</property>
 	<property>
 		<name>ranger.externalurl</name>
-		<value>https://{{ inventory_hostname }}:{{ ranger_admin_port }}</value>
+		<value>https://{{ groups['ranger'][0] }}:{{ ranger_admin_port }}</value>
 		<description/>
 	</property>
 	<property>
@@ -34,7 +34,7 @@
 
 	<property>
 		<name>ranger.audit.solr.urls</name>
-		<value>https://{{ groups['ranger'][0] }}:{{ solr_port }}/solr/ranger_audits</value>
+		<value>https://{{ groups['solr'][0] }}:{{ solr_port }}/solr/ranger_audits</value>
 		<description/>
 	</property>
 	<property>
@@ -76,7 +76,7 @@
 
 	<property>
 		<name>ranger.service.host</name>
-		<value>{{ inventory_hostname }}</value>
+		<value>{{ groups['ranger'][0] }}</value>
 	</property>
 
 	<property>
@@ -90,7 +90,7 @@
 	</property>
 	<property>
 		<name>ranger.admin.kerberos.cookie.domain</name>
-		<value>{{ inventory_hostname }}</value>
+		<value>{{ groups['ranger'][0] }}</value>
 	</property>
 	<property>
 		<name>ranger.admin.kerberos.cookie.path</name>
@@ -98,7 +98,7 @@
 	</property>
 	<property>
 		<name>ranger.admin.kerberos.principal</name>
-		<value>ranger/{{ inventory_hostname }}@{{ kerberos_realm }}</value>
+		<value>ranger/{{ groups['ranger'][0] }}@{{ kerberos_realm }}</value>
 	</property>
 	<property>
 		<name>ranger.admin.kerberos.keytab</name>
@@ -106,7 +106,7 @@
 	</property>
 	<property>
 		<name>ranger.spnego.kerberos.principal</name>
-		<value>HTTP/{{ inventory_hostname }}@{{ kerberos_realm }}</value>
+		<value>HTTP/{{ groups['ranger'][0] }}@{{ kerberos_realm }}</value>
 	</property>
 	<property>
 		<name>ranger.spnego.kerberos.keytab</name>
@@ -114,7 +114,7 @@
 	</property>
 	<property>
 		<name>ranger.lookup.kerberos.principal</name>
-		<value>lookupranger/{{ inventory_hostname }}@{{ kerberos_realm }}</value>
+		<value>lookupranger/{{ groups['ranger'][0] }}@{{ kerberos_realm }}</value>
 	</property>
 	<property>
 		<name>ranger.lookup.kerberos.keytab</name>
