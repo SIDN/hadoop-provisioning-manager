@@ -24,7 +24,7 @@
       shell: >
           echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
           curl --negotiate -u : -H "Content-type: application/json"
-          -X GET https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/name/impala
+          -X GET https://{{ groups['ranger'][0] }}:{{ ranger_admin_port }}/service/public/v2/api/service/name/impala
       register: service_check  
       retries: 5
       delay: 30
@@ -41,7 +41,7 @@
           echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
           curl --negotiate -u : -H "Content-type: application/json"
           -d '{{ lookup('file','../roles/ranger/files/ranger_impala_service.json') }}'
-          --fail -X POST https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/
+          --fail -X POST https://{{ groups['ranger'][0] }}:{{ ranger_admin_port }}/service/public/v2/api/service/
       delegate_to: localhost
       connection: local
       when: service_check.stdout.find('Not found') != -1
@@ -52,7 +52,7 @@
       shell: >
           echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
           curl --negotiate -u : -H "Content-type: application/json"
-          -X GET https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/name/hdfs
+          -X GET https://{{ groups['ranger'][0] }}:{{ ranger_admin_port }}/service/public/v2/api/service/name/hdfs
       register: service_check  
       delegate_to: localhost
       connection: local
@@ -69,7 +69,7 @@
           echo "{{ kerberos_hadoop_admin_password }}" | kinit admin;
           curl --negotiate -u : -H "Content-type: application/json"
           -d '{{ lookup('template','../roles/ranger/templates/ranger_hdfs_service.json.j2') | to_json }}'
-          --fail -X POST https://{{ inventory_hostname }}:{{ ranger_admin_port }}/service/public/v2/api/service/
+          --fail -X POST https://{{ groups['ranger'][0] }}:{{ ranger_admin_port }}/service/public/v2/api/service/
       delegate_to: localhost
       connection: local
       when: service_check.stdout.find('Not found') != -1
