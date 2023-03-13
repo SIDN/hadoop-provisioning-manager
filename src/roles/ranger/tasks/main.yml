@@ -272,6 +272,8 @@
     - { name: 'install.properties.j2', dest: '{{ stack_root }}/apache-ranger-admin-latest/install.properties' }
   become: yes
 
+# do NOT run ./setup.sh only the scripts that create the db
+# the config files normally created by  ./setup.sh are copied by this Ansible script
 - name: Run Admin setup
   shell: >
     export JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))";
