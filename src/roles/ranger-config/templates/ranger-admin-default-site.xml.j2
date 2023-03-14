@@ -31,7 +31,6 @@
 		<value>yyyy-MM-dd</value>
 	</property>
 
-
 	<property>
 		<name>ranger.ajax.auth.required.code</name>
 		<value>401</value>
@@ -48,7 +47,6 @@
 		<name>ranger.ajax.auth.failure.page</name>
 		<value>/ajax_failure.jsp</value>
 	</property>
-
 
 	<property>
 		<name>ranger.users.roles.list</name>
@@ -89,7 +87,6 @@
 		<value>true</value>
 	</property>
 
-
 	<property>
 		<name>ranger.user.firstname.maxlength</name>
 		<value>16</value>
@@ -105,16 +102,10 @@
 		<value>false</value>
 	</property>
 
-
-
-
-
-
 	<property>
 		<name>ranger.rest.paths</name>
 		<value>org.apache.ranger.rest,xa.rest</value>
 	</property>
-
 
 	<property>
 		<name>ranger.password.hidden</name>
@@ -366,7 +357,7 @@
 
 	<property>
 		<name>ranger.credential.provider.path</name>
-		<value>/usr/local/hadoop/apache-ranger-admin-latest/ews/webapp/WEB-INF/classes/conf/.jceks/rangeradmin.jceks</value>
+		<value>{{ tls_etc_dir }}/ranger-keystore.jcek</value>
 		<description />
 	</property>
 
@@ -530,37 +521,6 @@
 		<name>ranger.db.ssl.certificateFile</name>
 		<value />
 	</property>
-	<property>
-		<name>ranger.truststore.file.type</name>
-		<value>jks</value>
-	</property>
-	<property>
-		<name>ranger.keystore.file.type</name>
-		<value>jks</value>
-	</property>
-	<property>
-		<name>ranger.keystore.file</name>
-		<value />
-	</property>
-	<property>
-		<name>ranger.keystore.alias</name>
-		<value>keyStoreAlias</value>
-	</property>
-	<property>
-		<name>ranger.keystore.password</name>
-		<value />
-	</property>
-	<property>
-		<name>ranger.truststore.file</name>
-		<value />
-	</property>
-	<property>
-		<name>ranger.truststore.alias</name>
-		<value>trustStoreAlias</value>
-	</property>
-	<property>
-		<name>ranger.truststore.password</name>
-		<value />
 	</property>
         <property>
                 <name>ranger.service.https.attrib.ssl.enabled.protocols</name>
