@@ -9,10 +9,6 @@ if [ "$?" -ne 0 ]; then
     exit 1
 fi
 
-if [ "$#" -lt 1 ]; then
-    show_usage exit 1
-fi
-
 COMP=$1
 
 echo "Components and/or data will be deleted on hosts"
@@ -23,6 +19,8 @@ then
     echo "Aborting..."
     exit 1
 fi
+
+echo "Destroy: $COMP"
 
 run_playbooks "destroy-$COMP.yml"
 
