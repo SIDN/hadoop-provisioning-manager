@@ -48,7 +48,7 @@ scrape_configs:
     scheme: http
     metrics_path: /
     static_configs: 
-      - targets: [{{ (groups['hdfs_primary_nn'] | union(groups['hdfs_secondary_nn'])) | product([ hadoop_prometheus_port.hdfs_namenode ]) | map('join', ':') | join(',') }}]
+      - targets: [{{ groups['hdfs_nn'] | product([ hadoop_prometheus_port.hdfs_namenode ]) | map('join', ':') | join(',') }}]
   
   - job_name: hdfs_datanode
     scrape_interval: 30s

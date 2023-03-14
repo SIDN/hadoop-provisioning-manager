@@ -1,4 +1,4 @@
-- hosts: hdfs_primary_nn
+- hosts: hdfs_nn[0]
   remote_user: hadoop-mgr
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"

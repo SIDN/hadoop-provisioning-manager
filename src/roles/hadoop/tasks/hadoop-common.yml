@@ -39,7 +39,7 @@
     content: "{{ prev_hadoop_version.stdout }}"
   become: yes
   when: reg_hadoop_dir.stat.exists and prev_hadoop_version.stdout and (prev_hadoop_version.stdout != version.hadoop)
-        and (('hdfs_primary_nn' in groups and inventory_hostname in groups['hdfs_primary_nn']) or ('hdfs_secondary_nn' in groups and inventory_hostname in groups['hdfs_secondary_nn']))
+        and ('hdfs_nn' in groups and inventory_hostname in groups['hdfs_nn'])
 
 - name: Install package dependencies (RHEL)
   ansible.builtin.package:

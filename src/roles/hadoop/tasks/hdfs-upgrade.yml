@@ -32,7 +32,7 @@
     dest: "{{ hadoop_backup_dir }}/hdfs-metadata-backup-{{ ansible_date_time.iso8601 }}.tar.gz"
   become: yes
   when: (file_layout_version != software_layout_version) 
-        and (inventory_hostname in groups['hdfs_primary_nn'])
+        and (inventory_hostname == groups['hdfs_nn'][0])
   
 # if the layout versions have not changed then metadata upgrade is not required.
 # delete the UPGRADE file and then the namenode will be started normally by start_hdfs_service.sh

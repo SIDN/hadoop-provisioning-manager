@@ -26,25 +26,25 @@ hadoop-dev4.example.nl
 hadoop-dev5.example.nl
 hadoop-dev6.example.nl
 
-# The primary hdfs namenode is deployed on 
-# host in group: hdfs_primary_nn
+# The hdfs namenode is deployed on 
+# host in group: hdfs_nn
 # the hosts in this group may also be added to group: hadoop then they 
 # also function as a datanode
 # The ZKFC daemon (failover function) is also deployed to this node
-# only 1 host allowed and this host may also be in 
-# group: hadoop to let it also function as a datanode
-[hdfs_primary_nn]
+# the first node will be primary nn, the others are started a standby nn.
+[hdfs_nn]
 hadoop-dev4.example.nl
+hadoop-dev5.example.nl
 
-# The secondary hdfs namenode is deployed on 
-# host in group: hdfs_secondary_nn
+# The standby hdfs namenode is deployed on 
+# host in group: hdfs_standby_nn
 # the hosts in this group may also be added to group: hadoop then they 
 # also function as a datanode
 # The ZKFC daemon (failover function) is also deployed to this node
 # only 1 host allowed and this host may also be in 
 # group: hadoop to let it also function as a datanode
-[hdfs_secondary_nn]
-hadoop-dev5.example.nl
+#[hdfs_standby_nn]
+#hadoop-dev5.example.nl
 
 # HDFS journalnode function is deployed on hosts
 # in group: hdfs_journalnode

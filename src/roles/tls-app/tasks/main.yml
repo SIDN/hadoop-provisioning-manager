@@ -19,8 +19,7 @@
   when: (inventory_hostname in groups['impala']) 
     or (inventory_hostname in groups['impala_catalog']) 
     or (inventory_hostname in groups['hadoop']) 
-    or (inventory_hostname in groups['hdfs_primary_nn']) 
-    or (inventory_hostname in groups['hdfs_secondary_nn']) 
+    or (inventory_hostname in groups['hdfs_nn']) 
 
 - name: Install Monitor TLS
   import_tasks: monitor.yml

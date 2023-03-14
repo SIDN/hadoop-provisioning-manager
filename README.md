@@ -116,8 +116,7 @@ Available roles:
 | console                  | Management webinterface | 
 | zookeeper                  | Zookeeper instance | 
 | Hadoop (data node, impalad, yarn node manager)                  | data node | 
-| hdfs_primary_nn                  | HDFS primary name node | 
-| hdfs_secondary_nn                  | HDFS secondary name node | 
+| hdfs_nn                  | HDFS primary name node and standby name node(s) | 
 | hdfs_journalnode                  | HDFS journaling node | 
 | hdfs_httpfs                  | HDFS Httpfs node | 
 | yarn_resource_mgr                  | Yarn Resource manager | 
@@ -139,7 +138,7 @@ Available roles:
 
 
 In general it is best to map a role to hosts best suited for this specific role.
-A data node host will have lots of disk storage and CPU-cores, while a controller node will have limited disk storage and CPU-cores. Deploy Hadoop (HDFS datanode, Yarn nodemanager) on a data node and the Hadoop management processes such as hdfs_primary_nn
+A data node host will have lots of disk storage and CPU-cores, while a controller node will have limited disk storage and CPU-cores. Deploy Hadoop (HDFS datanode, Yarn node manager) on a data node and the Hadoop management processes such as hdfs_nn
 on a controller node. This to ensure that heavy data processing does not negatively affect the name node process.
 
 A logical distribution of cluster roles across cluster host types, could look something like this.
@@ -147,7 +146,7 @@ A logical distribution of cluster roles across cluster host types, could look so
 | Host type                     | Roles           | 
 | ---------------------------- |-----------------------| 
 | Management node               | manager, console, kerberos_kdc, ranger, solr, database, monitor | 
-| controller node               | zookeeper (3x), hdfs_primary_nn, hdfs_secondary_nn, hdfs_journalnode, hdfs_httpfs, yarn_resource_mgr, yarn_timelineserver, spark_history, spark_thrift, hive (metastore), impala_statestore, impala_catalog, impala_ha_proxy, livy | 
+| controller node               | zookeeper (3x), hdfs_nn, hdfs_journalnode, hdfs_httpfs, yarn_resource_mgr, yarn_timelineserver, spark_history, spark_thrift, hive (metastore), impala_statestore, impala_catalog, impala_ha_proxy, livy | 
 | data node                  | hadoop, impala | 
 | gateway node                  | gateway, hue, superset, jupyterhub | 
 

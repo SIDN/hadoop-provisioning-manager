@@ -3,11 +3,8 @@
 
 # HDFS 
 spark.hadoop.dfs.nameservices {{ hadoop_fs_nameservices }}
-spark.hadoop.dfs.ha.namenodes.{{ hadoop_fs_nameservices }} {{ groups['hdfs_primary_nn'] | union(groups['hdfs_secondary_nn']) | join(',') }}
-{% for host in groups['hdfs_primary_nn'] %}
-spark.hadoop.dfs.namenode.rpc-address.{{ host }} {{ host }}:8020
-{% endfor %}
-{% for host in groups['hdfs_secondary_nn'] %}
+spark.hadoop.dfs.ha.namenodes.{{ hadoop_fs_nameservices }} {{ groups['hdfs_nn'] | join(',') }}
+{% for host in groups['hdfs_nn'] %}
 spark.hadoop.dfs.namenode.rpc-address.{{ host }} {{ host }}:8020
 {% endfor %}
 spark.hadoop.dfs.client.failover.proxy.provider.{{ hadoop_fs_nameservices }} org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider

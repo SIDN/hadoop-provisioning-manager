@@ -20,9 +20,9 @@ Pushed to: {{  inventory_hostname }}
   </property>
   <property>
     <name>dfs.ha.namenodes.{{ hadoop_fs_nameservices }}</name>
-    <value>{{ groups['hdfs_primary_nn'] | union(groups['hdfs_secondary_nn']) | join(',') }}</value>
+    <value>{{ groups['hdfs_nn'] | join(',') }}</value>
   </property>
-  {% for host in groups['hdfs_primary_nn'] | union(groups['hdfs_secondary_nn']) %}
+  {% for host in groups['hdfs_nn'] %}
     <property>
       <name>dfs.namenode.rpc-address.{{ hadoop_fs_nameservices }}.{{ host }}</name>
       <value>{{ host }}:8020</value>

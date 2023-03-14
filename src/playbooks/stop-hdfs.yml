@@ -1,5 +1,5 @@
 # Stop failover controllers
-- hosts: hdfs_primary_nn:hdfs_secondary_nn
+- hosts: hdfs_nn
   remote_user: hadoop-mgr
   become: yes
   vars:
@@ -9,7 +9,7 @@
       include_tasks: shutdown/tasks/generic-service.yml
 
 # stop name nodes      
-- hosts: hdfs_primary_nn:hdfs_secondary_nn
+- hosts: hdfs_nn
   remote_user: hadoop-mgr
   become: yes
   vars:

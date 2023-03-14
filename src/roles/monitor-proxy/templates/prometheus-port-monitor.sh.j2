@@ -48,7 +48,7 @@ stat_val=$(netstat -na | grep LIST | grep "tcp .*:10200 " | wc -l)
 echo "cluster_service_port_up{name=\"yarn_timelineserver\", port=\"10200\"} $stat_val" >> $TEMP_FILE
 {% endif %}
 
-{% if (inventory_hostname in groups['hdfs_primary_nn']) or (inventory_hostname in groups['hdfs_secondary_nn']) %}
+{% if inventory_hostname in groups['hdfs_nn'] %}
 # namenode fs.namenode.rpc-address
 stat_val=$(netstat -na | grep LIST | grep "tcp .*:8020 " | wc -l)
 echo "cluster_service_port_up{name=\"hdfs_namenode\", port=\"8020\"} $stat_val" >> $TEMP_FILE

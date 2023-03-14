@@ -7,7 +7,7 @@
       {{ stack_root }}/hadoop-latest/bin/hdfs namenode -format -force {{ hadoop_fs_nameservices }}
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes
-  when: inventory_hostname in groups['hdfs_primary_nn']
+  when: inventory_hostname == groups['hdfs_nn'][0] 
 
 - name: (New HDFS cluster) Initializing HA state in ZooKeeper
   shell: >
@@ -15,23 +15,23 @@
       {{ stack_root }}/hadoop-latest/bin/hdfs zkfc -formatZK -force
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes
-  when: inventory_hostname in groups['hdfs_primary_nn']
+  when: inventory_hostname == groups['hdfs_nn'][0] 
 
 - name: (New HDFS cluster) Start primary HDFS Namenode
   ansible.builtin.systemd:
       state: started
       daemon_reload: yes
       name: hdfs_namenode
-  when: inventory_hostname in groups['hdfs_primary_nn']
+  when: inventory_hostname == groups['hdfs_nn'][0] 
   
-# SNN steps below only
+# Standby NN steps below only
 - name: (New HDFS cluster) Bootstrap Standby namenode
   shell: >
       . {{ hadoop_etc_dir }}/hadoop-env.sh;
       {{ stack_root }}/hadoop-latest/bin/hdfs namenode -bootstrapStandby -force -nonInteractive
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes
-  when: inventory_hostname in groups['hdfs_secondary_nn']
+  when: not (inventory_hostname == groups['hdfs_nn'][0])
 
 # create dirs, wait until snn has started
 - name: (New HDFS cluster) Create HDFS root directories
@@ -39,7 +39,7 @@
       {{ stack_root }}/hadoop-latest/bin/init_hdfs_service.sh
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes
-  when: inventory_hostname in groups['hdfs_secondary_nn']
+  when: not (inventory_hostname == groups['hdfs_nn'][0])
   
 # secondary NN can be started normal after NN -format and SNN -bootstrapStandby
 # has been completed
@@ -48,4 +48,4 @@
       state: started
       daemon_reload: yes
       name: hdfs_namenode
-  when: inventory_hostname in groups['hdfs_secondary_nn']
+  when: not (inventory_hostname == groups['hdfs_nn'][0])

@@ -16,7 +16,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for host in groups['hdfs_primary_nn'] | union(groups['hdfs_secondary_nn']) %}
+              {% for host in groups['hdfs_nn'] %}
               <tr scope="row">
                 <td>Name Node</td>
                 <td><a href="https://{{ host }}:50071" target="_blank">{{ host }}</a></td>

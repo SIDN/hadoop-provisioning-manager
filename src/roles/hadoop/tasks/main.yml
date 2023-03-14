@@ -25,8 +25,7 @@
 - name: Include Ranger Plugin installation
   include_tasks: tasks/ranger-hdfs-plugin.yml
   when: > 
-    (('hdfs_primary_nn' in groups and inventory_hostname in groups['hdfs_primary_nn']) 
-    or ('hdfs_secondary_nn' in groups and inventory_hostname in groups['hdfs_secondary_nn']))
+    'hdfs_nn' in groups and inventory_hostname in groups['hdfs_nn']
 #and not (inventory_hostname in groups['gateway']) 
 #and not (inventory_hostname in groups['ranger'])
 
