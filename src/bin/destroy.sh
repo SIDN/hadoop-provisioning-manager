@@ -9,7 +9,7 @@ if [ "$?" -ne 0 ]; then
     exit 1
 fi
 
-echo "All comoponents and data will be deleted on hosts"
+echo "Components and/or data will be deleted on hosts"
 read -p "Are you sure? (y/n)" -n 1 -r
 echo    # (optional) move to a new line
 if [[ ! $REPLY =~ ^[Yy]$ ]]
@@ -18,6 +18,10 @@ then
     exit 1
 fi
 
-echo "Clean hosts"
+if [ "$#" -lt 1 ]; then
+    show_usage exit 1
+fi
 
-run_playbook "destroy-all.yml"
+run_playbooks "destroy-$@.yml"
+
+#run_playbook "destroy-all.yml"
