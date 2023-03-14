@@ -1,4 +1,4 @@
-- name: Start service
+- name: "Start service {{ service_name }}"
   ansible.builtin.systemd:
       state: started
       daemon_reload: yes

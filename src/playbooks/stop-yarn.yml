@@ -4,7 +4,7 @@
   vars:
     service_name: yarn_resourcemanager
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml      
   
 - hosts: yarn_timelineserver
@@ -13,7 +13,7 @@
   vars:
     service_name: yarn_timelineserver
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml  
       
 - hosts: hadoop
@@ -22,5 +22,5 @@
   vars:
     service_name: yarn_nodemanager
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml     

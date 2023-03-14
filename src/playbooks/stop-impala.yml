@@ -4,7 +4,7 @@
   vars:
     service_name: impala_statestored
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml
       
 - hosts: impala_catalog
@@ -13,7 +13,7 @@
   vars:
     service_name: impala_catalogd
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml
       
 - hosts: impala
@@ -22,7 +22,7 @@
   vars:
     service_name: impala_impalad
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml
 
 

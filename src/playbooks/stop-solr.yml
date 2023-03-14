@@ -7,7 +7,7 @@
   vars:
     service_name: solr
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml           
 
  

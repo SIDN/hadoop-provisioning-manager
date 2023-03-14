@@ -4,7 +4,7 @@
   vars:
     service_name: impala_statestored
   tasks:
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml
       
 - hosts: impala_catalog
@@ -13,7 +13,7 @@
   vars:
     service_name: impala_catalogd
   tasks:
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml
       
 - hosts: impala
@@ -22,7 +22,7 @@
   vars:
     service_name: impala_impalad
   tasks:
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml
     
 - hosts: impala

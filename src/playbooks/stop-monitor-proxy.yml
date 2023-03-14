@@ -2,7 +2,7 @@
   remote_user: hadoop-mgr
   become: yes
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml
       loop: 
         - impala_prometheus_proxy_impalad
@@ -14,7 +14,7 @@
   remote_user: hadoop-mgr
   become: yes
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml
       loop: 
         - impala_prometheus_proxy_catalogd
@@ -26,7 +26,7 @@
   remote_user: hadoop-mgr
   become: yes
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml
       loop: 
         - impala_prometheus_proxy_statestored
@@ -38,7 +38,7 @@
   remote_user: hadoop-mgr
   become: yes
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml
       loop: 
         - prometheus-node-exporter

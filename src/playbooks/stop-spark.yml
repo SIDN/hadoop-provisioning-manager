@@ -3,7 +3,7 @@
   become: yes
   
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       vars:
         service_name: spark_historyserver
       include_tasks: shutdown/tasks/generic-service.yml
@@ -12,7 +12,7 @@
   remote_user: hadoop-mgr
   become: yes
   tasks:    
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       vars:
         service_name: spark_thrift
       include_tasks: shutdown/tasks/generic-service.yml    

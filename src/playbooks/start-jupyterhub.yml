@@ -4,5 +4,5 @@
   vars:
     service_name: jupyterhub
   tasks:
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml

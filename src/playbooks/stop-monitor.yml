@@ -2,7 +2,7 @@
   remote_user: hadoop-mgr
   become: yes
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       include_tasks: shutdown/tasks/generic-service.yml    
       loop: 
         - prometheus

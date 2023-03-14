@@ -2,7 +2,7 @@
   remote_user: hadoop-mgr
   become: yes
   tasks:
-    - name: "Stop {{ service_name }}"
+    - name: "Stop service(s)"
       vars:
         service_name: hive_metastore
       include_tasks: shutdown/tasks/generic-service.yml

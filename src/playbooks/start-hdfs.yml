@@ -4,7 +4,7 @@
   vars:
     service_name: hdfs_journalnode
   tasks:  
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml
 
 # start primary hdfs namenode before secondary      
@@ -39,7 +39,7 @@
   vars:
     service_name: hdfs_datanode
   tasks:
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml
 
 - hosts: hdfs_httpfs
@@ -48,7 +48,7 @@
   vars:
     service_name: hdfs_httpfs
   tasks:
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml      
 
 # set datanode cpu resource limits

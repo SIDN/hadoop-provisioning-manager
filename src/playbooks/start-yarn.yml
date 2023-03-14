@@ -12,7 +12,7 @@
         {{ stack_root }}/hadoop-latest/bin/create-hdfs-yarn-dir.sh
       become: yes
 
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml           
 
 - hosts: yarn_resource_mgr
@@ -21,7 +21,7 @@
   vars:
     service_name: yarn_resourcemanager
   tasks:
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml      
             
 - hosts: hadoop
@@ -45,5 +45,5 @@
         - "/sys/fs/cgroup/memory/hadoop-yarn"
       become: yes
 
-    - name: "Start {{ service_name }}"
+    - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml     
