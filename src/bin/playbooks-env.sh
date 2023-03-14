@@ -7,7 +7,6 @@ export PB_MANAGER=manager.yml
 export PB_KRB_KDC=krb-kdc.yml
 export PB_CONSOLE=console.yml
 export PB_ZOOKEEPER=zookeeper.yml
-export PB_HADOOP=hadoop.yml
 export PB_HDFS=hdfs.yml
 export PB_YARN=yarn.yml
 export PB_SPARK=spark.yml
@@ -134,9 +133,6 @@ function run_playbooks()
         ;;
         zookeeper)
           run_playbook "$PB_PREFIX-$PB_ZOOKEEPER"
-        ;;
-        hadoop)
-          run_playbook "$PB_PREFIX-$PB_HADOOP"
         ;;
         hdfs)
           run_playbook "$PB_PREFIX-$PB_HDFS"
