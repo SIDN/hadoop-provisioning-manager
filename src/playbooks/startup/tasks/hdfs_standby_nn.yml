@@ -3,6 +3,18 @@
 # 2 Initialize and start a new hdfs cluster    
 # 3 Upgrade and start an existing cluster
 
+# The NEW file is generated during component deploy
+- name: (New HDFS cluster) Check if HDFS needs to be initialized
+  stat:
+    path: "{{ hadoop_etc_dir }}/NEW"
+  register: reg_new
+  
+# The UPGRADE file is generated during component deploy
+- name: (New HDFS cluster) Check if HDFS needs to be upgraded
+  stat:
+    path: "{{ hadoop_etc_dir }}/UPGRADE"
+  register: reg_upgrade
+  
 # Bootstrap Standby namenode for new HDFS fs
 - name: Bootstrap Standby namenode
   shell: >
@@ -26,4 +38,12 @@
       daemon_reload: yes
       name: hdfs_zkfc
 
-
+# Cleanup
+# Remove UPGRADE/NEW files after all NN have started
+- name: Remove HDFS UPGRADE/NEW file (if present)
+  ansible.builtin.file:
+    path: "{{ hadoop_etc_dir }}/{{ item }}"
+    state: absent
+  loop:
+    - UPGRADE
+    - NEW
