@@ -36,6 +36,9 @@
 # create dirs, wait until Standby has started
 - hosts: hdfs_nn[0]
   remote_user: hadoop-mgr
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
   become: yes
   tasks:  
     - name: (New HDFS cluster) Create HDFS root directories
