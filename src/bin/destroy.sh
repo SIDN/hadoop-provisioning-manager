@@ -22,6 +22,6 @@ fi
 
 echo "Destroy: $COMP"
 
-run_playbooks "destroy-$COMP.yml"
+run_playbook "destroy-$COMP.yml"
 
 #run_playbook "destroy-all.yml"
