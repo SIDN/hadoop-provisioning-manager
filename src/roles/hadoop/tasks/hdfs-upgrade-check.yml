@@ -46,10 +46,10 @@
 # start both primary name node and secondary name node 
 # if upgrade was required due to metadata version change then:
 # the systemd service will detect any UPGRADE file and start HDFS primary name node accordingly.
-- name: (Update HDFS cluster) Start name node
-  ansible.builtin.systemd:
-      state: started
-      daemon_reload: yes
-      name: hdfs_namenode
+# - name: (Update HDFS cluster) Start name node
+#   ansible.builtin.systemd:
+#       state: started
+#       daemon_reload: yes
+#       name: hdfs_namenode
 
  

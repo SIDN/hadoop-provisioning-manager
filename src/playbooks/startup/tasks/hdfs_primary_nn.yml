@@ -1,4 +1,4 @@
-# Start name nodes, there are multiple start modes available here:
+# Start primary name node, there are multiple start modes available here:
 # 1 Start unchanged cluster normal
 # 2 Initialize and start a new hdfs cluster    
 # 3 Upgrade and start an existing cluster
@@ -16,8 +16,12 @@
   register: reg_upgrade
 
 # initialize new HDFS fs
-- name: Include Hadoop Initialization playbook
-  include_tasks: ../roles/hadoop/tasks/hdfs-initialize.yml
+- name: (New HDFS cluster) Format namenode
+  shell: >
+        . {{ hadoop_etc_dir }}/hadoop-env.sh;
+        {{ stack_root }}/hadoop-latest/bin/hdfs namenode -format -force {{ hadoop_fs_nameservices }}
+  become_user: "{{ hadoop_os_user.hdfs }}"
+  become: yes
   when: reg_new.stat.exists and not reg_upgrade.stat.exists
   
 # check if the znode for hdfs HA exists in Zookeeper, must be at path: /hadoop-ha
@@ -30,12 +34,10 @@
   register: zookeeper_ha_state_check
   ignore_errors: yes
   delegate_to: "{{ groups['zookeeper'][0] }}"
-  when: inventory_hostname == groups['hdfs_nn'][0] 
   
 - name: Show HA state in ZooKeeper
   debug: 
     msg: "HA state in ZooKeeper check {{ zookeeper_ha_state_check.stderr.find('Not found') == -1 }}"
-  when: inventory_hostname == groups['hdfs_nn'][0]
   
 # when reinstalling ZooKeeper there might not be ha state for an already
 # installed hdfs component. need to reinitialize ZooKeeper
@@ -45,33 +47,23 @@
       {{ stack_root }}/hadoop-latest/bin/hdfs zkfc -formatZK -nonInteractive
   become_user: "{{ hadoop_os_user.hdfs }}"
   become: yes
-  when: (inventory_hostname == groups['hdfs_nn'][0])
-        and (zookeeper_ha_state_check.stderr.find('Node does not exist') >= 0)
+  when: zookeeper_ha_state_check.stderr.find('Node does not exist') >= 0
   
-# Upgrade existing HDFS fs
-- name: Include Hadoop upgrade playbook
-  include_tasks: ../roles/hadoop/tasks/hdfs-upgrade.yml
+# Create upgrade file on name node for existing HDFS
+- name: Include Hadoop upgrade check playbook
+  include_tasks: ../roles/hadoop/tasks/hdfs-upgrade-check.yml
   when: reg_upgrade.stat.exists and not reg_new.stat.exists
   
 # if not Initializing new cluster or upgrading an existing cluster 
 # then do a normal start of the existing cluster.
-- name: (Existing HDFS cluster) Start name node
+- name: Start name node
   ansible.builtin.systemd:
       state: started
       daemon_reload: yes
       name: hdfs_namenode
-  when: not reg_new.stat.exists and not reg_upgrade.stat.exists
        
-# - name: (Existing HDFS cluster) Start Secondary name node
-#   ansible.builtin.systemd:
-#       state: started
-#       daemon_reload: yes
-#       name: hdfs_secondarynamenode
-#   when: ('hdfs_secondary_nn' in group_names)
-#        and (not reg_new.stat.exists and not reg_upgrade.stat.exists)
-
 # start failover Controller on name node
-- name: (All HDFS cluster) Start ZK Failover Controller daemon
+- name: Start ZK Failover Controller daemon
   ansible.builtin.systemd:
       state: started
       daemon_reload: yes
@@ -79,7 +71,7 @@
 
 # Cleanup
 # Remove UPGRADE/NEW files after all NN have started
-- name: (All HDFS cluster) Remove HDFS UPGRADE/NEW file (if present)
+- name: Remove HDFS UPGRADE/NEW file (if present)
   ansible.builtin.file:
     path: "{{ hadoop_etc_dir }}/{{ item }}"
     state: absent
