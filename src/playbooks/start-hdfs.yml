@@ -18,7 +18,7 @@
   become: yes
   tasks:
     - name: "Start primary name node"
-      include_tasks: startup/tasks/hdfs_nn.yml
+      include_tasks: startup/tasks/hdfs_primary_nn.yml
 
 # start standby nodes
 - hosts: hdfs_nn[1:]
@@ -31,7 +31,7 @@
   become: yes
   tasks:
     - name: "Start standby name nodes"
-      include_tasks: startup/tasks/hdfs_nn.yml
+      include_tasks: startup/tasks/hdfs_standby_nn.yml
       
 # create dirs, wait until Standby has started
 - hosts: hdfs_nn[0]
