@@ -14,7 +14,7 @@
 
 - name: Show check result
   debug:
-    msg: "result for 0rollingUpgrade query: {{ reg_upgrade_status.stdout }}"
+    msg: "result for rollingUpgrade query: {{ reg_upgrade_status.stdout }}"
     
 - name: Check if HDFS upgrade can be finalized
   fail:

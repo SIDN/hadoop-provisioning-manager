@@ -58,14 +58,6 @@
   become: yes  
   when: not (inventory_hostname in groups['gateway']) 
   
-# - name: Enable services
-#   ansible.builtin.service:
-#     name: "{{ item }}"
-#     enabled: yes
-#   loop:
-#     - ranger_admin
-#     - ranger_usersync    
-  
 # The task "Admin setup" creates the database schema and requires
 # the psql jdbc driver to be present
 # path configured in ranger install.properties file.
@@ -186,15 +178,6 @@
       dest: "{{ stack_root }}/apache-ranger-admin-latest/ews/webapp/WEB-INF/lib/postgresql.jar"
       state: link
   become: yes
-#  when: ansible_distribution == "RedHat"
-  
-# - name: Create symlink to Postgresql jar (Ubuntu)
-#   file:
-#       src: "/usr/share/java/postgresql.jar"
-#       dest: "{{ stack_root }}/apache-ranger-admin-latest/ews/webapp/WEB-INF/lib/postgresql.jar"
-#       state: link
-#   become: yes
-#   when: ansible_distribution == "Ubuntu"
     
 - name: Create db user
   postgresql_user:

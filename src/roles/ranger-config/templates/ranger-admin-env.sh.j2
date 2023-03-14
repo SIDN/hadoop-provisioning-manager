@@ -6,8 +6,6 @@
 # mitigation for: CVE-2021-44228 (Log4jShell)
 # see: https://logging.apache.org/log4j/2.x/security.html
 
-#-Djava.security.auth.login.config={{ ranger_etc_dir }}/ranger-solr-jaas.conf
-
 {% if ansible_distribution == "RedHat" %}
 export PATH="/usr/lib/jvm/java/bin:$PATH"
 {% endif %}
