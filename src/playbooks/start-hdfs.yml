@@ -1,3 +1,15 @@
+# The NEW file is generated during component deploy
+- name: (New HDFS cluster) Check if HDFS needs to be initialized
+  stat:
+    path: "{{ hadoop_etc_dir }}/NEW"
+  register: reg_new
+  
+# The UPGRADE file is generated during component deploy
+- name: (New HDFS cluster) Check if HDFS needs to be upgraded
+  stat:
+    path: "{{ hadoop_etc_dir }}/UPGRADE"
+  register: reg_upgrade
+
 - hosts: hdfs_journalnode
   remote_user: hadoop-mgr
   become: yes
@@ -33,7 +45,7 @@
     - name: "Start standby name nodes"
       include_tasks: startup/tasks/hdfs_standby_nn.yml
       
-# create dirs, wait until Standby has started
+# create dirs, wait until Standby node(s) started
 - hosts: hdfs_nn[0]
   remote_user: hadoop-mgr
   vars_files:
@@ -45,6 +57,7 @@
       shell: >
           {{ stack_root }}/hadoop-latest/bin/init_hdfs_service.sh
       become_user: "{{ hadoop_os_user.hdfs }}"
+      when: reg_new.stat.exists
       
 # start data nodes
 - hosts: hadoop
@@ -77,3 +90,13 @@
       shell: >
           systemctl set-property hdfs_datanode.service CPUShares={{ hadoop_cgroups.cpu_shares.hdfs_datanode }}
       when: ('hadoop' in groups and inventory_hostname in groups['hadoop'])
+
+# Cleanup
+# Remove UPGRADE/NEW files after all NN have started
+- name: Remove HDFS UPGRADE/NEW file (if present)
+  ansible.builtin.file:
+    path: "{{ hadoop_etc_dir }}/{{ item }}"
+    state: absent
+  loop:
+    - UPGRADE
+    - NEW
