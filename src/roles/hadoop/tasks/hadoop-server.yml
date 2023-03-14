@@ -130,7 +130,7 @@
     - { name: 'datanode', env: 'hadoop-env.sh', group_name: 'hadoop' }
     - { name: 'namenode', env: 'hadoop-env.sh', group_name: 'hdfs_primary_nn' }
     - { name: 'zkfc', env: 'hadoop-env.sh', group_name: 'hdfs_primary_nn' }
-    - { name: 'secondarynamenode', env: 'hadoop-env.sh', group_name: 'hdfs_secondary_nn' }
+    - { name: 'namenode', env: 'hadoop-env.sh', group_name: 'hdfs_secondary_nn' }
     - { name: 'zkfc', env: 'hadoop-env.sh', group_name: 'hdfs_secondary_nn' }
     - { name: 'journalnode', env: 'hadoop-env.sh', group_name: 'hdfs_journalnode' }
     - { name: 'httpfs', env: 'httpfs-env.sh', group_name: 'hdfs_httpfs' }

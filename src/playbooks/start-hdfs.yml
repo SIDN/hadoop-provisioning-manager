@@ -30,7 +30,7 @@
     - "{{ prov_cfg_dir }}/vars/zookeeper_vars.yml"
   become: yes
   tasks:
-    - name: "Start Secondary namenode"
+    - name: "Start Standby namenode"
       include_tasks: startup/tasks/hdfs_nn.yml
       
 - hosts: hadoop

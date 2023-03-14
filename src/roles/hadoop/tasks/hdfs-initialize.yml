@@ -25,7 +25,7 @@
   when: inventory_hostname in groups['hdfs_primary_nn']
   
 # SNN steps below only
-- name: (New HDFS cluster) Bootstrap secondary namenode
+- name: (New HDFS cluster) Bootstrap Standby namenode
   shell: >
       . {{ hadoop_etc_dir }}/hadoop-env.sh;
       {{ stack_root }}/hadoop-latest/bin/hdfs namenode -bootstrapStandby -force -nonInteractive
@@ -43,9 +43,9 @@
   
 # secondary NN can be started normal after NN -format and SNN -bootstrapStandby
 # has been completed
-- name: (New HDFS cluster) Start secondary name node
+- name: (New HDFS cluster) Start Standby name node
   ansible.builtin.systemd:
       state: started
       daemon_reload: yes
-      name: hdfs_secondarynamenode
+      name: hdfs_namenode
   when: inventory_hostname in groups['hdfs_secondary_nn']
