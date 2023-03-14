@@ -28,14 +28,14 @@
     path: "{{ hadoop_dfs_namenode_name_dir[0] }}/current/VERSION"
   register: hdfs_metadata
   become: yes
-  when: 'hdfs_nn' in groups and (inventory_hostname in groups['hdfs_nn']
+  when: ('hdfs_nn' in groups) and (inventory_hostname in groups['hdfs_nn']"
 
 - name: Create NEW file, no HDFS metadata found
   copy:
     dest: "{{ hadoop_etc_dir }}/NEW"
     content: "NEW"
   become: yes
-  when: ('hdfs_nn' in groups and (inventory_hostname in groups['hdfs_nn'])
+  when: ('hdfs_nn' in groups) and (inventory_hostname in groups['hdfs_nn'])
         and not hdfs_metadata.stat.exists
   
 # only on data nodes (not name nodes)
@@ -48,7 +48,7 @@
   loop: "{{ hadoop_dfs_datanode_data_dir }}"
   become: yes
   when: >
-    ('hadoop' in groups and inventory_hostname in groups['hadoop']) and not (inventory_hostname in groups['gateway']) 
+    ('hadoop' in groups) and (inventory_hostname in groups['hadoop']) and not (inventory_hostname in groups['gateway']) 
 
 # only on name nodes (this can also be a data nodes, if host is in both groups)
 - name: Create hadoop namenode metadata directories
@@ -60,7 +60,7 @@
   loop: "{{ hadoop_dfs_namenode_name_dir }}"
   become: yes
   when: >
-    ('hdfs_nn' in groups and (inventory_hostname in groups['hdfs_nn'])
+    ('hdfs_nn' in groups) and (inventory_hostname in groups['hdfs_nn'])
     and not (inventory_hostname in groups['gateway'])  
 
 - name: Create hadoop namenode checkpoint directories
@@ -72,7 +72,7 @@
   loop: "{{ hadoop_dfs_namenode_checkpoint_dir }}"
   become: yes
   when: >
-    ('hdfs_nn' in groups and (inventory_hostname in groups['hdfs_nn'])
+    ('hdfs_nn' in groups) and (inventory_hostname in groups['hdfs_nn'])
     and not (inventory_hostname in groups['gateway'])      
       
 - name: Check if {{ cache_root }}/http_secret exists
