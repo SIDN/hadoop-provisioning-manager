@@ -224,6 +224,14 @@
       force: yes
   become: yes
   
+- name: Create symlink for admin logs directory
+  file:
+      src: '{{ ranger_log_dir }}'
+      dest: '{{ stack_root }}/apache-ranger-admin-latest/ews/logs'
+      state: link
+      force: yes
+  become: yes
+  
 # Different guava jar is required by ranger
 - name: Check if Guava jar is already on manager
   stat:
@@ -260,7 +268,7 @@
       state: link
       force: yes
   become: yes
-  
+    
 - name: Create configuration files
   ansible.builtin.template:
     src: "../templates/{{ item.name }}"
