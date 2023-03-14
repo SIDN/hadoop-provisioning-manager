@@ -8,7 +8,7 @@
       include_tasks: startup/tasks/generic-service.yml
 
 # start primary hdfs namenode before standby      
-- hosts: hdfs_nn
+- hosts: hdfs_nn[0]
   remote_user: hadoop-mgr
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
@@ -17,7 +17,20 @@
     - "{{ prov_cfg_dir }}/vars/zookeeper_vars.yml"
   become: yes
   tasks:
-    - name: "Start Primary namenode"
+    - name: "Start primary name node"
+      include_tasks: startup/tasks/hdfs_nn.yml
+
+# start standby nodes
+- hosts: hdfs_nn[1:]
+  remote_user: hadoop-mgr
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/hadoop_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/zookeeper_vars.yml"
+  become: yes
+  tasks:
+    - name: "Start standby name nodes"
       include_tasks: startup/tasks/hdfs_nn.yml
       
 # # secondary namenode       
