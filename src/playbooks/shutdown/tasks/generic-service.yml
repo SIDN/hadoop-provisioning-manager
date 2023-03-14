@@ -1,4 +1,4 @@
-- name: Stop service
+- name: "Stop service {{ service_name }}"
   ansible.builtin.systemd:
       state: stopped
       name: "{{ service_name }}"
