@@ -39,7 +39,7 @@
       name: hdfs_zkfc
 
 # Cleanup
-# Remove UPGRADE/NEW files after all NN have started
+# Remove UPGRADE/NEW files after NN started
 - name: Remove HDFS UPGRADE/NEW file (if present)
   ansible.builtin.file:
     path: "{{ hadoop_etc_dir }}/{{ item }}"

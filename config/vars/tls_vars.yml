@@ -2,20 +2,24 @@
 tls_etc_dir: "{{ config_root }}/tls"
 
 # location of pem file with cert chain and file with key
-# this is location on the manager node (where ansible playbook are executed)
+# NOTE: this is location on the manager node (where ansible playbooks are executed)
 tls_cert:
   # pem file with cert and all required intermediate certs
-  crt: ~/tls/star.sidnlabs.nl.chain.pem 
+  crt: ~/tls/star.example.nl.chain.pem 
   # public key crt only
-  crt_only: ~/tls/star.sidnlabs.nl.crt 
+  crt_only: ~/tls/star.example.nl.crt 
   # key file also in pem format
-  key: ~/tls/star.sidnlabs.nl.key
+  key: ~/tls/star.example.nl.key
 
 # Password for the truststore (tls_remote_truststore) that will be created on the
 # nodes and is used by multiple services
+# edit the password in the vault file, not here
 tls_remote_truststore_password: "{{ vault_tls_remote_truststore_password }}"
 
+#
 # DO NOT NEED TO CHANGE ANYTHING BELOW HERE
+#
+
 
 # Java truststore containing all certs and the private key
 # NO NEED TO CHANGE THIS.

@@ -1,3 +1,7 @@
+#
+# Create or update Hive metastore db schema:
+# uese: https://cwiki.apache.org/confluence/plugins/servlet/mobile?contentId=27362069#HiveSchemaTool-TheHiveSchemaTool
+
 - name: Install package dependencies
   ansible.builtin.package:
     name:
@@ -92,6 +96,7 @@
   ansible.builtin.debug:
     msg: "Current metastore version: {{ metastore_version.query_result[0]['SCHEMA_VERSION'] }}"
 
+# Cloudera Hive 2.1.1 needs to have modified pgsql upgrade scripts otherwise upgrade will fail.
 - name: copy fixed upgrade files for hive 2.1.1
   ansible.builtin.copy:
     src: "{{ item }}"
