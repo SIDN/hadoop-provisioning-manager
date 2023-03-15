@@ -3,8 +3,8 @@
 PB_ADD_USER=add-user.yml
 
 # type can be: user or system
-# normal: create accounts on servers and gateway
-# system: only create accounts on server
+# normal: create nonlogin accounts on data nodes and login account on gateway nodes
+# system: only create nonlogin account on data nodes
 
 . playbooks-env.sh
 
@@ -15,6 +15,13 @@ fi
 
 if [ "$#" -ne 2 ]; then
     echo "Usage: add-user.sh username [normal|system]"
+    echo "normal: Create non-login account on data nodes and login account on gateway nodes"
+    echo "normal: Create non-login account on data nodes"
+    exit 1
+fi
+
+if [ "$2" -ne "normal" ] && [ "$2" -ne "system" ]; then
+    echo "Unknown user type: $2"
     exit 1
 fi
 

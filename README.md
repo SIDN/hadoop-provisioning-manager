@@ -87,7 +87,7 @@ It is possible to create a mixed cluster, for example have the data nodes use RH
 
 ## Redhat Enterprise Linux (RHEL)
 
-At the moment only RHEL 7.9 is fully supported and tested.
+At the moment only RHEL 7.9 is tested.
 
 ### Getting RHEL
 
@@ -297,12 +297,12 @@ The TLS-certificate must be valid for the domain name used for the cluster hosts
 
 For example, if there are 3 hosts, with the following names.
 ```
-host1.hadoop-domain.tld
-host2.hadoop-domain.tld
-host3.hadoop-domain.tld
+host1.example.nl
+host2.example.nl
+host3.example.nl
 ```
 
-The TLS certificate must have a wildcard match `*.hadoop-domain.tld` or be a multi-domain (SAN) certificate and have all the host names explicitly included in the certificate. 
+The TLS certificate must have a wildcard match `*.example.nl` or be a multi-domain (SAN) certificate and have all the host names explicitly included in the certificate. 
 
 The certificate must be PEM formatted and the PEM file must include all required intermediate certificates.
 

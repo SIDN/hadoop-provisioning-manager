@@ -101,6 +101,7 @@
       become: yes
       when: create_type == 'normal'
 
+# create user home dir on HDFS
 - hosts: hdfs_nn[0]
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"
@@ -113,5 +114,7 @@
       shell: >
           . {{ hadoop_etc_dir }}/hadoop-env.sh;
           kinit -kt {{ hadoop_etc_dir }}/hdfs.keytab hdfs/{{ inventory_hostname }}@{{ kerberos_realm }};
-          hdfs dfs -mkdir -p /user/{{ create_user }} && hdfs dfs -chown {{ create_user }}:{{ ranger_sync_group_name }} /user/{{ create_user }} && hdfs dfs -chmod 755 /user/{{ create_user }};
+          hdfs dfs -mkdir -p /user/{{ create_user }} &&
+          hdfs dfs -chown {{ create_user }}:{{ ranger_sync_group_name }} /user/{{ create_user }} && 
+          hdfs dfs -chmod 755 /user/{{ create_user }};
       become: yes
