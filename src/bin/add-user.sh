@@ -16,11 +16,11 @@ fi
 if [ "$#" -ne 2 ]; then
     echo "Usage: add-user.sh username [normal|system]"
     echo "normal: Create non-login account on data nodes and login account on gateway nodes"
-    echo "normal: Create non-login account on data nodes"
+    echo "system: Create non-login account on data nodes"
     exit 1
 fi
 
-if [ "$2" -ne "normal" ] && [ "$2" -ne "system" ]; then
+if [ "$2" != "normal" ] && [ "$2" != "system" ]; then
     echo "Unknown user type: $2"
     exit 1
 fi
