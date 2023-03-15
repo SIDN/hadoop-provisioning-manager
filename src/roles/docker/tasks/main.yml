@@ -1,3 +1,4 @@
+# retrieve list of all services on remote host
 - name: Populate service facts
   service_facts:
 
@@ -11,15 +12,7 @@
       - docker
   become: yes
     
-- name: Mak sure Docker service is running
-  ansible.builtin.systemd:
-    name: docker
-    enabled: yes
-    state: started
-  become: yes
-  when: "'docker.service' in services"
-
-- name: Create docker cfg directory
+- name: Create Docker cfg directory
   file:
     path: /etc/docker
     state: directory
@@ -27,7 +20,7 @@
   become: yes
   when: not 'docker.service' in services
   
-- name: Create docker data directory
+- name: Create Docker data directory
   file:
     path: "{{ docker_data_dir }}"
     state: directory
@@ -50,7 +43,8 @@
     append: yes
   become: yes
   
-- name: Reset ssh connection to allow group changes to affect 'current login user'
+# Reset ssh connection to allow group changes to affect 'current login user'
+- name: Reset ssh connection
   meta: reset_connection
 
 - name: Systemctl Reload Daemons
@@ -58,7 +52,7 @@
   become: yes
   when: not 'docker.service' in services
   
-# make sure to restart docker other wise a new data location
+# make sure to restart docker otherwise a new data location
 # might not be used.
 - name: Enable and start service Docker
   ansible.builtin.systemd:
@@ -66,4 +60,3 @@
     enabled: yes
     state: restarted
   become: yes
-  when: not 'docker.service' in services

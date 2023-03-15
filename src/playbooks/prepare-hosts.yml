@@ -1,4 +1,4 @@
-# create hadoop manager ser on new nodes
+# create hadoop provision_user user on new nodes
 - hosts: all:!manager
   vars_files:
     - "{{ prov_cfg_dir }}/vars/all.yml"

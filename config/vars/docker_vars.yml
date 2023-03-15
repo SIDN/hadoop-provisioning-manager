@@ -15,5 +15,6 @@ docker_data_dir: /var/lib/docker
 
 # Docker installation repo
 docker_repo:
+  ubuntu: "https://download.docker.com/linux/ubuntu"
   rhel79: "https://download.docker.com/linux/centos/7/$basearch/stable"
 

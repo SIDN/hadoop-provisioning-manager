@@ -15,8 +15,8 @@
 
 - name: Add the GPG key for the official Docker repository
   shell: >
-      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -;
-      add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+      curl -fsSL {{ docker_repo }}/gpg | sudo apt-key add -;
+      add-apt-repository -y "deb [arch=amd64] {{ docker_repo }} focal stable"
   become: yes
 
 - name: Install Docker packages
@@ -24,7 +24,6 @@
     name: 
       - docker-ce
       - docker-ce-cli
-      #- containerd.io
     state: latest
     update_cache: yes
   become: yes
