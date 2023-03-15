@@ -22,7 +22,7 @@
     path: "{{ mgtm_console_content_dir }}/client-config/client-config.tar.gz"
     state: absent
 
-- name: Create a gz archive of config files
+- name: Create an archive containing config files
   community.general.archive:
     path:
     - "{{ mgtm_console_content_dir }}/client-config"

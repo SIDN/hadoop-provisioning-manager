@@ -1,11 +1,4 @@
-- name: Create Hadoop users OS group
-  group:
-    name: "{{ ranger_sync_group_name }}"
-    state: present
-    gid: "{{ ranger_sync_group_uid }}"
-  become: yes
-
-- name: Create remote cache and deploy directories
+- name: Create manager directories
   file:
     path: "{{ item }}"
     state: directory

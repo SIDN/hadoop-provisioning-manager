@@ -51,12 +51,6 @@
   register: python_extract
   become: yes
 
-# - name: Recursively remove directory
-#   ansible.builtin.file:
-#     path: '{{ stack_root }}/python/python-{{ version.python }}'
-#     state: absent
-#   become: yes
-
 - name: Extract Python 
   ansible.builtin.unarchive:
       src: "{{ cache_root }}/python-{{ version.python }}-rhel79.tar.gz"

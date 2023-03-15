@@ -7,6 +7,7 @@
     - { "src": "profile.sh.j2", "dest": "/etc/profile.d/hadoop.sh", mode: '655'}
   become: yes
   
+# no ipv6 support for hadoop
 - name: Create config files non non-gateway hosts
   ansible.builtin.template:
     src: "../templates/{{ item.src }}"
@@ -24,13 +25,13 @@
   become: yes
   when: not (inventory_hostname in groups['gateway']) 
   
-- name: Copy chrony.conf
+- name: Copy Chrony.conf
   ansible.builtin.template:
     src: ../templates/chrony.conf.j2
     dest: /etc/chrony.conf
   become: yes
 
-- name: restart chrony
+- name: Restart Chrony
   ansible.builtin.systemd: 
     name: chronyd 
     state: restarted

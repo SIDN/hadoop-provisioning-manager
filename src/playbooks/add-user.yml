@@ -42,21 +42,27 @@
         database: passwd
       
     # update local user
-    - name: Update user
+    - name: Update user login shell
       ansible.builtin.user:
         name: "{{ create_user }}"
-        group: "{{ ranger_sync_group_name }}"
+        #group: "{{ ranger_sync_group_name }}"
         shell: '{{ fact_login_shell }}'
       when: (create_user in ansible_facts.getent_passwd)
       become: yes
     
-    # only update group for ldap based user
-    - name: Update user groups
+- hosts: ranger
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
+  remote_user: hadoop-mgr
+  tasks:
+    # only update group for user on ranger host
+    # this will allow ranger to pickup the new user
+    - name: Add user to Ranger Sync group
       ansible.builtin.user:
         name: "{{ create_user }}"
         groups: "{{ ranger_sync_group_name }}"
         append: yes
-      when: (create_user not in ansible_facts.getent_passwd)
       become: yes
 
 # create user on worker nodes, do create home dir and do set password
