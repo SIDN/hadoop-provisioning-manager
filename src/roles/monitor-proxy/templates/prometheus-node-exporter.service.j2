@@ -8,7 +8,7 @@ Description=Prometheus Node Exporter
 Type=simple
 ExecStart={{ stack_root }}/prometheus-node-exporter-latest/node_exporter \
   --collector.textfile.directory {{ prometheus_etc_dir }}/metrics \
-  --web.config={{ prometheus_etc_dir }}/prometheus-node-exporter-config.yml
+  --web.config.file={{ prometheus_etc_dir }}/prometheus-node-exporter-config.yml
 Restart=always
 RestartSec=60
 

@@ -126,7 +126,7 @@
     group: "{{ spark_os_group }}"
   become: yes
   
-- name: Template bin scripts
+- name: Create Spark scripts
   ansible.builtin.template:
     src: "../templates/{{ item.name }}"
     dest: "{{ stack_root }}/apache-spark-latest/bin/{{ item.dest }}"
