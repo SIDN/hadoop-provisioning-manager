@@ -7,8 +7,6 @@ docker_registry_port: 2000
 # port used by the docker registry ui app
 docker_registry_ui_port: 2080
 
-docker_registry_ui_title: "Hadoop Provisioning Manager"
-
 # directory on hosts where docker data is stored
 # is only used on the manager node 
 # where docker image registry is located
@@ -18,6 +16,7 @@ docker_registry_ui_title: "Hadoop Provisioning Manager"
 # to restart Docker after the move is complete
 docker_data_dir: /var/lib/docker
 
+# directory on hosts where docker repository data is stored
 docker_registry_dir: /var/lib/registry
 
 

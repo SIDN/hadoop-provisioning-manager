@@ -11,7 +11,7 @@ Use Docker Registry UI to manage the Docker images in the Docker repository on t
   </tr>
     {% for host in groups['manager'] %}
     <tr>
-      <td>Ranger Admin</td>
+      <td>Docker Registry UI</td>
       <td><a href="https://{{ host }}:{{ docker_registry_ui_port }}" target="_blank">{{ host }}</a></td>
     </tr>
     {% endfor %}

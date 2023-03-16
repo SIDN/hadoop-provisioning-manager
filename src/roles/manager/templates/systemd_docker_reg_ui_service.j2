@@ -17,9 +17,9 @@ ExecStart=/usr/bin/docker run --rm -p {{ docker_registry_ui_port }}:{{ docker_re
 -v /etc/docker/nginx-registry-ui.conf:/etc/nginx/conf.d/default.conf \
 -v {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:/etc/nginx/certs/fullchain.pem \
 -v {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:/etc/nginx/certs/privkey.pem \
--e REGISTRY_TITLE="{{ docker_registry_ui_title }}" \
+-e REGISTRY_URL='{{ inventory_hostname }}:{{ docker_registry_ui_port }}' \
 -e SINGLE_REGISTRY=true \
--e DELETE_IMAGES=true --name docker_reg_ui joxit/docker-registry-ui:latest
+-e DELETE_IMAGES=true --name docker_reg_ui joxit/docker-registry-ui:{{ version.docker_registry_ui }}
 
 ExecStop=/usr/bin/docker container stop docker_reg_ui
  

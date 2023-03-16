@@ -57,6 +57,11 @@
     - { "src": "nginx-registry-ui.conf.j2", "dest": "/etc/docker/nginx-registry-ui.conf"}
   become: yes
   
+- name: Pull Docker UI image to controller server
+  command: docker pull joxit/docker-registry-ui:{{ version.docker_registry_ui }}
+  delegate_to: localhost
+  connection: local
+  become: yes
   
 - name: Systemctl Reload Daemons
   shell: systemctl daemon-reload

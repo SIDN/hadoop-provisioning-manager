@@ -113,6 +113,7 @@
 - name: Pull Superset image to Superset server
   shell: >
     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
+  become: yes
 
 - name: Copy docker control scripts
   ansible.builtin.copy:

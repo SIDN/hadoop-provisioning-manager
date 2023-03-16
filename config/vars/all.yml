@@ -58,6 +58,7 @@ version:
   superset: '2.0'
   jupyterhub: '3.1.1'
   jupyterlab: '3.6.1'
+  docker_registry_ui: 'latest'
   
 
 # set path for python2 on the remote systems here
