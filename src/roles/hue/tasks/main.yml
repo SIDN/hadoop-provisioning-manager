@@ -213,6 +213,7 @@
  # push img to docker registry  
 - name: Push Hue docker image to registry
   shell: >
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }}
     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
   delegate_to: localhost
   connection: local

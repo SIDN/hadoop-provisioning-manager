@@ -3,7 +3,6 @@
   "data-root": "{{ docker_data_dir }}",
   {% endif %}
   "ipv6": false,
-  "insecure-registries": ["{{ groups['manager'][0] }}:{{ docker_registry_port }}"],
   "log-opts": {
     "cache-disabled": "false",
     "cache-max-file": "5",

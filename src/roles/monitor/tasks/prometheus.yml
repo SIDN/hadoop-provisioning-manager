@@ -69,28 +69,35 @@
   become: yes    
   
 - name: Pull Prometheus server image to Manager
-  command: "docker pull prom/prometheus:v{{ version.prometheus }}"
+  shell: >
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }}
+    docker pull prom/prometheus:v{{ version.prometheus }}
   delegate_to: localhost
   connection: local
   become: yes
   when: docker_img_exists.images | length == 0
 
 - name: Tag Prometheus server docker image
-  command: "docker image tag prom/prometheus:v{{ version.prometheus }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
+  shell: > 
+    docker image tag prom/prometheus:v{{ version.prometheus }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
   delegate_to: localhost
   connection: local
   become: yes
   when: docker_img_exists.images | length == 0
 
 - name: Push Prometheus server docker image to registry
-  command: "docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
+  shell: >
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }}
+    docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}
   delegate_to: localhost
   connection: local
   become: yes
   when: docker_img_exists.images | length == 0
 
 - name: Pull Prometheus image to monitor server
-  command: "docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
+  shell: >
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }}
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}
   become: yes
   
 - name: Create Prometheus systemd unit
