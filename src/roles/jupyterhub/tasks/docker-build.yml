@@ -1,17 +1,3 @@
-# - name: Check if Jupyterhub docker image already exists
-#   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub.*{{ version.jupyterhub }} | wc -l"
-#   register: docker_img_exists
-#   delegate_to: localhost
-#   connection: local
-#   become: yes
-# 
-# - name: Show Jupyterhub docker image already exists
-#   ansible.builtin.debug:
-#     msg: Jupyterhub image detect {{ docker_img_exists.stdout }}
-#   delegate_to: localhost
-#   connection: local
-#   become: yes
-  
 - name: Check if Jupyterhub docker image already exists
   docker_image_info:
     name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:{{ version.jupyterhub }}"
@@ -61,11 +47,12 @@
   delegate_to: localhost
   connection: local
   become: yes
-  #when: docker_img_exists.stdout | int == 0
+  when: docker_img_exists.images | length == 0
   
-- name: Deploy image to Jupyterhub server  
-  community.docker.docker_image:
-    name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:{{ version.jupyterhub }}"
-    source: pull
-    force_source: yes
+- name: Pull Jupyterhub image to Jupyterhub server
+  shell: >
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/jupyterhub:{{ version.jupyterhub }};
+    docker system prune -f
+  become: yes
 
