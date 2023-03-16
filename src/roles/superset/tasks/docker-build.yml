@@ -109,7 +109,7 @@
     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
   delegate_to: localhost
   connection: local
-  when: docker_img_exists.images | length == 0
+  #when: docker_img_exists.images | length == 0
 
 - name: Pull Superset image to Superset server
   shell: >

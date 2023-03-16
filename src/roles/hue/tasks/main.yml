@@ -218,7 +218,7 @@
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.images | length == 0
+  #when: docker_img_exists.images | length == 0
   
   
 # use task below to deploy img when no modification is required.    

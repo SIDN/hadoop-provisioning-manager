@@ -126,7 +126,7 @@
   delegate_to: localhost
   connection: local
   become: yes 
-  when: docker_img_exists.images | length == 0
+  #when: docker_img_exists.images | length == 0
 
 - name: Pull Impala image to host
   shell: >

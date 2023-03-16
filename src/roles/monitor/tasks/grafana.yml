@@ -54,7 +54,7 @@
   delegate_to: localhost
   connection: local
   become: yes
-  when: docker_img_exists.images | length == 0
+  #when: docker_img_exists.images | length == 0
 
 - name: Pull Grafana image to monitor server
   shell: >
