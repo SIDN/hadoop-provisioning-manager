@@ -62,7 +62,7 @@
 # does not work, cannot find bcrypt. even after installing the required packages
 - name: Create Docker registry password file 
   shell: >
-    DOCKER_REG_PASSWD="echo '{{ docker_registry_password }}' | htpasswd -niBC 10 "" | tr -d ':\n';
+    DOCKER_REG_PASSWD="echo '{{ docker_registry_password }}'" | htpasswd -niBC 10 "" | tr -d ':\n';
     echo "{{ docker_registry_user }}:$DOCKER_REG_PASSWD" > /etc/docker/registry-htpasswd;
   become: yes
   
