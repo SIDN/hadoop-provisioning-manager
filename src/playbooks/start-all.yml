@@ -20,6 +20,9 @@
 - name: MGMT Console
   import_playbook: start-console.yml
   
+- name: Docker Registry UI
+  import_playbook: start-docker-reg-ui.yml
+  
 - name: Zookeeper
   import_playbook: start-zookeeper.yml
   

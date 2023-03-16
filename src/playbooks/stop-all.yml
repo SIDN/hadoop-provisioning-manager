@@ -55,6 +55,9 @@
 - name: MGMT Console
   import_playbook: stop-console.yml
   
+- name: Docker Registry UI
+  import_playbook: stop-docker-reg-ui.yml
+  
 - name: Database
   import_playbook: stop-db.yml
   when: hostvars.localhost.should_start_db
