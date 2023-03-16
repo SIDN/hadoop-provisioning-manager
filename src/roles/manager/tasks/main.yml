@@ -57,6 +57,15 @@
     - { "src": "nginx-registry-ui.conf.j2", "dest": "/etc/docker/nginx-registry-ui.conf"}
   become: yes
   
+# create password for docker registry
+# create hash with with htpasswd util, the ansible password_hash
+# does not work, cannot find bcrypt. even after installing the required packages
+- name: Create Docker registry password file 
+  shell: >
+    DOCKER_REG_PASSWD="echo '{{ docker_registry_password }}' | htpasswd -niBC 10 "" | tr -d ':\n';
+    echo "{{ docker_registry_user }}:$DOCKER_REG_PASSWD" > /etc/docker/registry-htpasswd;
+  become: yes
+  
 - name: Pull Docker UI image to controller server
   command: docker pull joxit/docker-registry-ui:{{ version.docker_registry_ui }}
   delegate_to: localhost

@@ -1,6 +1,9 @@
 # On the management server a docker repository will be will deployed.
 # Other cluster nodes will use this repository to download images
 
+docker_registry_user: admin
+docker_registry_password: "{{ vault_docker_registry_password }}"
+
 # port the docker registry will listen on 
 docker_registry_port: 2000
 
