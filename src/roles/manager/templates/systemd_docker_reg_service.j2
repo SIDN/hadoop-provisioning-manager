@@ -12,10 +12,13 @@ Restart=always
 RestartSec=60
 Type=exec
 
-ExecStart=/usr/bin/docker run --rm -p {{ docker_registry_port }}:5000 \
+ExecStart=/usr/bin/docker run --rm -p {{ docker_registry_port }}:{{ docker_registry_port }} \
 -v {{ tls_etc_dir }}:/certs \
+-v {{ docker_registry_dir }}:/var/lib/registry \
+-v /etc/docker/registry.yml:/etc/docker/registry/config.yml \
 -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/{{ tls_remote_pub_chain }} \
 -e REGISTRY_HTTP_TLS_KEY=/certs/{{ tls_remote_priv_key }} --name registry registry:2
+
 ExecStop=/usr/bin/docker container stop registry
  
 [Install]

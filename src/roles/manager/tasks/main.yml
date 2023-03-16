@@ -37,13 +37,24 @@
   become: yes
   when:  ansible_distribution == "RedHat"
 
-- name: Create Docker registry service
+- name: Create Docker registry services
   ansible.builtin.template:
     src: "../templates/{{ item.src }}"
     dest: "{{ item.dest }}"
   loop:
     - { "src": "systemd_docker_reg_service.j2", "dest": "/etc/systemd/system/docker_reg.service"}
+      - { "src": "systemd_docker_reg_ui_service.j2", "dest": "/etc/systemd/system/docker_reg_ui.service"}
   become: yes
+  
+- name: Create Docker registry configuration
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { "src": "docker-registry-config.yml.j2", "dest": "/etc/docker/registry.yml"}
+    - { "src": "nginx-registry-ui.conf.j2", "dest": "/etc/docker/nginx-registry-ui.conf"}
+  become: yes
+  
   
 - name: Systemctl Reload Daemons
   shell: systemctl daemon-reload

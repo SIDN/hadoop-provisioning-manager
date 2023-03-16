@@ -1,0 +1,14 @@
+version: '2.0'
+services:
+  ui:
+    image: joxit/docker-registry-ui:latest
+    ports:
+      - {{ docker_registry_ui_port }}:{{ docker_registry_ui_port }}
+    environment:
+      - REGISTRY_TITLE=Hadoop Provisioning Manager Repository
+      - SINGLE_REGISTRY=true
+      - DELETE_IMAGES=true
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:/etc/nginx/certs/fullchain.pem
+      - {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:/etc/nginx/certs/privkey.pem

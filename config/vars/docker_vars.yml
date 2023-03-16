@@ -4,6 +4,11 @@
 # port the docker registry will listen on 
 docker_registry_port: 2000
 
+# port used by the docker registry ui app
+docker_registry_ui_port: 2080
+
+docker_registry_ui_title: "Hadoop Provisioning Manager Repository"
+
 # directory on hosts where docker data is stored
 # is only used on the manager node 
 # where docker image registry is located
@@ -12,6 +17,9 @@ docker_registry_port: 2000
 # to the new location. Make sure to stop Docker before moving the data and
 # to restart Docker after the move is complete
 docker_data_dir: /var/lib/docker
+
+docker_registry_dir: /var/lib/registry
+
 
 # Docker installation repo
 docker_repo:
