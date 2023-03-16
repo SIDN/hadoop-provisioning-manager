@@ -45,7 +45,7 @@
     dest: "{{ item.dest }}"
   loop:
     - { "src": "systemd_docker_reg_service.j2", "dest": "/etc/systemd/system/docker_reg.service"}
-      - { "src": "systemd_docker_reg_ui_service.j2", "dest": "/etc/systemd/system/docker_reg_ui.service"}
+    - { "src": "systemd_docker_reg_ui_service.j2", "dest": "/etc/systemd/system/docker_reg_ui.service"}
   become: yes
   
 - name: Create Docker registry configuration
