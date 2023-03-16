@@ -11,7 +11,7 @@
     new_user: "{{ zookeeper_os_user }}"
     new_group: "{{ zookeeper_os_group }}"
             
-- name: create cfg directories
+- name: Create cfg directory
   file:
     path: "{{ item }}"
     state: directory
@@ -20,7 +20,7 @@
     - "{{ zookeeper_etc_dir }}"
   become: yes
   
-- name: create log directories
+- name: Create data/log directories
   file:
     path: "{{ item }}"
     state: directory
@@ -44,7 +44,7 @@
   become: yes
   when: not (inventory_hostname in groups['gateway']) 
   
-- name: create myid files
+- name: Create myid files
   copy:
     dest: "{{ zookeeper_data_dir }}/myid"
     content: "{{ groups['zookeeper'].index(inventory_hostname) +1 }}"
