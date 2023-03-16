@@ -31,6 +31,7 @@ export PB_KRB_KT=krb-keytab.yml
 export PB_TLS=tls.yml
 export PB_TLS_APP=tls-app.yml
 export PB_TLS_BASE=tls-base.yml
+export PB_DOCKER_REG_UI=docker-reg-ui.yml
 
 # general commands
 export PB_DO_ENALBLE_HDFS_RANGER_PLUGIN=enable-hdfs-ranger-plugin.yml
@@ -185,6 +186,9 @@ function run_playbooks()
         ;;
         solr)
           run_playbook "$PB_PREFIX-$PB_SOLR"
+        ;;
+        docker-reg-ui)
+          run_playbook "$PB_PREFIX-$PB_DOCKER_REG_UI"
         ;;
         client-config)
           run_playbook "$PB_PREFIX-$PB_CLIENT_CONFIG"

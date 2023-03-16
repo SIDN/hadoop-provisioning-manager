@@ -1,0 +1,8 @@
+- hosts: manager
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: docker_reg_ui
+  tasks:
+    - name: "Start service(s)"
+      include_tasks: startup/tasks/generic-service.yml
