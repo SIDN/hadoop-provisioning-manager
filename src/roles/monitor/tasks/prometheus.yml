@@ -79,7 +79,7 @@
 
 - name: Tag Prometheus server docker image
   shell: > 
-    docker image tag prom/prometheus:v{{ version.prometheus }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}"
+    docker image tag prom/prometheus:v{{ version.prometheus }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}
   delegate_to: localhost
   connection: local
   become: yes

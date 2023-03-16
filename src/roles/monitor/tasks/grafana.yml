@@ -16,23 +16,6 @@
     - "{{ grafana_etc_dir }}/provisioning/dashboards"
   become: yes
   
-# Pull remote image to controller
-# add a tag and push it to local docker registry
-# from registry distribute to servers.
-# - name: Check if Grafana docker image already exists
-#   shell: "docker images | grep {{ groups['manager'][0] }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }} | wc -l"
-#   register: docker_img_exists
-#   delegate_to: localhost
-#   connection: local
-#   become: yes
-# 
-# - name: Show Grafana docker image already exists
-#   ansible.builtin.debug:
-#     msg: Grafana image detect {{ docker_img_exists.stdout }}
-#   delegate_to: localhost
-#   connection: local
-# 
-  
 - name: Check if Grafana docker image already exists
   docker_image_info:
     name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}"
@@ -49,14 +32,16 @@
   become: yes  
   
 - name: Pull Grafana server image to Manager
-  command: "docker pull grafana/grafana-enterprise:{{ version.grafana }}"
+  shell: >
+    docker pull grafana/grafana-enterprise:{{ version.grafana }}
   delegate_to: localhost
   connection: local
   become: yes
   when: docker_img_exists.images | length == 0
 
 - name: Tag Grafana server docker image
-  command: "docker image tag grafana/grafana-enterprise:{{ version.grafana }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}"
+  shell: >
+    docker image tag grafana/grafana-enterprise:{{ version.grafana }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}
   delegate_to: localhost
   connection: local
   become: yes
