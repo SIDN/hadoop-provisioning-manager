@@ -9,6 +9,7 @@
     - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
     - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
     - "{{ prov_cfg_dir }}/vars/console_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/docker_vars.yml"
     - "{{ prov_cfg_dir }}/vars/hue_vars.yml"
     - "{{ prov_cfg_dir }}/vars/jupyterhub_vars.yml"
     - "{{ prov_cfg_dir }}/vars/superset_vars.yml"
