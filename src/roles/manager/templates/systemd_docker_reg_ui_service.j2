@@ -12,11 +12,11 @@ Restart=always
 RestartSec=60
 Type=exec
 
-ExecStart=/usr/bin/docker run --rm \
+ExecStart=/usr/bin/docker run --rm -p {{ docker_registry_ui_port }}:{{ docker_registry_ui_port }} \
 -v /etc/docker/registry.yml:/etc/docker/registry/config.yml \
 -v /etc/docker/nginx-registry-ui.conf:/etc/nginx/conf.d/default.conf \
-- {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:/etc/nginx/certs/fullchain.pem \
-- {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:/etc/nginx/certs/privkey.pem \
+-v {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:/etc/nginx/certs/fullchain.pem \
+-v {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:/etc/nginx/certs/privkey.pem \
 -e REGISTRY_TITLE="{{ docker_registry_ui_title }}" \
 -e SINGLE_REGISTRY=true \
 -e DELETE_IMAGES=true --name docker_reg_ui joxit/docker-registry-ui:latest

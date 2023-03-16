@@ -7,7 +7,7 @@ docker_registry_port: 2000
 # port used by the docker registry ui app
 docker_registry_ui_port: 2080
 
-docker_registry_ui_title: "Hadoop Provisioning Manager Repository"
+docker_registry_ui_title: "Hadoop Provisioning Manager"
 
 # directory on hosts where docker data is stored
 # is only used on the manager node 
