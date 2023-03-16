@@ -61,7 +61,7 @@
     - name: Add user to Ranger Sync group
       ansible.builtin.user:
         name: "{{ create_user }}"
-        groups: "{{ ranger_sync_group_name }}"
+        group: "{{ ranger_sync_group_name }}"
       become: yes
 
 # create user on worker nodes, do create home dir and do set password
