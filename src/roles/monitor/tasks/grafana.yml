@@ -75,7 +75,7 @@
   shell: >
     docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }};
-    docker system prune -y
+    docker system prune -f
   become: yes
   
 - name: Create Grafana systemd unit
