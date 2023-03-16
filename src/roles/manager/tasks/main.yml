@@ -6,6 +6,7 @@
     - "{{ download_root }}"
     - "{{ cache_root }}/conf"
     - "{{ cache_root }}/krb"
+    - "{{ docker_registry_dir }}"
   
 - name: Installing required Ansible packages
   shell: >
