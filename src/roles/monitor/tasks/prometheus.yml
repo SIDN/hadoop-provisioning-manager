@@ -70,7 +70,7 @@
   
 - name: Pull Prometheus server image to Manager
   shell: >
-    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }}
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
     docker pull prom/prometheus:v{{ version.prometheus }}
   delegate_to: localhost
   connection: local
@@ -87,7 +87,7 @@
 
 - name: Push Prometheus server docker image to registry
   shell: >
-    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }}
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}
   delegate_to: localhost
   connection: local
@@ -96,7 +96,7 @@
 
 - name: Pull Prometheus image to monitor server
   shell: >
-    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }}
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/prom/prometheus:v{{ version.prometheus }}
   become: yes
   

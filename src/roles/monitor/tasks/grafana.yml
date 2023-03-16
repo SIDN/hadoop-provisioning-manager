@@ -64,7 +64,7 @@
 
 - name: Push Grafana server docker image to registry
   shell: >
-    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }}
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}
   delegate_to: localhost
   connection: local
@@ -73,7 +73,7 @@
 
 - name: Pull Grafana image to monitor server
   shell: >
-    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }}
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
     docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}
   become: yes
   
