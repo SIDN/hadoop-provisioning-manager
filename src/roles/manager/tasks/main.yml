@@ -89,7 +89,7 @@
 #     append: yes
 #   become: yes
   
-  # start docker and registry otherwise isnatlling other dockerized
+  # start docker and registry otherwise installing other dockerized
   # components on cluster will fail.
   
 - name: Start service Docker
@@ -98,10 +98,11 @@
     state: started
   become: yes
     
+# restart docker registry to let new cfg take effect
 - name: Start Docker registry
   ansible.builtin.systemd:
     name: docker_reg
-    state: started
+    state: restarted
   become: yes
   
 # have ansible run in py3 venv on the manager node
