@@ -6,12 +6,13 @@
     state: latest
   become: yes
   when: ansible_distribution == 'Ubuntu'
-  
-- name: Enable rhel-7-server-optional-rpms (RHEL7)
-  shell: >
-    subscription-manager repos --enable=rhel-7-server-optional-rpms
-  become: yes  
-  when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
+
+# TODO: do we still need rhel-7-server-optional-rpms?
+# - name: Enable rhel-7-server-optional-rpms (RHEL7)
+#   shell: >
+#     subscription-manager repos --enable=rhel-7-server-optional-rpms
+#   become: yes  
+#   when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
 
 - name: Install required packages (RHEL)
   ansible.builtin.package:

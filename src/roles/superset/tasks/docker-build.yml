@@ -114,7 +114,8 @@
 - name: Pull Superset image to Superset server
   shell: >
     docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
-    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }}
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/superset:{{ version.superset }};
+    docker system prune -y
   become: yes
 
 - name: Copy docker control scripts
