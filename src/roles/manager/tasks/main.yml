@@ -25,6 +25,7 @@
   ansible.builtin.package:
     name:
       - apache2-utils
+      - docker-compose
     state: latest
   become: yes
   when:  ansible_distribution == "Ubuntu"
@@ -33,6 +34,7 @@
   ansible.builtin.package:
     name:
       - httpd-tools
+      - docker-compose
     state: latest
   become: yes
   when:  ansible_distribution == "RedHat"
