@@ -1,10 +1,39 @@
+# install default python env for spark jobs
+# installing kerberos can be a pain.
+
+- name: Install required Python3 Kerberos packages
+  ansible.builtin.package:
+    name:
+      - python3-kerberos
+    state: latest
+  become: yes  
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Copy requirements file
+  ansible.builtin.copy:
+    src: "{{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}/python/default-pyspark-requirements.txt"
+    dest: '{{ cache_root }}'
+    
+# Add kerberos package to req file, only for rhel.
+# for ubuntu we install krb using os package    
+# because pip install does not work for ubuntu
+- name: Add additional Python packages
+  ansible.builtin.lineinfile:
+    path: '{{ cache_root }}/default-pyspark-requirements.txt'
+    line: '{{ item }}'
+    state: present
+  loop:
+    - kerberos
+  when: ansible_distribution == "RedHat"
+
 # Spark containers run as the krb user that started them, therefore the py env group must be ranger_sync_group_name
-# otherwize the krb user has no permission to the py env.
+# otherwise the krb user has no permission to the py env.
+
 - name: Create config facts
   set_fact:
      py_version: 3
      py_env_name: '{{ spark_default_python_venv }}'
-     py_env_req_file: "{{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}/python/default-pyspark-requirements.txt"
+     py_env_req_file: '{{ cache_root }}/default-pyspark-requirements.txt'
      py_env_permission: 'root:{{ ranger_sync_group_name }}'
 
 - name: Include role for Python create venv

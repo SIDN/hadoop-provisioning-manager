@@ -25,12 +25,6 @@
   ansible.builtin.stat:
     path: "{{ python_venv_dir }}/{{ py_env_name }}"
   register: py_venv_dir
-  
-- name: Copy requirements file
-  ansible.builtin.copy:
-    src: '{{ py_env_req_file }}'
-    dest: '{{ cache_root }}'
-  when: not py_venv_dir.stat.exists and py_env_req_file is defined
     
 - name: Create new py2 virtualenv
   shell: >
