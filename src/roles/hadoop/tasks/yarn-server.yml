@@ -5,6 +5,14 @@
     owner: "{{ hadoop_os_user.yarn }}"
     group: "{{ hadoop_os_group }}"
   become: yes
+  
+- name: Create cgroup directory
+  ansible.builtin.shell: |
+    mkdir -p {{ item }};
+  loop:
+    - "/sys/fs/cgroup/cpu,cpuacct"
+    - "/sys/fs/cgroup/memory"
+  become: yes
       
 # make sure yarn is allowd to create dir below cgroup mounts
 - name: Set correct cgroup directory permissions

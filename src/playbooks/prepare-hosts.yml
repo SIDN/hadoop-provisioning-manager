@@ -75,10 +75,10 @@
           {{ provision_user }} ALL=(ALL) NOPASSWD:ALL
       become: yes
       
-    - name: Install Python3
-      ansible.builtin.package:
-        name:
-          - python{{ version.python }}
-          - python3-pip
-        state: latest
-      become: yes
+    # - name: Install Python3
+    #   ansible.builtin.package:
+    #     name:
+    #       - python{{ version.python }}
+    #       - python3-pip
+    #     state: latest
+    #   become: yes

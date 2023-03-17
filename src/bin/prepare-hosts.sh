@@ -22,4 +22,4 @@ if [ -f "$PY_EXEC" ]; then
 fi
 
 ansible-playbook --user $1 --ask-pass --ask-become-pass -i $SIDN_HADOOP_CFG_DIR/$HOSTS_FILE $PRJ_ROOT_DIR/playbooks/$PB_PREPARE_HOST \
-    --extra-vars="provision_user_passwd=$prov_user_passwd ansible_python_interpreter=python2 prov_cfg_dir={{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}"
+    --extra-vars="provision_user_passwd=$prov_user_passwd ansible_python_interpreter=python3 prov_cfg_dir={{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}"
