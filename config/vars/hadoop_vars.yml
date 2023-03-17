@@ -172,3 +172,6 @@ hadoop_download_url: "https://dlcdn.apache.org/hadoop/common/hadoop-{{ version.h
 # URL where to get the metric-core jar that is compatible with the spark shuffle service
 # when version.hadoop < 3.2
 yarn_metrics_core_download_url: "https://repo1.maven.org/maven2/io/dropwizard/metrics/metrics-core/{{ version.spark_metrics }}/metrics-core-{{ version.spark_metrics }}.jar"
+
+# for ubuntu 22.04
+yarn_openssl_download_url: "http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.17_amd64.deb"
