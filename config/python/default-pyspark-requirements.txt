@@ -1,8 +1,8 @@
 # requirements used to create the default Python venv for Pyspark
-wheel
+#wheel
 pyspark
 pandas
-kerberos
+#kerberos
 numpy
 scipy
 matplotlib
