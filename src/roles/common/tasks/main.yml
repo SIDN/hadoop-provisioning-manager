@@ -1,3 +1,10 @@
+- name: Create default user OS group
+  group:
+    name: "{{ ranger_sync_group_name }}"
+    state: present
+    gid: "{{ ranger_sync_group_uid }}"
+  become: yes
+  
 - name: Create manager directories
   file:
     path: "{{ item }}"
