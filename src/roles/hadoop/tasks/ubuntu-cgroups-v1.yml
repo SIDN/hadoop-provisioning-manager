@@ -41,6 +41,7 @@
 - name: "Wait for server ({{ inventory_hostname }})"
   wait_for:
     host: "{{ inventory_hostname }}"
+    port: 22
     state: started
     delay: 10
     timeout: 300
