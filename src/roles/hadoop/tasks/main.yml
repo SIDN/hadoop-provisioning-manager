@@ -2,6 +2,10 @@
 # This files installs base files, for data, name- nodes and gateways
 # the data, name- nodes files are deployed with hadoop-server.yml
 # 
+- name: Include Yarn Server installation
+  include_tasks: tasks/yarn-server.yml
+  when: not (inventory_hostname in groups['gateway']) 
+  
 - name: Include Hadoop common installation
   include_tasks: tasks/hadoop-common.yml
 
@@ -29,7 +33,5 @@
   include_tasks: tasks/prometheus-exporter.yml
   when: not (inventory_hostname in groups['gateway']) 
     
-- name: Include Yarn Server installation
-  include_tasks: tasks/yarn-server.yml
-  when: not (inventory_hostname in groups['gateway']) 
+
 
