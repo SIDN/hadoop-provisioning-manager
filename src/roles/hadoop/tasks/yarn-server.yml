@@ -139,7 +139,7 @@
 #     - "/sys/fs/cgroup/memory"
 #   become: yes
       
-# make sure yarn is allowd to create dir below cgroup mounts
+# make sure yarn is allowed to create dir below cgroup mounts
 - name: Set correct cgroup directory permissions
   shell: >
     chown :{{ hadoop_os_group }} -R {{ item }};

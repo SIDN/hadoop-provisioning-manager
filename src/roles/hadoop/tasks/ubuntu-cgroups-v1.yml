@@ -1,5 +1,5 @@
 # enable cgroups v1 on ubuntu 22.04 yarn does not work with v2
-- name: find
+- name: Check if cgroup v1 is enabled
   lineinfile: 
     state: absent
     path: /etc/default/grub
@@ -8,14 +8,15 @@
   register: grub_cfg
   changed_when: false
   
-- replace:
+- name: Remove old Grub cgroup config
+  replace:
     path: /etc/default/grub
     regexp: 'systemd.unified_cgroup_hierarchy=[0-9]'
     replace: ''
   become: yes
   when: grub_cfg.found == 0
     
-- name: Set Grub cgroup config
+- name: Set Grub cgroup config for cgroups v1
   lineinfile:
     path: /etc/default/grub
     regexp: 'GRUB_CMDLINE_LINUX="(.*)"'
@@ -29,7 +30,7 @@
   become: yes
   when: grub_cfg.found == 0
 
-- name: Reboot 
+- name: Reboot server
   shell: >
     sleep 2 && shutdown -r now "Ansible reboot"
   async: 1 
