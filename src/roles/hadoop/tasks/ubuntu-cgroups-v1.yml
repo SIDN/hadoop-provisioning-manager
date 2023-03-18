@@ -18,8 +18,8 @@
 - name: Set Grub cgroup config
   lineinfile:
     path: /etc/default/grub
-    regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="(.*)"'
-    line: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 systemd.unified_cgroup_hierarchy=0"'
+    regexp: 'GRUB_CMDLINE_LINUX="(.*)"'
+    line: 'GRUB_CMDLINE_LINUX="\1 systemd.unified_cgroup_hierarchy=0"'
     backrefs: true
   become: yes
   when: grub_cfg.found == 0
