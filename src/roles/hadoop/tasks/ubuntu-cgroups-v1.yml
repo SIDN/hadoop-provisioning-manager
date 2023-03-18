@@ -1,8 +1,9 @@
 # enable cgroups v1 on ubuntu 22.04 yarn does not work with v2
 - name: find
   lineinfile: 
-    dest: /etc/default/grub
-    line: "systemd.unified_cgroup_hierarchy=0"
+    state: absent
+    path: /etc/default/grub
+    regexp: "systemd.unified_cgroup_hierarchy=0"
   check_mode: yes
   register: grub_cfg
   changed_when: false
