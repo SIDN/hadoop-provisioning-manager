@@ -12,7 +12,7 @@
     regexp: 'systemd.unified_cgroup_hierarchy=[0-9]'
     replace: ''
   become: yes
-  when: grub_cfg.found
+  when: grub_cfg.found == 0
     
 - name: Set Grub cgroup config
   ansible.builtin.lineinfile:
@@ -21,12 +21,12 @@
     line: line='GRUB_CMDLINE_LINUX_DEFAULT="\1 systemd.unified_cgroup_hierarchy=0"'
     backrefs: true
   become: yes
-  when: grub_cfg.found
+  when: grub_cfg.found == 0
 
 - name: Update Grub
   shell: update-grub
   become: yes
-  when: grub_cfg.found
+  when: grub_cfg.found == 0
 
 # - name: Reboot 
 #   shell: sleep 2 && shutdown -r now "Ansible reboot"
@@ -34,7 +34,7 @@
 #   poll: 0
 #   ignore_errors: true
 #   become: yes
-#   when: grub_cfg.found
+#   when: grub_cfg.found == 0
 # 
 # - name: "Wait for server ({{ inventory_hostname }})"
 #   wait_for:
@@ -44,4 +44,4 @@
 #     timeout: 300
 #   delegate_to: localhost
 #   connection: local
-#   when: grub_cfg.found
+#   when: grub_cfg.found == 0
