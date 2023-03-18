@@ -146,5 +146,7 @@
     dpkg -i {{ download_root }}/{{ yarn_openssl_download_url | basename }}
   become: yes  
   when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
-  
-  
+    
+- name: Enable cgroups v1
+  include_tasks: tasks/ubuntu-cgroups-v1.yml
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"

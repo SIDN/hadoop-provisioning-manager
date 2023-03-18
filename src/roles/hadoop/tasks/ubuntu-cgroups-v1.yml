@@ -1,0 +1,47 @@
+# enable cgroups v1 on ubuntu 22.04 yarn does not work with v2
+- name: find
+  lineinfile: 
+    dest: /etc/default/grub
+    line: "systemd.unified_cgroup_hierarchy=0"
+  check_mode: yes
+  register: grub_cfg
+  changed_when: false
+  
+- replace:
+    path: /etc/default/grub
+    regexp: 'systemd.unified_cgroup_hierarchy=[0-9]'
+    replace: ''
+  become: yes
+  when: grub_cfg.found
+    
+- name: Set Grub cgroup config
+  ansible.builtin.lineinfile:
+    path: /etc/default/grub
+    regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="(.*)"'
+    line: line='GRUB_CMDLINE_LINUX_DEFAULT="\1 systemd.unified_cgroup_hierarchy=0"'
+    backrefs: true
+  become: yes
+  when: grub_cfg.found
+
+- name: Update Grub
+  shell: update-grub
+  become: yes
+  when: grub_cfg.found
+
+# - name: Reboot 
+#   shell: sleep 2 && shutdown -r now "Ansible reboot"
+#   async: 1 
+#   poll: 0
+#   ignore_errors: true
+#   become: yes
+#   when: grub_cfg.found
+# 
+# - name: "Wait for server ({{ inventory_hostname }})"
+#   wait_for:
+#     host: "{{ inventory_hostname }}"
+#     port: 22
+#     delay: 5
+#     timeout: 300
+#   delegate_to: localhost
+#   connection: local
+#   when: grub_cfg.found
