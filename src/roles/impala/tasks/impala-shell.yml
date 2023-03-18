@@ -3,6 +3,9 @@
   ansible.builtin.package:
     name:
       - libkrb5-dev
+      - libsasl2-dev
+      - libsasl2-2
+      - libsasl2-modules-gssapi-mit
     state: latest
   become: yes
   when: ansible_distribution == 'Ubuntu'
