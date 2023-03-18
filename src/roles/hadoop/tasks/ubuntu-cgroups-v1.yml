@@ -16,10 +16,10 @@
   when: grub_cfg.found == 0
     
 - name: Set Grub cgroup config
-  ansible.builtin.lineinfile:
+  lineinfile:
     path: /etc/default/grub
     regexp: 'GRUB_CMDLINE_LINUX_DEFAULT="(.*)"'
-    line: "\\1 systemd.unified_cgroup_hierarchy=0"
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 systemd.unified_cgroup_hierarchy=0"'
     backrefs: true
   become: yes
   when: grub_cfg.found == 0
