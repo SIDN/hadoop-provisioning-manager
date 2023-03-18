@@ -129,6 +129,13 @@ Pushed to: {{ inventory_hostname }}
     <name>yarn.nodemanager.linux-container-executor.cgroups.delete-delay-ms</name>
     <value>1000</value>
   </property>
+  
+  <!-- Yarn on Ubuntu 22.04 re2quires mount-path otherwise nodemanager
+        will not start -->
+  <property>
+   <name>yarn.nodemanager.linux-container-executor.cgroups.mount-path</name>
+   <value>/sys/fs/cgroup/</value>
+ </property>
 
   <!--
    Configuring strict container memory enforcement with cgroups
@@ -149,10 +156,7 @@ Pushed to: {{ inventory_hostname }}
     <name>yarn.nodemanager.linux-container-executor.cgroups.mount</name>
     <value>true</value>
  </property>
- <property>
-  <name>yarn.nodemanager.linux-container-executor.cgroups.mount-path</name>
-  <value>/sys/fs/cgroup/</value>
-</property>
+
 
   <property>
     <name>yarn.nodemanager.pmem-check-enabled</name>
