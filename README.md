@@ -1,6 +1,6 @@
 # SIDN Labs Hadoop Provisioning
 
-SIDN Labs Hadoop Provisioning Manager is a set of tools to make is easier to deploy a Big Data analytics cluster. The analytics cluster has support for well known components.
+SIDN Labs Hadoop Provisioning Manager makes it easier to deploy a Hadoop based data analytics cluster. The analytics cluster has support for well known components.
 
 - Apache Hadoop
 - Apache Impala
@@ -11,7 +11,7 @@ SIDN Labs Hadoop Provisioning Manager is a set of tools to make is easier to dep
 - Monitoring (Prometheus and Grafana)
 - Hue
 - Apache Superset
-- JupyterHub
+- JupyterHub/JupyterLab
 
 The cluster is automatically configured with features such as.
 
@@ -47,6 +47,7 @@ This project installs the following components
 | monitor      |  Prometheus and Grafana server      | Yes       | 
 | monitor-proxy      |  Prometheus proxies      | Yes       | 
 | db      |  Postgresql database      | Yes       | 
+| docker-reg-ui      |  Docker registry ui       | No       | 
 | zookeeper      |  Zookeeper packages and config     | No       | 
 | Hadoop      |  Hadoop (hdfs/yarn) packages and config     | No       |
 | spark      |  Spark packages and config     | No       | 
@@ -133,6 +134,7 @@ Available roles:
 | impala_ha_proxy                  | Impala HaProxy loadbalancer | 
 | hue                  | Hie server | 
 | livy                  | Livy server | 
+| docker-reg-ui          | Docker registry UI | 
 | gateway                  | Gateway host, client only | 
 | monitor                  | Monitoring (Prometheus and Grafana) | 
 
@@ -145,7 +147,7 @@ A logical distribution of cluster roles across cluster host types, could look so
 
 | Host type                     | Roles           | 
 | ---------------------------- |-----------------------| 
-| Management node               | manager, console, kerberos_kdc, ranger, solr, database, monitor | 
+| Management node               | manager, console, kerberos_kdc, ranger, solr, database, monitor, docker registry,  docker registry UI| 
 | controller node               | zookeeper (3x), hdfs_nn, hdfs_journalnode, hdfs_httpfs, yarn_resource_mgr, yarn_timelineserver, spark_history, spark_thrift, hive (metastore), impala_statestore, impala_catalog, impala_ha_proxy, livy | 
 | data node                  | hadoop, impala | 
 | gateway node                  | gateway, hue, superset, jupyterhub | 
@@ -578,6 +580,20 @@ When the existing TLS certificate needs to be replaced (because it might expire 
 
 The last step is required because otherwise the Ranger HDFS plugin will not be able to connect to the updated Ranger Admin service.   
  
+## Adding additional hosts
+
+Adding new hosts requires careful execution of the following steps, to make sure all services are correctly deployed on their assigned hosts.
+
+- Stop all services
+- Add the new host to desired groups in hosts configuration file
+- start db, kerberos and console
+- Deploy all service assigned to new host
+- Deploy tls
+- Deploy Kerberos principals
+- Deploy Kerberos keytabs
+- Start all services
+
+
 # Tips
  
 ### Make sure the database and Kerberos KDC are running before deploying other components
