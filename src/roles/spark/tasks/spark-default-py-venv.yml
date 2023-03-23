@@ -9,11 +9,12 @@
   become: yes  
   when: ansible_distribution == 'Ubuntu'
 
-- name: Copy requirements file
-  ansible.builtin.copy:
-    src: "{{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}/python/default-pyspark-requirements.txt"
-    dest: '{{ cache_root }}'
-    
+- name: Create requirements file for default Pyspark environment
+  template:
+    src: "{{ prov_cfg_dir }}/python/default-pyspark-requirements.txt.j2"
+    dest: "{{ cache_root }}/default-pyspark-requirements.txt"
+  become: yes
+  
 # Add kerberos package to req file, only for rhel.
 # for ubuntu we install krb using os package    
 # because pip install does not work for ubuntu
