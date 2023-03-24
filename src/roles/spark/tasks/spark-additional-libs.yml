@@ -20,8 +20,7 @@
   get_url:
       url: "{{ item.item.url }}"
       dest: "{{ download_root }}/{{ item.item.url | basename }}"
-  loop:
-    - "{{ stat_lib.results| flatten }}"
+  loop: "{{ stat_lib.results| flatten }}"
   delegate_to: localhost
   connection: local
   when: item.stat.exists == False
