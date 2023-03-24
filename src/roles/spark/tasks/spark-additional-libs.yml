@@ -2,6 +2,8 @@
   ansible.builtin.debug:
     msg: "{{ item.url }}"
   loop: '{{ spark_additional_libs_download_url| flatten }}'
+  delegate_to: localhost
+  connection: local
   
 - name: Check if libraries are already downloaded
   stat:
@@ -15,8 +17,10 @@
   ansible.builtin.debug:
     msg: "{{ item }}"
   loop: "{{ stat_lib.results| flatten }}"
+  delegate_to: localhost
+  connection: local
 
-- name: Download libraries
+- name: Download libraries to manager host
   get_url:
       url: "{{ item.item.url }}"
       dest: "{{ download_root }}/{{ item.item.url | basename }}"
@@ -24,3 +28,13 @@
   delegate_to: localhost
   connection: local
   when: item.stat.exists == False
+  
+- name: Copy jars to remote hosts
+  ansible.builtin.copy:
+    src: "{{ download_root }}/{{ item.url | basename }}"
+    dest: "{{ stack_root }}/apache-spark-latest/jars"
+    mode: '0644'
+    owner: "{{ spark_os_user }}"
+    group: "{{ spark_os_group }}"
+  become: yes
+  loop: '{{ spark_additional_libs_download_url| flatten }}'
