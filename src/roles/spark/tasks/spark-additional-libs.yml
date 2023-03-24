@@ -1,3 +1,8 @@
+- name: Debug info
+  ansible.builtin.debug:
+    msg: "{{ item }}"
+  loop: '{{ spark_additional_libs_download_url| flatten }}'
+  
 - name: Check if libraries are already downloaded
   stat:
     path: "{{ download_root }}/{{ item.url | basename }}"
@@ -7,6 +12,11 @@
   delegate_to: localhost
   connection: local
   
+- name: Debug info
+  ansible.builtin.debug:
+    msg: "{{ item }}"
+  loop: "{{ stat_lib.results| flatten }}"
+
 - name: Download libraries
   get_url:
       url: "{{ item.item.url }}"
