@@ -24,6 +24,9 @@ docker run --rm \
 {% for d in impalad_scratch_dirs %}
   -v {{ d.split(':')[0] }}:{{ d.split(':')[0] }} \
 {% endfor %}
+{% for d in impalad_cache_dirs %}
+  -v {{ d }}:{{ d}} \
+{% endfor %}
   -v /usr/local/hadoop/hadoop-latest/lib/native:/usr/local/hadoop/hadoop-latest/lib/native \
   {{ groups['manager'][0] }}:{{ docker_registry_port }}/apache/impala:{{ version.impala }} $1
 
