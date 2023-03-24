@@ -54,3 +54,6 @@
 
 -scratch_dirs={{ impalad_scratch_dirs | join(',') }}
 
+{% if impalad_cache_size | length > 0 %}
+-data_cache={{ impalad_cache_dirs | join(',') }}:{{ impalad_cache_size }}
+{% endif %}

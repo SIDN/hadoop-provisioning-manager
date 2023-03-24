@@ -45,9 +45,17 @@ impala_haproxy:
 # can write temp query data
 # format <dir>:<max_size> 
 impalad_scratch_dirs:
-  - /data/1/impala/:10G
-  - /data/2/impala/:10G
-  - /data/3/impala/:10G
+  - /data/1/impala_scratch/:10G
+  - /data/2/impala_scratch/:10G
+  - /data/3/impala_scratch/:10G
+
+# caching directories for remote S3 reads  
+# see: https://impala.apache.org/docs/build/html/topics/impala_data_cache.html#data_cache
+impalad_cache_size: '10G'
+impalad_cache_dirs:
+  - /data/1/impala_cache
+  - /data/2/impala_cache
+  - /data/3/impala_cache
 
 # additional startup options for impalad
 # will be added to file: impalad_flags
@@ -62,7 +70,14 @@ impala_impalad_options:
     max_log_files: 5
     insert_inherit_permissions: true
     umask: '022'
+    fs.s3a.connection.maximum: 1500
+    fs.s3a.block.size: 134217728
 
+# add s3 access and secret key to core-site.xml but only
+# if they are configured
+s3_authentication:
+  access_key: ''
+  secret_key: ''  
       
 # additional startup options for statestored
 # will be added to file: statestored_flags

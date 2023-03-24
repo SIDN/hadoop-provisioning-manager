@@ -23,7 +23,31 @@
     - hdfs-site.xml
     - hive-site.xml
   become: yes
-        
+  
+# add s3 access and secret key to core-site.xml but only
+# if they are configured
+- name: Add S3 credentials to core-site.xml
+  become: yes
+  lineinfile:
+    path: '{{ impala_etc_dir }}/core-site.xml'
+    insertbefore: '</configuration>'
+    line: >
+      <property>
+        <name>fs.s3a.access.key</name>
+        <value>{{ s3_authentication.access_key }}</value>
+      </property>
+      <property>
+        <name>fs.s3a.access.key</name>
+        <value>{{ s3_authentication.secret_key }}</value>
+      </property>
+    state: present  
+  when: not ( ((s3_authentication.access_key is undefined) or
+              (s3_authentication.access_key | length == 0))
+              or
+              ((s3_authentication.secret_key is undefined) or
+              (s3_authentication.secret_key | length == 0))
+            )
+      
 - name: Create symlink for metastore-site.xml
   file:
       src: "{{ impala_etc_dir }}/hive-site.xml"

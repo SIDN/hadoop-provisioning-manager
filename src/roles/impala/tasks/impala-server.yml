@@ -14,7 +14,19 @@
     owner: "{{ impala_os_user }}"
     group: "{{ impala_os_group }}"
     mode: '0755'
-  loop: '{{ impalad_scratch_dirs }}'
+  loop: '{{ impalad_scratch_dirs | flatten }}'
+  become: yes  
+  when: inventory_hostname in groups['impala']
+        and not (inventory_hostname in groups['gateway']) 
+        
+- name: Create cache directories for Impalad
+  file:
+    path: "{{ item }}:{{ impalad_cache_size }}"
+    state: directory
+    owner: "{{ impala_os_user }}"
+    group: "{{ impala_os_group }}"
+    mode: '0755'
+  loop: '{{ impalad_cache_dirs | flatten}}'
   become: yes  
   when: inventory_hostname in groups['impala']
         and not (inventory_hostname in groups['gateway']) 
