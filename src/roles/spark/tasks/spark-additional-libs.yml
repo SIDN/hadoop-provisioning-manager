@@ -1,6 +1,6 @@
 - name: Debug info
   ansible.builtin.debug:
-    msg: "{{ item }}"
+    msg: "{{ item.url }}"
   loop: '{{ spark_additional_libs_download_url| flatten }}'
   
 - name: Check if libraries are already downloaded
