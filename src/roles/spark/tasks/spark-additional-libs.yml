@@ -7,8 +7,7 @@
   stat:
     path: "{{ download_root }}/{{ item.url | basename }}"
   register: stat_lib
-  loop:
-    - '{{ spark_additional_libs_download_url| flatten }}'
+  loop: '{{ spark_additional_libs_download_url| flatten }}'
   delegate_to: localhost
   connection: local
   
