@@ -1,5 +1,8 @@
 - name: Include Spark server
   include_tasks: spark-server.yml
   
+- name: Include Spark additional libs
+  include_tasks: spark-additional-libs.yml
+  
 - name: Include Create default Python virtual environment
   include_tasks: spark-default-py-venv.yml

@@ -1,0 +1,18 @@
+- name: Check if libraries are already downloaded
+  stat:
+    path: "{{ download_root }}/{{ item.url | basename }}"
+  register: stat_lib
+  loop:
+    - '{{ spark_additional_libs_download_url }}'
+  delegate_to: localhost
+  connection: local
+  
+- name: Download libraries
+  get_url:
+      url: "{{ item.item }}"
+      dest: "{{ download_root }}/{{ item.item | basename }}"
+  loop:
+    - "{{ stat_lib.results| flatten(1) }}"
+  delegate_to: localhost
+  connection: local
+  when: item.stat.exists == False
