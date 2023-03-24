@@ -3,16 +3,16 @@
     path: "{{ download_root }}/{{ item.url | basename }}"
   register: stat_lib
   loop:
-    - '{{ spark_additional_libs_download_url }}'
+    - '{{ spark_additional_libs_download_url| flatten }}'
   delegate_to: localhost
   connection: local
   
 - name: Download libraries
   get_url:
-      url: "{{ item.item }}"
-      dest: "{{ download_root }}/{{ item.item | basename }}"
+      url: "{{ item.item.url }}"
+      dest: "{{ download_root }}/{{ item.item.url | basename }}"
   loop:
-    - "{{ stat_lib.results| flatten(1) }}"
+    - "{{ stat_lib.results| flatten }}"
   delegate_to: localhost
   connection: local
   when: item.stat.exists == False
