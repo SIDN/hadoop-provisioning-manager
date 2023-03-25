@@ -4,5 +4,5 @@
     dest: "{{ airflow_etc_dir }}/{{ item.dest }}"
     mode: '0644'
   loop:
-    - { name: 'airflow-env.sh.j2', dest: 'airflow-env.sh'}
+    - { name: 'airflow.env.j2', dest: 'airflow.env'}
   become: yes
