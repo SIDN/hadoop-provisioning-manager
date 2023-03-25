@@ -18,7 +18,6 @@ airflow_db: airflow_db
 airflow_db_user: airflow
 airflow_db_password: "{{ vault_airflow_db_password }}"
 
-
 # Additional options
 airflow_additional_cfg_block: |
   # add additional config lines here
