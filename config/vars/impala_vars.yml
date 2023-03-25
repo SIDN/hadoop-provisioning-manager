@@ -51,7 +51,8 @@ impalad_scratch_dirs:
 
 # caching directories for remote S3 reads  
 # see: https://impala.apache.org/docs/build/html/topics/impala_data_cache.html#data_cache
-impalad_cache_size: '10G'
+# when  not enough free space impala will not start
+impalad_cache_size: '1G'
 impalad_cache_dirs:
   - /data/1/impala_cache
   - /data/2/impala_cache

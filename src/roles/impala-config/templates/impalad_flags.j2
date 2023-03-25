@@ -1,6 +1,7 @@
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
 
+-hostname={{ inventory_hostname }}
 -fe_port=21000
 -be_port=22000
 -webserver_port={{ impala_web_port.impalad }}
