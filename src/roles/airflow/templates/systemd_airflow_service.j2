@@ -14,7 +14,7 @@ User={{ airflow_os_user }}
 Group={{ airflow_os_group }}
 Type=exec
 ExecStart={{ stack_root }}/airflow-latest/bin/start-airflow.sh
-ExecStop=/usr/bin/docker stop airflow
+ExecStop={{ stack_root }}/airflow-latest/bin/stop-airflow.sh
 [Install]
 WantedBy=multi-user.target
 
