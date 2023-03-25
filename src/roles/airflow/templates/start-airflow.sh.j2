@@ -3,7 +3,11 @@
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
 
-docker run --rm \
+export UID=$(id -u)
+export GID=$(id -g)
+
+docker run --user $UID:$GID \
+--rm \
 --name airflow \
 --env-file {{ airflow_etc_dir }}/airflow.env \
 -p {{ airflow_port }}:{{ airflow_port }} \
