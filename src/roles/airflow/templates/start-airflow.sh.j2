@@ -5,7 +5,7 @@
 
 docker run --rm \
 --name airflow \
---env-file {{ airflow_etc_dir }}/airflow-env.sh \
+--env-file {{ airflow_etc_dir }}/airflow.env \
 -p {{ airflow_port }}:{{ airflow_port }} \
 -v {{ airflow_log_dir }}:{{ airflow_log_dir }} \
 -v {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:{{ tls_etc_dir }}/{{ tls_remote_pub_chain }} \
