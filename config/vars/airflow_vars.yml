@@ -7,7 +7,7 @@ airflow_etc_dir: "{{ config_root }}/airflow"
 # Location of airflow logging
 airflow_log_dir: /var/log/airflow
 
-airflow_data_dir: /data/1/airflow
+airflow_data_dir: /airflow
 
 # Port airflow is listening on
 airflow_port: 9999
