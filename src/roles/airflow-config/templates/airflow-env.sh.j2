@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+
+{% for key, value in airflow_additional_cfg.items() %}
+export AIRFLOW__{{ key| upper }}={{ value | upper }}
+{% endfor %}

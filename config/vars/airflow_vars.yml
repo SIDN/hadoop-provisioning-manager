@@ -19,7 +19,13 @@ airflow_db_user: airflow
 airflow_db_password: "{{ vault_airflow_db_password }}"
 
 # Additional options
-airflow_additional_cfg_block: |
-  # add additional config lines here
-  # will be added to airflow.cfg
-  default_timezone = Europe/Amsterdam
+airflow_additional_cfg:
+  database__sql_alchemy_conn: 'postgresql+psycopg2://{{ airflow_db_user}}:{{ airflow_db_password }}@{{ groups['database'][0] }}/{{ airflow_db}}'
+  core__default_timezone: 'Europe/Amsterdam'
+  webserver__base_url: 'https://{{ inventory_hostname }}:{{ airflow_port }}'
+  webserver__web_server_port: '{{ airflow_port }}'
+  webserver__web_server_ssl_cert: '{{ tls_etc_dir }}/{{ tls_remote_pub_chain }}'
+  webserver__web_server_ssl_key: '{{ tls_etc_dir }}/{{ tls_remote_priv_key }}'
+  
+  
+
