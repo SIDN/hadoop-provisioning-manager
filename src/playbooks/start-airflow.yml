@@ -1,4 +1,6 @@
 - hosts: airflow
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/airflow_vars.yml"
   remote_user: hadoop-mgr
   become: yes
   vars:

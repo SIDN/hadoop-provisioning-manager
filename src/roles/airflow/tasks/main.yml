@@ -42,7 +42,7 @@
     src: "../templates/{{ item.src }}"
     dest: "{{ item.dest }}"
   loop:
-    - { "src": "systemd_airflow_service.j2", "dest": "/etc/systemd/system/systemd_airflow.service"}
+    - { "src": "systemd_airflow_service.j2", "dest": "/etc/systemd/system/airflow.service"}
   become: yes
   
 - name: Systemctl Reload Daemons
