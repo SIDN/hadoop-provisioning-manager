@@ -5,5 +5,5 @@
 
 
 {% for key, value in airflow_additional_cfg.items() %}
-export AIRFLOW__{{ key| upper }}={{ value | upper }}
+export AIRFLOW__{{ key| upper }}={{ value }}
 {% endfor %}
