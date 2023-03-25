@@ -22,3 +22,4 @@ airflow_db_password: "{{ vault_airflow_db_password }}"
 airflow_additional_cfg_block: |
   # add additional config lines here
   # will be added to airflow.cfg
+  default_timezone = Europe/Amsterdam
