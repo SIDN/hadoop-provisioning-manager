@@ -24,20 +24,20 @@
     state: directory
     owner: "{{ airflow_os_user }}"
     group: "{{ airflow_os_group }}"
-    mode: '0777'
   loop:
     - "{{ airflow_data_dir }}"
     - "{{ airflow_log_dir }}"
+    - "{{ stack_root }}/airflow-{{ version.airflow }}/bin"
   become: yes
   
-- name: Create airflow component directory
-  file:
-    path: "{{ stack_root }}/airflow-{{ version.airflow }}/bin"
-    state: directory
-    owner: "{{ airflow_os_user }}"
-    group: "{{ airflow_os_group }}"
-    mode: '0755'
-  become: yes  
+# - name: Create airflow component directory
+#   file:
+#     path: "{{ stack_root }}/airflow-{{ version.airflow }}/bin"
+#     state: directory
+#     owner: "{{ airflow_os_user }}"
+#     group: "{{ airflow_os_group }}"
+#     mode: '0755'
+#   become: yes  
 
 - name: Create symlink latest airflow version
   file:
