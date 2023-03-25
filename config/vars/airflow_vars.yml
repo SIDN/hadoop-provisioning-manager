@@ -1,0 +1,25 @@
+# OS user to run airflow docker container
+airflow_os_user: airflow
+airflow_os_group: airflow
+
+# Location of airflow configuration files
+airflow_etc_dir: "{{ config_root }}/airflow"
+# Location of airflow logging
+airflow_log_dir: /var/log/airflow
+
+airflow_data_dir: /data/1/airflow
+
+# Port airflow is listening on
+airflow_port: 9999
+
+# The airflow database options 
+# Database will be create automatically
+airflow_db: airflow_db
+airflow_db_user: airflow
+airflow_db_password: "{{ vault_airflow_db_password }}"
+
+
+# Additional options
+airflow_additional_cfg_block: |
+  # add additional config lines here
+  # will be added to airflow.cfg

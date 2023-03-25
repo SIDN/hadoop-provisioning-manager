@@ -1,0 +1,15 @@
+- name: Create Airflow configuration
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ airflow_etc_dir }}/{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { name: 'airflow.cfg.j2', dest: 'airflow.cfg'}
+  become: yes
+  
+- name: Create symlink latest airflow config
+  file:
+      src: "{{ airflow_data_dir }}/airflow.cfg"
+      dest: "{{ airflow_etc_dir }}/airflow.cfg"
+      state: link
+  become: yes

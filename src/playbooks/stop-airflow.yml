@@ -1,0 +1,8 @@
+- hosts: airflow
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: airflow
+  tasks:
+    - name: "Stop service(s)"
+      include_tasks: shutdown/tasks/generic-service.yml

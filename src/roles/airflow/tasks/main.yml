@@ -1,0 +1,97 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ airflow_os_group }}"
+    state: present
+  become: yes
+    
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ airflow_os_user }}"
+    new_group: "{{ airflow_os_group }}"
+  
+- name: Create cfg directory
+  file:
+    path: "{{ airflow_etc_dir }}"
+    state: directory
+    mode: '0755'
+  become: yes
+  
+- name: Create airflow directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ airflow_os_user }}"
+    group: "{{ airflow_os_group }}"
+    mode: '0777'
+  loop:
+    - "{{ airflow_data_dir }}"
+    - "{{ airflow_log_dir }}"
+  become: yes
+  
+- name: Create airflow component directory
+  file:
+    path: "{{ stack_root }}/airflow-{{ version.airflow }}/bin"
+    state: directory
+    owner: "{{ airflow_os_user }}"
+    group: "{{ airflow_os_group }}"
+    mode: '0755'
+  become: yes  
+
+- name: Create symlink latest airflow version
+  file:
+      src: "{{ stack_root }}/airflow-{{ version.airflow }}"
+      dest: "{{ stack_root }}/airflow-latest"
+      state: link
+  become: yes
+  
+- name: Systemctl Reload Daemons
+  command: "systemctl daemon-reload"
+  become: yes
+  
+- name: "Add user {{ airflow_os_user }} to group docker"
+  user:
+    name: "{{ airflow_os_user }}"
+    groups: docker
+    append: yes
+  become: yes
+  
+- name: Add user '{{ provision_user }}' to group docker
+  user:
+    name: '{{ provision_user }}'
+    groups: docker
+    append: yes
+  become: yes
+
+# use task below to pull img from dockerhub and push to local repo
+- name: Pull image, tag and push to registry
+  community.docker.docker_image:
+    name: apache/airflow:{{ version.airflow }}
+    repository: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/airflow/airflow"
+    tag: "{{ version.airflow }}"
+    push: yes
+    source: pull
+  delegate_to: localhost
+  connection: local
+  become: yes
+
+- name: Pull airflow image to airflow server
+  shell: >
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/airflow/airflow:{{ version.airflow }};
+    docker system prune -f
+  become: yes
+     
+- name: Include create database task
+  include_tasks: tasks/database.yml
+
+- name: Create Container start script
+  ansible.builtin.template:
+    src: "../templates/{{ item }}"
+    dest: "{{ stack_root }}/airflow-latest/bin/{{ item | replace('.j2','') }}"
+    mode: '0755'
+  become: yes
+  loop:
+    - start-airflow.sh.j2
+    - stop-airflow.sh.j2

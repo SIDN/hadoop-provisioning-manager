@@ -153,3 +153,7 @@ hadoop-dev2.example.nl
 
 [jupyterhub]
 hadoop-dev2.example.nl
+
+# max 1 host for airflow server allowed
+[airflow]
+hadoop-dev1.example.nl

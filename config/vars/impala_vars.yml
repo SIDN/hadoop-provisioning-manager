@@ -72,7 +72,6 @@ impala_impalad_options:
     insert_inherit_permissions: true
     umask: '022'
     fs.s3a.connection.maximum: 1500
-    fs.s3a.block.size: 134217728
 
 # add s3 access and secret key to core-site.xml but only
 # if they are configured

@@ -18,6 +18,7 @@ export PB_IMPALA=impala.yml
 export PB_IMPALA_SHELL=impala-shell.yml
 export PB_IMPALA_PROXY=impala-proxy.yml
 export PB_HUE=hue.yml
+export PB_AIRFLOW=airflow.yml
 export PB_SUPERSET=superset.yml
 export PB_JUPYTERHUB=jupyterhub.yml
 export PB_LIVY=livy.yml
@@ -162,6 +163,9 @@ function run_playbooks()
         ;;
         hue)
           run_playbook "$PB_PREFIX-$PB_HUE"
+        ;;
+        airflow)
+          run_playbook "$PB_PREFIX-$PB_AIRFLOW"
         ;;
         superset)
           run_playbook "$PB_PREFIX-$PB_SUPERSET"

@@ -1,0 +1,31 @@
+- hosts: airflow
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: airflow
+  tasks:
+    - name: "Start service(s)"
+      include_tasks: startup/tasks/generic-service.yml
+
+    - name: Wait for Docker container to become active
+      wait_for:
+        host: "{{ groups['airflow'][0] }}"
+        port: '{{ airflow_port }}'
+        delay: 5
+        connect_timeout: 15
+        timeout: 120
+        msg: "Connection fail for: {{ groups['airflow'][0] }}:{{ airflow_port }}"
+      delegate_to: localhost
+      connection: local
+  
+    - name: Update Airflow database
+      community.docker.docker_container_exec:
+        container: hue
+        argv:
+          - /bin/bash
+          - "-c"
+          - "airflow db upgrade"
+        user: airflow
+      delegate_to: localhost
+      connection: local
+      become: yes
