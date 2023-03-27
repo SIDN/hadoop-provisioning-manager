@@ -9,6 +9,7 @@
     mode: '0644'
   loop:
     - { name: 'airflow.env.j2', dest: 'airflow.env'}
+    - { name: 'nginx-rev-proxy.conf.j2', dest: 'nginx-rev-proxy.conf'}
   become: yes
   
   

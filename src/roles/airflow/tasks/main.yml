@@ -18,12 +18,13 @@
     mode: '0755'
   become: yes
   
+# use group root, otherwise docker container cannot access the directories
 - name: Create airflow directories
   file:
     path: "{{ item }}"
     state: directory
     owner: "{{ airflow_os_user }}"
-    group: "{{ airflow_os_group }}"
+    group: "{{ root }}"
   loop:
     - "{{ airflow_data_dir }}"
     - "{{ airflow_data_dir }}/dags"

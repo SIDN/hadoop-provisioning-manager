@@ -107,8 +107,8 @@ services:
     <<: *airflow-common
     command: webserver
     container_name: airflow_webserver
-    ports:
-      - "{{ airflow_web_port }}:8080"
+    expose:
+      - 8080
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
@@ -270,14 +270,14 @@ services:
   # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
   # or by explicitly targeted on the command line e.g. docker-compose up flower.
   # See: https://docs.docker.com/compose/profiles/
-  flower:
+  airflow-flower:
     <<: *airflow-common
     command: celery flower
     container_name: airflow_flower
     profiles:
       - flower
-    ports:
-      - "{{ airflow_flower_web_port }}:5555"
+    expose:
+      - 5555
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
       interval: 30s
@@ -289,3 +289,16 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+        
+  nginx:
+  image: nginx:latest
+  container_name: airflow_nginx
+  ports:
+    - "{{ airflow_flower_web_port }}:{{ airflow_flower_web_port }}"
+    - "{{ airflow_web_port }}:{{ airflow_web_port }}"
+  volumes:
+    - {{ airflow_etc_dir}}/nginx-rev-proxy.conf:/etc/nginx/nginx.conf
+    - {{ airflow_log_dir}}:/var/log/nginx/
+    - {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:{{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
+    - {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:{{ tls_etc_dir }}/{{ tls_remote_priv_key }}
+
