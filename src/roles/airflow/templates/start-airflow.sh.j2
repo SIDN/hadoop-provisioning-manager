@@ -6,8 +6,5 @@
 
 cd {{ airflow_data_dir }}/src
 
-# 1st check if database needs to initialised or upgraded
-#docker compose up airflow-init
-
 # start airflow
 docker compose --profile flower up

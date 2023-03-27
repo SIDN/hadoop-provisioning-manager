@@ -11,11 +11,11 @@
   </tr>
     {% for host in groups['airflow'] %}
     <tr>
-      <td>Airflow web interface</td>
+      <td>Airflow Admin</td>
       <td><a href="https://{{ host }}:{{ airflow_web_port }}/" target="_blank">{{ host }}</a></td>
     </tr>
     <tr>
-      <td>Flower web interface</td>
+      <td>Celery Flower Monitor</td>
       <td><a href="https://{{ host }}:{{ airflow_flower_web_port }}/" target="_blank">{{ host }}</a></td>
     </tr>
     {% endfor %}
