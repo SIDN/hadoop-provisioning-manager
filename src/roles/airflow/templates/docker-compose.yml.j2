@@ -28,7 +28,7 @@ x-airflow-common:
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   image: {{ groups['manager'][0] }}:{{ docker_registry_port }}/airflow/airflow:{{ version.airflow }}
-  env_file: {{ airflow_etc_dir }}airflow.env
+  env_file: {{ airflow_etc_dir }}/airflow.env
   environment:
     &airflow-common-env
     AIRFLOW_PROJ_DIR: {{ airflow_data_dir }}

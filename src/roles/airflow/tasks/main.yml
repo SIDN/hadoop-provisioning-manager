@@ -10,6 +10,13 @@
   vars:
     new_user: "{{ airflow_os_user }}"
     new_group: "{{ airflow_os_group }}"
+    
+- name: "Add user {{ airflow_os_user }} to group docker"
+  user:
+    name: "{{ airflow_os_user }}"
+    groups: docker
+    append: yes
+  become: yes
   
 - name: Create cfg directory
   file:
