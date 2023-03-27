@@ -24,7 +24,7 @@
     path: "{{ item }}"
     state: directory
     owner: "{{ airflow_os_user }}"
-    group: "{{ root }}"
+    group: root
   loop:
     - "{{ airflow_data_dir }}"
     - "{{ airflow_data_dir }}/dags"
