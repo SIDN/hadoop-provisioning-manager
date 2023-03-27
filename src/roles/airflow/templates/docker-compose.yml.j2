@@ -291,14 +291,16 @@ services:
         condition: service_completed_successfully
         
   nginx:
-  image: nginx:latest
-  container_name: airflow_nginx
-  ports:
-    - "{{ airflow_flower_web_port }}:{{ airflow_flower_web_port }}"
-    - "{{ airflow_web_port }}:{{ airflow_web_port }}"
-  volumes:
-    - {{ airflow_etc_dir}}/nginx-rev-proxy.conf:/etc/nginx/nginx.conf
-    - {{ airflow_log_dir}}:/var/log/nginx/
-    - {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:{{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
-    - {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:{{ tls_etc_dir }}/{{ tls_remote_priv_key }}
-
+    image: nginx:latest
+    container_name: airflow_nginx
+    ports:
+      - "{{ airflow_flower_web_port }}:{{ airflow_flower_web_port }}"
+      - "{{ airflow_web_port }}:{{ airflow_web_port }}"
+    volumes:
+      - {{ airflow_etc_dir}}/nginx-rev-proxy.conf:/etc/nginx/nginx.conf
+      - {{ airflow_log_dir}}:/var/log/nginx/
+      - {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:{{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
+      - {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:{{ tls_etc_dir }}/{{ tls_remote_priv_key }}
+    depends_on:
+      - airflow-webserver
+      - airflow-flower
