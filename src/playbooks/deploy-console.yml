@@ -18,6 +18,7 @@
     - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
     - "{{ prov_cfg_dir }}/vars/spark_vars.yml"
     - "{{ prov_cfg_dir }}/vars/impala_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/airflow_vars.yml"
     - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
   remote_user: hadoop-mgr
   become: yes
