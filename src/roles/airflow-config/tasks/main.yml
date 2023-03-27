@@ -1,3 +1,7 @@
+- name: Get user database
+  getent:
+    database: passwd
+        
 - name: Create Airflow configuration
   template:
     src: "../templates/{{ item.name }}"
