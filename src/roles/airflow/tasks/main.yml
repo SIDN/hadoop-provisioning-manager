@@ -26,18 +26,33 @@
     group: "{{ airflow_os_group }}"
   loop:
     - "{{ airflow_data_dir }}"
+    - "{{ airflow_data_dir }}/dags"
+    - "{{ airflow_data_dir }}/plugins"
+    - "{{ airflow_data_dir }}/src"
     - "{{ airflow_log_dir }}"
     - "{{ stack_root }}/airflow-{{ version.airflow }}/bin"
   become: yes
 
-- name: Create symlink latest airflow version
+- name: Create symlinks
   file:
-      src: "{{ stack_root }}/airflow-{{ version.airflow }}"
-      dest: "{{ stack_root }}/airflow-latest"
+      src: "{{ airflow_data_dir }}/logs"
+      dest: "{{ airflow_log_dir }}"
       state: link
+  loop:
+    - { "src": "{{ airflow_data_dir }}/logs", "dest": "{{ airflow_log_dir }}" }
+    - { "src": "{{ airflow_data_dir }}/src/.env", "dest": "{{ airflow_etc_dir }}/airflow.env" }
+    - { "src": "{{ stack_root }}/airflow-{{ version.airflow }}", "dest": "{{ stack_root }}/airflow-latest" }
+  become: yes
+
+- name: Copy Airflow docker compose file
+  ansible.builtin.template:
+    src: "../templates/docker-compose-yml.j2"
+    dest: "{{ airflow_data_dir }}/src/docker-compose-yml"
+    owner: "{{ airflow_os_user }}"
+    group: "{{ airflow_os_group }}"
   become: yes
   
-- name: Create systemd service
+- name: Copy Airflow Systemd Unit
   ansible.builtin.template:
     src: "../templates/{{ item.src }}"
     dest: "{{ item.dest }}"

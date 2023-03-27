@@ -3,4 +3,6 @@
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
 
-/usr/bin/docker stop airflow
+cd {{ airflow_data_dir }}/src
+
+docker compose down

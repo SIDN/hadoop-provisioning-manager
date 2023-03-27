@@ -6,6 +6,13 @@
   vars:
     service_name: airflow
   tasks:
+    # do airflow db init/upgrade first
+    - name: Initialise Airflow
+      shell: >
+        cd {{ airflow_data_dir }}/src;
+        docker compose up airflow-init
+      become: yes
+    
     - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml
 

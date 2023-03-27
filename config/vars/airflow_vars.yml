@@ -12,6 +12,10 @@ airflow_data_dir: /airflow
 # Port airflow is listening on
 airflow_port: 9999
 
+# www credentials
+airflow_www_user: airflow
+airflow_www_password:  "{{ vault_airflow_www_password }}"
+
 # The airflow database options 
 # Database will be create automatically
 airflow_db: airflow_db

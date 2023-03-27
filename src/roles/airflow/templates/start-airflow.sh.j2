@@ -3,15 +3,17 @@
 # Created on {{ ansible_date_time.iso8601 }}
 # Pushed to: {{  inventory_hostname }}
 
-export UID=$(id -u)
-export GID=$(id -g)
 
-docker run --user $UID:$GID \
---rm \
---name airflow \
---env-file {{ airflow_etc_dir }}/airflow.env \
--p {{ airflow_port }}:{{ airflow_port }} \
--v {{ airflow_log_dir }}:{{ airflow_log_dir }} \
--v {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:{{ tls_etc_dir }}/{{ tls_remote_pub_chain }} \
--v {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:{{ tls_etc_dir }}/{{ tls_remote_priv_key }} \
---env AIRFLOW_HOME={{ airflow_data_dir }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/airflow/airflow:{{ version.airflow }}
+cd {{ airflow_data_dir }}/src
+
+docker compose up flower
+
+# docker run --user $UID:$GID \
+# --rm \
+# --name airflow \
+# --env-file {{ airflow_etc_dir }}/airflow.env \
+# -p {{ airflow_port }}:{{ airflow_port }} \
+# -v {{ airflow_log_dir }}:{{ airflow_log_dir }} \
+# -v {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:{{ tls_etc_dir }}/{{ tls_remote_pub_chain }} \
+# -v {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:{{ tls_etc_dir }}/{{ tls_remote_priv_key }} \
+# --env AIRFLOW_HOME={{ airflow_data_dir }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/airflow/airflow:{{ version.airflow }}
