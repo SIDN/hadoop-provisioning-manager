@@ -58,7 +58,7 @@ x-airflow-common:
   env_file: .env
   environment:
     &airflow-common-env
-    AIRFLOW_PROJ_DIR: {{ airflow_data_dir }}/src
+    AIRFLOW_PROJ_DIR: {{ airflow_data_dir }}
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     #AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     # For backward compatibility, with Airflow <2.3
@@ -252,7 +252,7 @@ services:
       _PIP_ADDITIONAL_REQUIREMENTS: ''
     user: "0:0"
     volumes:
-      - ${AIRFLOW_PROJ_DIR:-.}:/sources
+      - ${AIRFLOW_PROJ_DIR}/src:/sources
 
   airflow-cli:
     <<: *airflow-common
