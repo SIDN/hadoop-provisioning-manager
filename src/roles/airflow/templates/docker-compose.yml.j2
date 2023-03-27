@@ -107,9 +107,9 @@ services:
     command: webserver
     container_name: airflow_webserver
     ports:
-      - "{{ airflow_port }}:{{ airflow_port }}"
+      - "{{ airflow_web_port }}:{{ airflow_web_port }}"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:{{ airflow_port }}/health"]
+      test: ["CMD", "curl", "--fail", "http://localhost:{{ airflow_web_port }}/health"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -276,9 +276,9 @@ services:
     profiles:
       - flower
     ports:
-      - "5555:5555"
+      - "{{ airflow_flower_web_port }}:{{ airflow_flower_web_port }}"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
+      test: ["CMD", "curl", "--fail", "http://localhost:{{ airflow_flower_web_port }}/"]
       interval: 30s
       timeout: 10s
       retries: 5

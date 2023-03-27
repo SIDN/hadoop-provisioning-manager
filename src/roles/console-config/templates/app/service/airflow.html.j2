@@ -1,0 +1,22 @@
+<h1 class="display-6">Airflow</h1>
+<p>
+<a href="https://airflow.apache.org/">Airflow</a> Airflow is a platform created by the community to programmatically author, schedule and monitor workflows.
+</p>
+<p>
+</p>
+<table class="table table-hover">
+  <tr>
+    <th>Service</th>
+    <th>Host</th>
+  </tr>
+    {% for host in groups['airflow'] %}
+    <tr>
+      <td>Airflow web interface</td>
+      <td><a href="https://{{ host }}:{{ airflow_web_port }}/" target="_blank">{{ host }}</a></td>
+    </tr>
+    <tr>
+      <td>Flower web interface</td>
+      <td><a href="https://{{ host }}:{{ airflow_flower_web_port }}/" target="_blank">{{ host }}</a></td>
+    </tr>
+    {% endfor %}
+</table>

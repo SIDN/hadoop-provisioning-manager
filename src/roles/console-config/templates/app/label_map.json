@@ -22,6 +22,7 @@
 		"hadoop": ["HDFS Data Node", "Yarn Node Manager"],
 		"database": ["PostgreSQL Server"],
 		"hue": ["Hue Server"],
+    "airflow": ["Airflow Server"],
     "jupyterhub": ["Jupyterhub Server"],
     "superset": ["Superset Server"],
 		"gateway": ["Gateway"],

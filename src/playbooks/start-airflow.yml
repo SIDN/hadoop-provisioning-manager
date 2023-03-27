@@ -19,11 +19,11 @@
     - name: Wait for Docker container to become active
       wait_for:
         host: "{{ groups['airflow'][0] }}"
-        port: '{{ airflow_port }}'
+        port: '{{ airflow_web_port }}'
         delay: 5
         connect_timeout: 15
         timeout: 120
-        msg: "Connection fail for: {{ groups['airflow'][0] }}:{{ airflow_port }}"
+        msg: "Connection fail for: {{ groups['airflow'][0] }}:{{ airflow_web_port }}"
       delegate_to: localhost
       connection: local
   

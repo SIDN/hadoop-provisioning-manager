@@ -85,6 +85,7 @@
     - { path: 'service', src: 'spark.html.j2', name: 'spark' }
     - { path: 'service', src: 'zookeeper.html.j2', name: 'zookeeper' }
     - { path: 'service', src: 'docker.html.j2', name: 'docker' }
+    - { path: 'service', src: 'airflow.html.j2', name: 'airflow' }
     - { path: '', src: 'main.html.j2', name: 'index' }
     - { path: '', src: 'hostmap.html.j2', name: 'hostmap' }
     - { path: '', src: 'version.html.j2', name: 'version' }  

@@ -10,7 +10,8 @@ airflow_log_dir: /var/log/airflow
 airflow_data_dir: /airflow
 
 # Port airflow is listening on
-airflow_port: 9999
+airflow_web_port: 9990
+airflow_flower_web_port: 9991
 
 # www credentials
 airflow_www_user: airflow
@@ -24,11 +25,10 @@ airflow_db_password: "{{ vault_airflow_db_password }}"
 
 # Additional options
 airflow_additional_cfg:
+  # add additional config lines here
+  # will be added to airflow.cfg
   core__default_timezone: 'Europe/Amsterdam'
-  webserver__base_url: 'https://{{ inventory_hostname }}:{{ airflow_port }}'
-  webserver__web_server_port: '{{ airflow_port }}'
-  webserver__web_server_ssl_cert: '{{ tls_etc_dir }}/{{ tls_remote_pub_chain }}'
-  webserver__web_server_ssl_key: '{{ tls_etc_dir }}/{{ tls_remote_priv_key }}'
+
   
   
 
