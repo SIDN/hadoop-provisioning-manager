@@ -40,7 +40,6 @@
       state: link
   loop:
     - { "src": "{{ airflow_log_dir }}", "dest": "{{ airflow_data_dir }}/logs" }
-    - { "src": "{{ airflow_data_dir }}/src/.env", "dest": "{{ airflow_etc_dir }}/airflow.env" }
     - { "src": "{{ stack_root }}/airflow-{{ version.airflow }}", "dest": "{{ stack_root }}/airflow-latest" }
   become: yes
 
