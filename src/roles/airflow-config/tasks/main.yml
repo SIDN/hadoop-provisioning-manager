@@ -11,3 +11,13 @@
     - { name: 'airflow.env.j2', dest: 'airflow.env'}
     - { name: 'nginx-rev-proxy.conf.j2', dest: 'nginx-rev-proxy.conf'}
   become: yes
+  
+  
+- name: Create symlinks
+  file:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      state: link
+  loop:
+    - { "src": "{{ airflow_etc_dir }}/airflow.env", "dest": "{{ airflow_data_dir }}/src/.env" }
+  become: yes
