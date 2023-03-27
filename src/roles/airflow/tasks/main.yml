@@ -45,7 +45,7 @@
 
 - name: Copy Airflow docker compose file
   ansible.builtin.template:
-    src: "../templates/docker-compose-yml.j2"
+    src: "../templates/docker-compose.yml.j2"
     dest: "{{ airflow_data_dir }}/src/docker-compose-yml"
     owner: "{{ airflow_os_user }}"
     group: "{{ airflow_os_group }}"
