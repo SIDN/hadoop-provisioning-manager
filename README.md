@@ -12,6 +12,7 @@ SIDN Labs Hadoop Provisioning Manager makes it easier to deploy a Hadoop based d
 - Hue
 - Apache Superset
 - JupyterHub/JupyterLab
+- Apache Airflow
 
 The cluster is automatically configured with features such as.
 
@@ -57,6 +58,7 @@ This project installs the following components
 | livy      |  Livy packages and config     | No       | 
 | ranger      |  Ranger packages and config     | No       | 
 | solr      |  Solr packages and config     | No       | 
+| airflow      |  Airflow packages and config     | Yes       | 
 | tls      |  TLS certificates and config for all components    | No       | 
 | krb-kdc      |  Deploy Keberos KDC server    | No       | 
 | krb-principal      |  Generate Kerberos principals for all components    | No       | 

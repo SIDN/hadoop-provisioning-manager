@@ -58,6 +58,7 @@ x-airflow-common:
   env_file: .env
   environment:
     &airflow-common-env
+    AIRFLOW_PROJ_DIR: {{ airflow_data_dir }}/src
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     #AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     # For backward compatibility, with Airflow <2.3
@@ -77,12 +78,12 @@ x-airflow-common:
     # for other purpose (development, test and especially production usage) build/extend Airflow image.
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
-    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+    - ${AIRFLOW_PROJ_DIR}/dags:/opt/airflow/dags
+    - ${AIRFLOW_PROJ_DIR}/logs:/opt/airflow/logs
+    - ${AIRFLOW_PROJ_DIR}/plugins:/opt/airflow/plugins
     - {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:{{ tls_etc_dir }}/{{ tls_remote_pub_chain }}
     - {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:{{ tls_etc_dir }}/{{ tls_remote_priv_key }}
-  user: "${AIRFLOW_UID:-50000}:0"
+  user: "${AIRFLOW_UID}:0"
   depends_on:
     &airflow-common-depends-on
     redis:
@@ -107,9 +108,9 @@ services:
     command: webserver
     container_name: airflow_webserver
     ports:
-      - "{{ airflow_web_port }}:{{ airflow_web_port }}"
+      - "{{ airflow_web_port }}:8080"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:{{ airflow_web_port }}/health"]
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -276,9 +277,9 @@ services:
     profiles:
       - flower
     ports:
-      - "{{ airflow_flower_web_port }}:{{ airflow_flower_web_port }}"
+      - "{{ airflow_flower_web_port }}:5555"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:{{ airflow_flower_web_port }}/"]
+      test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
       interval: 30s
       timeout: 10s
       retries: 5

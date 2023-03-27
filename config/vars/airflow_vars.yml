@@ -13,7 +13,7 @@ airflow_data_dir: /airflow
 airflow_web_port: 9990
 airflow_flower_web_port: 9991
 
-# www credentials
+# www credentials, the default admin user and password
 airflow_www_user: airflow
 airflow_www_password:  "{{ vault_airflow_www_password }}"
 
