@@ -72,6 +72,7 @@ services:
 
   airflow-webserver:
     <<: *airflow-common
+    env_file: {{ airflow_etc_dir }}/airflow.env
     command: webserver
     container_name: airflow_webserver
     expose:
@@ -90,6 +91,7 @@ services:
 
   airflow-scheduler:
     <<: *airflow-common
+    env_file: {{ airflow_etc_dir }}/airflow.env
     command: scheduler
     container_name: airflow_scheduler
     healthcheck:
@@ -106,6 +108,7 @@ services:
 
   airflow-worker:
     <<: *airflow-common
+    env_file: {{ airflow_etc_dir }}/airflow.env
     command: celery worker
     container_name: airflow_worker
     healthcheck:
@@ -129,6 +132,7 @@ services:
 
   airflow-triggerer:
     <<: *airflow-common
+    env_file: {{ airflow_etc_dir }}/airflow.env
     command: triggerer
     container_name: airflow_triggerer
     healthcheck:
@@ -145,6 +149,7 @@ services:
 
   airflow-init:
     <<: *airflow-common
+    env_file: {{ airflow_etc_dir }}/airflow.env
     entrypoint: /bin/bash
     # yamllint disable rule:line-length
     command:
@@ -221,6 +226,7 @@ services:
 
   airflow-cli:
     <<: *airflow-common
+    env_file: {{ airflow_etc_dir }}/airflow.env
     profiles:
       - debug
     environment:
@@ -237,6 +243,7 @@ services:
   # See: https://docs.docker.com/compose/profiles/
   airflow-flower:
     <<: *airflow-common
+    env_file: {{ airflow_etc_dir }}/airflow.env
     command: celery flower
     container_name: airflow_flower
     profiles:
