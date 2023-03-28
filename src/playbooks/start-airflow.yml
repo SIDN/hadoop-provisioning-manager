@@ -6,35 +6,5 @@
   vars:
     service_name: airflow
   tasks:
-    # do airflow db init/upgrade first
-    - name: Initialise Airflow
-      shell: >
-        cd {{ airflow_data_dir }}/src;
-        docker compose up airflow-init
-      become: yes
-    
     - name: "Start service(s)"
       include_tasks: startup/tasks/generic-service.yml
-
-    - name: Wait for Docker container to become active
-      wait_for:
-        host: "{{ groups['airflow'][0] }}"
-        port: '{{ airflow_web_port }}'
-        delay: 5
-        connect_timeout: 15
-        timeout: 120
-        msg: "Connection fail for: {{ groups['airflow'][0] }}:{{ airflow_web_port }}"
-      delegate_to: localhost
-      connection: local
-  
-    - name: Update Airflow database
-      community.docker.docker_container_exec:
-        container: hue
-        argv:
-          - /bin/bash
-          - "-c"
-          - "airflow db upgrade"
-        user: airflow
-      delegate_to: localhost
-      connection: local
-      become: yes
