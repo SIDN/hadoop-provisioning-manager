@@ -73,6 +73,10 @@ spark.ssl.historyServer {{ spark_ports.history_ui_port }}
 # allow read/write fow owner and readonly for others
 spark.hadoop.fs.permissions.umask-mode 022
 
+# apache iceberg options
+spark.sql.catalog.{{ iceberg_catalog_name }} org.apache.iceberg.spark.SparkCatalog
+spark.sql.catalog.{{ iceberg_catalog_name }}.type hive
+
 {% for key, value in spark_default_options.items() %}
 {{ key }} {{ value | string | lower }}
 {% endfor %}

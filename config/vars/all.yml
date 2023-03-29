@@ -46,6 +46,7 @@ version:
   spark: '3.3.2'
   spark_hadoop: '3'      # works for 3.2 and newer
   spark_metrics: '4.2.9'   # needed when hadoop < 3.2
+  iceberg: '1.2.0'
   hive: '3.1.3'
   impala: '4.2.0'
   hue: '4.11.0'

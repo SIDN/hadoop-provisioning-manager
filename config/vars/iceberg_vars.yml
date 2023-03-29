@@ -1,0 +1,4 @@
+# name of the catlog used from spark and impala
+# the catalog data will be saved in the Hive metastore
+
+iceberg_catalog_name: 'hive_catalog' 

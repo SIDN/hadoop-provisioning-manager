@@ -13,6 +13,7 @@ SIDN Labs Hadoop Provisioning Manager makes it easier to deploy a Hadoop based d
 - Apache Superset
 - JupyterHub/JupyterLab
 - Apache Airflow
+- Apache Iceberg
 
 The cluster is automatically configured with features such as.
 
