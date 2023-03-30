@@ -29,6 +29,9 @@ spark.history.kerberos.enabled true
 spark.history.kerberos.principal spark/{{ inventory_hostname }}@{{ kerberos_realm }}
 spark.history.kerberos.keytab {{ spark_etc_dir }}/spark.keytab
 
+# YARN
+spark.master yarn
+
 # SSL
 spark.ssl.enabled true
 spark.ui.port 0
