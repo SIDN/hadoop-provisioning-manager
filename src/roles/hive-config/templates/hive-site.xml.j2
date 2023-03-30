@@ -148,4 +148,11 @@ Pushed to: {{  inventory_hostname }}
 </property>
 {% endfor %}
 
+<!-- Iceberg add custom catalog-->
+
+<property>
+  <name>iceberg.catalog.{{ iceberg_catalog_name }}.type</name>
+  <value>hive</value>
+</property> 
+
 </configuration>
