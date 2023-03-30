@@ -1,8 +1,4 @@
 # name of the catlog used from spark and impala
 # the catalog data will be saved in the Hive metastore
 
-# if enabled then spark default properties for catalog are set 
-# in spark defaults file
-iceberg_enabled: True
-
 iceberg_catalog_name: 'lakehouse' 
