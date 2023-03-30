@@ -28,6 +28,8 @@ PATH={{ stack_root }}/apache-zookeeper-latest/bin:$PATH
 
 {% if ('hadoop' in groups and inventory_hostname in groups['hadoop']) or ('gateway' in groups and inventory_hostname in groups['gateway']) %}
 PATH={{ stack_root }}/apache-spark-latest/bin:$PATH
+export SPARK_HOME={{ stack_root }}/apache-spark-latest
+export SPARK_CONF_DIR={{ spark_etc_dir }}
 {% endif %}
 
 {% if ('hive' in groups and inventory_hostname in groups['hive']) or ('gateway' in groups and inventory_hostname in groups['gateway']) %}
@@ -35,8 +37,3 @@ PATH={{ stack_root }}/apache-hive-latest/bin:$PATH
 {% endif %}  
 
 export PATH
-
-{% if ('spark' in groups and inventory_hostname in groups['spark']) or ('gateway' in groups and inventory_hostname in groups['gateway']) %}
-export SPARK_HOME={{ stack_root }}/apache-spark-latest
-export SPARK_CONF_DIR={{ spark_etc_dir }}
-{% endif %}  

@@ -76,6 +76,8 @@ spark.hadoop.fs.permissions.umask-mode 022
 # apache iceberg options
 spark.sql.catalog.{{ iceberg_catalog_name }} org.apache.iceberg.spark.SparkCatalog
 spark.sql.catalog.{{ iceberg_catalog_name }}.type hive
+spark.sql.catalog.spark_catalog org.apache.iceberg.spark.SparkSessionCatalog
+spark.sql.catalog.spark_catalog.type hive
 
 {% for key, value in spark_default_options.items() %}
 {{ key }} {{ value | string | lower }}
