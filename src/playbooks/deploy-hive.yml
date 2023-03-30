@@ -12,6 +12,7 @@
     - "{{ prov_cfg_dir }}/vars/spark_vars.yml"
     - "{{ prov_cfg_dir }}/vars/impala_vars.yml"
     - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/iceberg_vars.yml"
   remote_user: hadoop-mgr
   tasks:
     # shared config must always be generated before config deploy
