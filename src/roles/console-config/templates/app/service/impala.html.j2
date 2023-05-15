@@ -53,9 +53,6 @@ kinit -kt /path/to/keytab username@{{ kerberos_realm }}
 # Set the correct path to the required libraries, make sure to also source the environment variables.
 . {{ impala_etc_dir }}/impala-impalad-env.sh
 
-# Active the python2 venv when the default Python version is not Python2.
-. {{ python_venv_dir }}/py2-impala-shell/bin/activate
-
 # connect impala-shell to the Ha-proxy host using SSL and Kerberos
 impala-shell -i {{ groups['impala_ha_proxy'][0] }} --ssl -k
 </code></pre>
