@@ -4,6 +4,11 @@
     description: Docker CE Stable Repo
     baseurl: "{{ docker_repo.rhel79 }}"
   become: yes
+  
+- name: Add signing key
+  ansible.builtin.rpm_key:
+    key: "https://download.docker.com/linux/centos/gpg"
+    state: present
     
 - name: Remove conflicting container packages
   ansible.builtin.package:
