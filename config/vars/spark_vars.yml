@@ -63,9 +63,10 @@ spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ version.spark }}/sp
 
 spark_additional_libs_download_url:
   - name: 'apache-iceberg'
-    url: "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-{{ version.spark|reverse|replace('.','_',1)|reverse }}.{{ version.spark_scala }}/{{ version.iceberg }}/iceberg-spark-runtime-{{ version.spark|reverse|replace('.','_',1)|reverse }}.{{ version.spark_scala }}-{{ version.iceberg }}.jar"
+    url: "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-{{ version.iceberg_spark|reverse|replace('.','_',1)|reverse }}.{{ version.spark_scala }}/{{ version.iceberg }}/iceberg-spark-runtime-{{ version.iceberg_spark|reverse|replace('.','_',1)|reverse }}.{{ version.spark_scala }}-{{ version.iceberg }}.jar"
+    #url: "https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-{{ version.spark|reverse|replace('.','_',1)|reverse }}.{{ version.spark_scala }}/{{ version.iceberg }}/iceberg-spark-runtime-{{ version.spark|reverse|replace('.','_',1)|reverse }}.{{ version.spark_scala }}-{{ version.iceberg }}.jar"
   - name: 'hadoop-aws'
-    url: 'https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-{{ version.hadoop }}.jar'
+    url: 'https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/{{ version.hadoop }}/hadoop-aws-{{ version.hadoop }}.jar'
   - name: 'spark-hadoop-cloud'
     url: 'https://repo1.maven.org/maven2/org/apache/spark/spark-hadoop-cloud_2.13/{{ version.spark }}/spark-hadoop-cloud_2.13-{{ version.spark }}.jar'
   - name: 'commons-pool2'
