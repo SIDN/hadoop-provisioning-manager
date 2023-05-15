@@ -67,7 +67,7 @@ spark_additional_libs_download_url:
   - name: 'hadoop-aws'
     url: 'https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-{{ version.hadoop }}.jar'
   - name: 'spark-hadoop-cloud'
-    url: 'https://repo1.maven.org/maven2/org/apache/spark/spark-hadoop-cloud_2.13/3.3.2/spark-hadoop-cloud_2.13-{{ version.spark }}.jar'
+    url: 'https://repo1.maven.org/maven2/org/apache/spark/spark-hadoop-cloud_2.13/{{ version.spark }}/spark-hadoop-cloud_2.13-{{ version.spark }}.jar'
   - name: 'commons-pool2'
     url: 'https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1.jar'    
   - name: 'aws-java-sdk-bundle'
