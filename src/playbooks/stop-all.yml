@@ -40,6 +40,9 @@
 - name: Hue
   import_playbook: stop-hue.yml
   
+- name: Jupyterhub
+  import_playbook: stop-jupyterhub.yml
+  
 - name: Superset
   import_playbook: stop-superset.yml
   
