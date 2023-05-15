@@ -16,8 +16,8 @@ ENV LD_LIBRARY_PATH \
 
 COPY . .
 
-RUN ln -s {{ stack_root }}/apache-impala-latest/bin/impalad {{ stack_root }}/apache-impala-latest/bin/statestored 
-RUN ln -s {{ stack_root }}/apache-impala-latest/bin/impalad {{ stack_root }}/apache-impala-latest/bin/catalogd 
+RUN cp {{ stack_root }}/apache-impala-latest/bin/impalad {{ stack_root }}/apache-impala-latest/bin/statestored 
+RUN cp {{ stack_root }}/apache-impala-latest/bin/impalad {{ stack_root }}/apache-impala-latest/bin/catalogd 
 
 ENTRYPOINT ["{{ stack_root }}/apache-impala-latest/entrypoint.sh"]
 

@@ -7,14 +7,14 @@ echo "Starting Impala service: $1"
 
 if [ $1 == "impalad" ]
 then
-  . {{ impala_etc_dir }}/impala-daemon-impalad-env.sh
+  . {{ impala_etc_dir }}/impala-impalad-env.sh
   {{ stack_root }}/apache-impala-latest/bin/impalad -flagfile {{ impala_etc_dir }}/impalad_flags
 elif [ $1 == "statestored" ]
 then
-  . {{ impala_etc_dir }}/impala-daemon-statestored-env.sh
+  . {{ impala_etc_dir }}/impala-statestored-env.sh
   {{ stack_root }}/apache-impala-latest/bin/statestored -flagfile {{ impala_etc_dir }}/statestored_flags
 elif [ $1 == "catalogd" ]
 then
-  . {{ impala_etc_dir }}/impala-daemon-catalogd-env.sh
+  . {{ impala_etc_dir }}/impala-catalogd-env.sh
   {{ stack_root }}/apache-impala-latest/bin/catalogd -flagfile {{ impala_etc_dir }}/catalogd_flags
 fi
