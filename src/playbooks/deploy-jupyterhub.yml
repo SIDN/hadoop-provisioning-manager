@@ -13,6 +13,7 @@
     - "{{ prov_cfg_dir }}/vars/hue_vars.yml"
     - "{{ prov_cfg_dir }}/vars/livy_vars.yml"
     - "{{ prov_cfg_dir }}/vars/impala_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/iceberg_vars.yml"
   remote_user: hadoop-mgr
   tasks:
     - name: Include component deploy
