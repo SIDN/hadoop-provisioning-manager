@@ -17,15 +17,16 @@
 #   become: yes  
 #   when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
 
-- name: Install required packages (RHEL)
-  ansible.builtin.package:
-    name:
-      - python3-devel
-      - cyrus-sasl
-      - cyrus-sasl-devel
-    state: latest
-  become: yes
-  when: ansible_distribution == 'RedHat'
+# - name: Install required packages (RHEL)
+#   ansible.builtin.package:
+#     name:
+#       - python3-devel
+#       - cyrus-sasl
+#       - cyrus-sasl-devel
+#       - impala-shell
+#     state: latest
+#   become: yes
+#   when: ansible_distribution == 'RedHat'
   
 - name: Install required Python packages (Ubuntu)
   pip:
@@ -35,12 +36,12 @@
   become: yes
   when: ansible_distribution == 'Ubuntu'
   
-- name: Install required Python packages (RHEL)
-  pip:
-    name: 
-      - impala-shell
-  become: yes
-  when: ansible_distribution == 'RedHat'
+# - name: Install required Python packages (RHEL)
+#   pip:
+#     name: 
+#       - impala-shell
+#   become: yes
+#   when: ansible_distribution == 'RedHat'
 
 # code below is for using the docker version of impala-shell
 # prefer the pypi version, because for docker the user must have permission
