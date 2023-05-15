@@ -9,6 +9,7 @@
   ansible.builtin.rpm_key:
     key: "https://download.docker.com/linux/centos/gpg"
     state: present
+  become: yes
     
 - name: Remove conflicting container packages
   ansible.builtin.package:
