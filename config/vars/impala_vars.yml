@@ -58,8 +58,8 @@ impalad_cache_dirs:
   - /data/2/impala_cache
   - /data/3/impala_cache
 
-#  MAX memory allowed for impala  QUERY G
-impala_mem_limit: 80
+#  MAX memory allowed for 1 impala QUERY
+impala_mem_limit: '80G'
 
 # additional startup options for impalad
 # will be added to file: impalad_flags
@@ -70,7 +70,7 @@ impala_impalad_options:
     queue_wait_timeout_ms: 300000  
     # make sure PARQUET_FALLBACK_SCHEMA_RESOLUTION is set to name to support
     # parquet schema evolution.
-    default_query_options: PARQUET_FALLBACK_SCHEMA_RESOLUTION=name,EXEC_TIME_LIMIT_S=3600,MEM_LIMIT={{ impala_mem_limit }}G
+    default_query_options: PARQUET_FALLBACK_SCHEMA_RESOLUTION=name,EXEC_TIME_LIMIT_S=3600,MEM_LIMIT={{ impala_mem_limit }}
     max_log_files: 5
     insert_inherit_permissions: true
     umask: '022'
