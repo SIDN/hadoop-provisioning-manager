@@ -76,6 +76,7 @@
   register: stat_impala_src
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Download Apache Impala
   get_url:
@@ -94,6 +95,7 @@
       dest: "{{ cache_root }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Create Container scripts
   ansible.builtin.template:
@@ -105,6 +107,7 @@
     - { src: 'impala-entrypoint.sh.j2', dst: 'entrypoint.sh', perm: '0755' }
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Check if Impala docker image already exists
   docker_image_info:
@@ -113,6 +116,7 @@
   delegate_to: localhost
   connection: local
   become: yes
+  run_once: true
 
 - name: Show Impala docker image already exists
   ansible.builtin.debug:
@@ -120,6 +124,7 @@
   delegate_to: localhost
   connection: local
   become: yes    
+  run_once: true
 
 - name: Create Docker image on controller server
   shell: >
@@ -129,6 +134,7 @@
   delegate_to: localhost
   connection: local
   become: yes 
+  run_once: true
   when: docker_img_exists.images | length == 0
     
 - name: Push Impala docker image to registry
@@ -139,6 +145,7 @@
   delegate_to: localhost
   connection: local
   become: yes 
+  run_once: true
   #when: docker_img_exists.images | length == 0
 
 - name: Pull Impala image to host
