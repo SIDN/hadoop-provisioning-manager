@@ -17,18 +17,16 @@
 #   become: yes  
 #   when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "7")
 
-# - name: Install required packages (RHEL)
-#   ansible.builtin.package:
-#     name:
-#       - python3-devel
-#       - cyrus-sasl
-#       - cyrus-sasl-devel
-#       - impala-shell
-#     state: latest
-#   become: yes
-#   when: ansible_distribution == 'RedHat'
+- name: Install required packages
+  ansible.builtin.package:
+    name:
+      - python3-dev
+      - python3-bitarray
+    state: latest
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
   
-- name: Install required Python packages (Ubuntu)
+- name: Install required Python packages
   pip:
     name: 
       - kerberos

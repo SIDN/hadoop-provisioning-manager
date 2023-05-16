@@ -1,0 +1,30 @@
+    
+- name: Check to see if libs already downloaded
+  stat:
+    path: "{{ download_root }}/{{ item | basename }}"
+  register: stat_download_jar
+  with_items: "{{ ranger_download_url }}"
+  delegate_to: localhost
+  connection: local
+
+- name: Download jars
+  get_url:
+      url: "{{ item.item }}"
+      dest: "{{ download_root }}"
+  with_items: "{{ stat_download_jar.results }}"
+  when: not item.stat.exists
+  delegate_to: localhost
+  connection: local
+
+- name: Copy jars to remote
+  copy:
+      src: "{{ download_root }}/{{ item | basename }}"
+      dest: "{{ stack_root }}/ranger-hdfs-plugin-latest/install/lib/"
+  with_items: "{{ ranger_download_url }}"
+  become: yes
+  
+# add hadoop jars to ranger plugin dir
+- name: Copy dependencies to install lib dir
+  shell: >
+    cp -n {{ stack_root }}/hadoop-latest/share/hadoop/hdfs/lib/*.jar {{ stack_root }}/ranger-hdfs-plugin-latest/install/lib
+  become: yes  
