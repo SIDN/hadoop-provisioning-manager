@@ -4,6 +4,10 @@
 # Pushed to: {{  inventory_hostname }}
 
 echo "Starting Impala service: $1"
+echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+
+echo "Impala libs:"
+ls -alh {{ stack_root }}/apache-impala-latest/lib/
 
 if [ $1 == "impalad" ]
 then

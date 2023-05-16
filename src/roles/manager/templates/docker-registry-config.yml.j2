@@ -8,7 +8,7 @@ storage:
   cache:
     blobdescriptor: inmemory
   filesystem:
-    rootdirectory: {{ docker_data_dir }}/registry
+    rootdirectory: {{ docker_registry_dir }}
 http:
   addr: :{{ docker_registry_port }}
   headers:
