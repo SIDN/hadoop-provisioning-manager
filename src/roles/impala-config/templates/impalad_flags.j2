@@ -50,7 +50,7 @@
 -invalidate_tables_timeout_s=3600
 
 # make sure to set mem_limit too prevent using all system memory
-‑mem_limit={{ impala_mem_limit }}%
+#‑mem_limit={{ impala_mem_limit }}%
 
 {% for key, value in impala_impalad_options.items() %}
 -{{ key }}={{ value | string | lower }}
