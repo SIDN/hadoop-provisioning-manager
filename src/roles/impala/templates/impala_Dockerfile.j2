@@ -12,7 +12,6 @@ RUN apt-get update \
 
 ENV LD_LIBRARY_PATH /usr/lib/jvm/java-11-openjdk-amd64/lib/server:\
 /usr/lib/jvm/java-11-openjdk-amd64/lib:\
-/opt/gcc-native-10.4.0/lib64:\
 {{ stack_root }}/apache-impala-latest/lib
 
 COPY . .
