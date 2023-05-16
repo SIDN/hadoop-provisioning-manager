@@ -1,7 +1,6 @@
 FROM debian:bullseye-slim
 
-RUN adduser -D {{ impala_os_user }}
-RUN groupadd {{ impala_os_group }}
+RUN adduser {{ impala_os_user }} && groupadd {{ impala_os_group }}
 
 WORKDIR {{ stack_root }}/apache-impala-latest
 
