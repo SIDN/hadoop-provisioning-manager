@@ -1,7 +1,7 @@
 # Update the ss repo
 - name: Check for Git repo
   ansible.builtin.stat:
-    path: '{{ download_root }}/superset'
+    path: '{{ download_root }}/superset/requirements/base.in'
   delegate_to: localhost
   connection: local
   run_once: true
