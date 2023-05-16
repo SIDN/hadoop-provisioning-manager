@@ -96,6 +96,9 @@ impala_heap:
   impalad:  4g
   catalogd:  4g
   
+# percent of memory allowed for impala  process
+impala_mem_limit: 80
+  
 # Create addmission queue for impala queries  
 # queue propertes for fair-scheduler.xml
 # first queue will become the default queue and must be named "default"

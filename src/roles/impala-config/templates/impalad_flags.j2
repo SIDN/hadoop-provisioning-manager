@@ -49,6 +49,8 @@
 -use_local_catalog=true
 -invalidate_tables_timeout_s=3600
 
+‑mem_limit={{ impala_mem_limit }}%
+
 {% for key, value in impala_impalad_options.items() %}
 -{{ key }}={{ value | string | lower }}
 {% endfor %}
