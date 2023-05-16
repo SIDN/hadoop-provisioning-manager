@@ -15,6 +15,7 @@ docker run --rm \
 {% if ansible_distribution == "RedHat" %}
   -v /var/lib/sss/pubconf/krb5.include.d:/var/lib/sss/pubconf/krb5.include.d \
 {% endif %}
+  -v /tmp:/tmp \
   -v /etc/krb5.conf:/etc/krb5.conf \
   -v /var/run/hdfs-sockets/dn:/var/run/hdfs-sockets/dn \
   -v KRB5CCNAME:$KRB_CC_CACHE \

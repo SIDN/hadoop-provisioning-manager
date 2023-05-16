@@ -9,11 +9,6 @@ RUN apt-get update \
  libsasl2-2 locales openjdk-11-jre libssl-dev -y \
  && apt-get clean
 
-
-#ENV LD_LIBRARY_PATH /usr/lib/jvm/java-11-openjdk-amd64/lib/server:\
-#/usr/lib/jvm/java-11-openjdk-amd64/lib:\
-#{{ stack_root }}/apache-impala-latest/lib
-
 COPY . .
 
 RUN cp {{ stack_root }}/apache-impala-latest/bin/impalad {{ stack_root }}/apache-impala-latest/bin/statestored 
