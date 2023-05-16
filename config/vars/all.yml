@@ -61,7 +61,7 @@ version:
   grafana: '9.5.2'
   superset: '2.1.0'
   jupyterhub: '4.0.0'
-  jupyterlab: '3.6.3'
+  jupyterlab: '4.0.0'
   docker_registry_ui: 'latest'
   
 
