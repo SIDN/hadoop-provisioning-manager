@@ -5,6 +5,7 @@
   delegate_to: localhost
   connection: local
   become: yes
+  run_once: true
 
 - name: Show Jupyterhub docker image already exists
   ansible.builtin.debug:
@@ -12,6 +13,7 @@
   delegate_to: localhost
   connection: local
   become: yes
+  run_once: true
 
 - name: Create docker build directory
   file:
@@ -19,6 +21,7 @@
     state: directory
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Create Dockerfile
   ansible.builtin.template:
@@ -34,6 +37,7 @@
     - "{{ prov_cfg_dir }}/python/jupyterhub-user-requirements.txt"
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Create Jupyterhub image on controller server
   community.docker.docker_image:
@@ -47,6 +51,7 @@
   delegate_to: localhost
   connection: local
   become: yes
+  run_once: true
   when: docker_img_exists.images | length == 0
   
 - name: Pull Jupyterhub image to Jupyterhub server

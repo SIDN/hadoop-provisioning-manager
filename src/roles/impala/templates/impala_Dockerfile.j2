@@ -10,9 +10,9 @@ RUN apt-get update \
  && apt-get clean
 
 
-ENV LD_LIBRARY_PATH /usr/lib/jvm/java-11-openjdk-amd64/lib/server:\
-/usr/lib/jvm/java-11-openjdk-amd64/lib:\
-{{ stack_root }}/apache-impala-latest/lib
+#ENV LD_LIBRARY_PATH /usr/lib/jvm/java-11-openjdk-amd64/lib/server:\
+#/usr/lib/jvm/java-11-openjdk-amd64/lib:\
+#{{ stack_root }}/apache-impala-latest/lib
 
 COPY . .
 
