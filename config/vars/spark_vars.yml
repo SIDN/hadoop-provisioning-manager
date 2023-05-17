@@ -72,5 +72,5 @@ spark_additional_libs_download_url:
   - name: 'commons-pool2'
     url: 'https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1.jar'    
   - name: 'aws-java-sdk-bundle'
-    url: 'https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.433/aws-java-sdk-bundle-1.12.433.jar'    
+    url: 'https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.316/aws-java-sdk-bundle-1.12.316.jar'    
     
