@@ -64,7 +64,7 @@
   ansible.builtin.lineinfile:
     path: '{{ download_root }}/superset/Dockerfile'
     insertbefore: '.*{{ item }}.*'
-    line: krb5-user
+    line: 'krb5-user \\ # added before {{ item }}'
     state: present
   delegate_to: localhost
   connection: local
