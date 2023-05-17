@@ -63,15 +63,15 @@
 - name: Add additional os packages
   ansible.builtin.lineinfile:
     path: '{{ download_root }}/superset/Dockerfile'
-    insertbefore: '{{ item }}'
+    insertbefore: '.*{{ item }}.*'
     line: 'RUN echo "match: {{ item}}" && apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get -y install krb5-user vim'
     state: present
   delegate_to: localhost
   connection: local
   run_once: true
   loop:
-    - 'RUN mkdir /app'
-    - 'RUN mkdir .+PYTHONPATH.+'
+    - 'libsasl2-modules-gssapi-mit'
+    - 'libxtst6'
   when: docker_img_exists.images | length == 0
 
 - name: Add additional Python packages
