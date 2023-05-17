@@ -81,6 +81,7 @@
   register: stat_http_secret
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   
 - name: Create secret data
@@ -88,6 +89,7 @@
   delegate_to: localhost
   connection: local
   when: not stat_http_secret.stat.exists
+  run_once: true
   become: yes
     
 - name: Copy HTTP secret file

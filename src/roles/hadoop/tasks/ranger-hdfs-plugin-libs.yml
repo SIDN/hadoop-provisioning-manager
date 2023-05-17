@@ -6,6 +6,7 @@
   with_items: "{{ ranger_download_url }}"
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Download jars
   get_url:
@@ -15,6 +16,7 @@
   when: not item.stat.exists
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Copy jars to remote
   copy:

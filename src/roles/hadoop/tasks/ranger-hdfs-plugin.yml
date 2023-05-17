@@ -5,6 +5,7 @@
   register: stat_src
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Download Ranger HDFS plugin
   get_url:
@@ -14,6 +15,7 @@
     - "{{ repository_url }}/apache-ranger/apache-ranger-2.2.0/ranger-{{ version.ranger  }}-hdfs-plugin.tar.gz"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not stat_src.stat.exists
   
 - name: Check if the Ranger HDFS plugin is already on remote

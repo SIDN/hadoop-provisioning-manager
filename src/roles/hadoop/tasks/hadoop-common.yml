@@ -87,6 +87,7 @@
   register: stat_hadoop_src
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Download Apache Hadoop {{ version.hadoop }}
   get_url:
@@ -97,6 +98,7 @@
     - "{{ hadoop_download_url }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not stat_hadoop_src.stat.exists
 
 - name: Check if the Apache Hadoop src is already on remote

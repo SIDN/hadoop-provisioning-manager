@@ -75,6 +75,7 @@
   register: stats_metrics_core
   delegate_to: localhost
   connection: local
+  run_once: true
   when: version.hadoop | float < 3.2
     
 - name: Download metrics-core jar
@@ -83,6 +84,7 @@
       dest: "{{ download_root }}/{{ yarn_metrics_core_download_url | basename }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: (version.hadoop | float < 3.2) and not stats_metrics_core.stat.exists
   
 # fix problem with older hadoop versions
@@ -103,6 +105,7 @@
   register: stat_libssl
   delegate_to: localhost
   connection: local
+  run_once: true
   when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
     
 - name: Download libssl for Yarn
@@ -111,6 +114,7 @@
       dest: "{{ download_root }}/{{ yarn_openssl_download_url | basename }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04")
      and not stat_libssl.stat.exists
   

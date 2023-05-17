@@ -48,4 +48,5 @@
     timeout: 300
   delegate_to: localhost
   connection: local
+  run_once: true
   when: grub_cfg.found == 0

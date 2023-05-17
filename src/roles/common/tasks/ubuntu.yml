@@ -9,7 +9,7 @@
 - name: Install required packages (Ubuntu)
   ansible.builtin.package:
     name:
-      - libpython2.7  # not sure anymore where we need this package for
+      #- libpython2.7  # not sure anymore where we need this package for
       - krb5-user
       - postgresql-client
       - libsasl2-modules-gssapi-mit
@@ -34,24 +34,24 @@
     state: latest
   become: yes
 
-- name: Install pip and virtualenv Python2 packages (Ubuntu 18)
-  ansible.builtin.package:
-    name:
-      - python-virtualenv
-      - python-pip
-    state: latest
-  become: yes
-  when: ansible_distribution_major_version | int == 18
+# - name: Install pip and virtualenv Python2 packages (Ubuntu 18)
+#   ansible.builtin.package:
+#     name:
+#       - python-virtualenv
+#       - python-pip
+#     state: latest
+#   become: yes
+#   when: ansible_distribution_major_version | int == 18
   
-# install pip and virtualenv for py2 on ubuntu 20.04 is difficult, no std packages available
-# TODO: have manager node fetch the install script and push to cluster node  
-- name: Install pip and virtualenv Python2 packages (Ubuntu 20)
-  shell: >
-    curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output /tmp/get-pip.py;
-    /usr/bin/python2 /tmp/get-pip.py;
-    /usr/bin/python2 -m pip install -U pip virtualenv
-  become: yes
-  when: ansible_distribution_major_version | int == 20
+# # install pip and virtualenv for py2 on ubuntu 20.04 is difficult, no std packages available
+# # TODO: have manager node fetch the install script and push to cluster node  
+# - name: Install pip and virtualenv Python2 packages (Ubuntu 20)
+#   shell: >
+#     curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output /tmp/get-pip.py;
+#     /usr/bin/python2 /tmp/get-pip.py;
+#     /usr/bin/python2 -m pip install -U pip virtualenv
+#   become: yes
+#   when: ansible_distribution_major_version | int == 20
  
 - name: Update pip and setuptools for Python3
   shell: >
