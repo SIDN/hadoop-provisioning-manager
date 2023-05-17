@@ -58,20 +58,18 @@
   run_once: true
   when: docker_img_exists.images | length == 0
 
-# make each line unique by echoing the match line.
-# otherwise lineinfile will only insert the line once
 - name: Add additional os packages
   ansible.builtin.lineinfile:
     path: '{{ download_root }}/superset/Dockerfile'
     insertbefore: '.*{{ item }}.*'
-    line: 'krb5-user \ # added before {{ item }} \'
+    line: 'krb5-user \'
     state: present
   delegate_to: localhost
   connection: local
   run_once: true
   loop:
-    - 'libsasl2-modules-gssapi-mit'
-    - 'libxtst6'
+    - libsasl2-modules-gssapi-mit
+    - libxtst6
   when: docker_img_exists.images | length == 0
 
 - name: Add additional Python packages
