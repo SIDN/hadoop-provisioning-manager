@@ -80,7 +80,7 @@
   
 - name: Recursively remove Spark directory
   ansible.builtin.file:
-    path: '{{ stack_root }}/spark-{{ version.spark }}'
+    path: '{{ download_root }}/{{ spark_download_url | basename | replace('.tgz','')}}'
     state: absent
   become: yes
     
