@@ -30,6 +30,7 @@
       delay: 30
       delegate_to: localhost
       connection: local
+      run_once: true
         
     # - name: Impala service status
     #   debug: 
@@ -44,6 +45,7 @@
           --fail -X POST https://{{ groups['ranger'][0] }}:{{ ranger_admin_port }}/service/public/v2/api/service/
       delegate_to: localhost
       connection: local
+      run_once: true
       when: service_check.stdout.find('Not found') != -1
       
       
@@ -56,12 +58,14 @@
       register: service_check  
       delegate_to: localhost
       connection: local
+      run_once: true
     
     - name: HDFS service status
       debug: 
         msg: "HDFS service not found!"
       delegate_to: localhost
       connection: local
+      run_once: true
       when: service_check.stdout.find('Not found') != -1
           
     - name: Create new HDFS service
@@ -72,5 +76,6 @@
           --fail -X POST https://{{ groups['ranger'][0] }}:{{ ranger_admin_port }}/service/public/v2/api/service/
       delegate_to: localhost
       connection: local
+      run_once: true
       when: service_check.stdout.find('Not found') != -1
   

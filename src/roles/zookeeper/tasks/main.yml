@@ -58,6 +58,7 @@
   register: stat_zkpr_src
   delegate_to: localhost
   connection: local  
+  run_once: true
   
 - name: Download Apache Zookeeper
   get_url:
@@ -67,6 +68,7 @@
     - "{{ zookeeper_download_url }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not stat_zkpr_src.stat.exists
   
 - name: Check if the Apache Zookeeper src is already on remote

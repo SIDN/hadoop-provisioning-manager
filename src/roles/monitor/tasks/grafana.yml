@@ -22,6 +22,7 @@
   register: docker_img_exists
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
 
 - name: Show Grafana docker image already exists
@@ -29,6 +30,7 @@
     msg: "Grafana image detect: {{ docker_img_exists.images | length == 1 }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes  
   
 - name: Pull Grafana server image to Manager
@@ -36,6 +38,7 @@
     docker pull grafana/grafana-enterprise:{{ version.grafana }}
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   when: docker_img_exists.images | length == 0
 
@@ -44,6 +47,7 @@
     docker image tag grafana/grafana-enterprise:{{ version.grafana }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   when: docker_img_exists.images | length == 0
 
@@ -53,6 +57,7 @@
     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/grafana/grafana-enterprise:{{ version.grafana }}
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   #when: docker_img_exists.images | length == 0
 

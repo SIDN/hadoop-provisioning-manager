@@ -96,6 +96,7 @@
   delegate_to: localhost
   connection: local
   become: yes
+  run_once: true
 
 - name: Pull airflow image to airflow server
   shell: >

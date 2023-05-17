@@ -86,6 +86,7 @@
     - "{{ repository_url }}/impala/apache-impala-ubuntu-{{ version.impala }}.tar.gz"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not stat_impala_src.stat.exists
   
 - name: Extract Impala 

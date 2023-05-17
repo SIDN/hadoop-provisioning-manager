@@ -4,6 +4,7 @@
   register: exporter_downloaded
   delegate_to: localhost
   connection: local
+  run_once: true
     
 - name: Download Prometheus exporter
   get_url:
@@ -11,6 +12,7 @@
       dest: "{{ download_root }}/{{ prometheus_jmx_exporter_url | basename }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not exporter_downloaded.stat.exists
 
 - name: Check if the Prometheus exporter src is already on remote

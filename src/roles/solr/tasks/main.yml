@@ -58,6 +58,7 @@
   register: stat_solr_src
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Download Solr.
   get_url:
@@ -66,6 +67,7 @@
     force: false
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not stat_solr_src.stat.exists
 
 - name: Check if the Apache Solr src is already on remote

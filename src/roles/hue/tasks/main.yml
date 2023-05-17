@@ -115,6 +115,7 @@
   register: docker_img_exists
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
 
 - name: Show Hue docker image already exists
@@ -122,12 +123,14 @@
     msg: "Hue image detect ({{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}) : {{ docker_img_exists.images | length == 1 }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
 
 - name: Pull Hue image to controller server
   command: "docker pull gethue/hue:{{ version.hue }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   when: docker_img_exists.images | length == 0
   
@@ -136,6 +139,7 @@
     docker kill hue || echo "ignore error"
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   when: docker_img_exists.images | length == 0
   
@@ -145,6 +149,7 @@
     docker run -d --rm --name hue -p {{ hue_port }}:8888 gethue/hue:{{ version.hue }}
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   when: docker_img_exists.images | length == 0
   
@@ -159,6 +164,7 @@
     timeout: 120
     msg: "Connection fail for: {{ groups['manager'][0] }}:{{ hue_port }}"
   delegate_to: localhost
+  run_once: true
   connection: local
   when: docker_img_exists.images | length == 0
   
@@ -185,6 +191,7 @@
     user: hue
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   when: docker_img_exists.images | length == 0
   
@@ -192,6 +199,7 @@
   command: docker commit hue gethue/hue:{{ version.hue }}
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   when: docker_img_exists.images | length == 0
   
@@ -199,6 +207,7 @@
   command: docker stop hue
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   when: docker_img_exists.images | length == 0
   
@@ -207,6 +216,7 @@
     docker image tag gethue/hue:{{ version.hue  }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   when: docker_img_exists.images | length == 0
 
@@ -217,6 +227,7 @@
     docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/gethue/hue:{{ version.hue }}
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   #when: docker_img_exists.images | length == 0
   

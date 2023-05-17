@@ -10,6 +10,7 @@
   loop: '{{ spark_additional_libs_download_url| flatten }}'
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Download libraries to manager host
   get_url:
@@ -18,6 +19,7 @@
   loop: "{{ stat_lib.results| flatten }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: item.stat.exists == False
   
 - name: Copy jars to remote hosts

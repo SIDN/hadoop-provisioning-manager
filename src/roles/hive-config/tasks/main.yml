@@ -17,6 +17,7 @@
   become: yes
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Create Hive Configuration files
   ansible.builtin.template:

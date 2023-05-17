@@ -78,6 +78,7 @@
   command: docker pull joxit/docker-registry-ui:{{ version.docker_registry_ui }}
   delegate_to: localhost
   connection: local
+  run_once: true
   become: yes
   
 - name: Systemctl Reload Daemons

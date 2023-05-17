@@ -9,6 +9,7 @@
         WHERE datname = '{{ airflow_db }}'
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Create Airflow db user
   postgresql_user:
@@ -20,6 +21,7 @@
       password: "{{ airflow_db_password }}"
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Create Airflow database
   postgresql_db:
@@ -31,5 +33,6 @@
       name: "{{ airflow_db }}"
   delegate_to: localhost
   connection: local
+  run_once: true
 
 # Airflow schema will be created by Airflow during startup

@@ -72,6 +72,7 @@
   register: jdbc_driver
   delegate_to: localhost
   connection: local
+  run_once: true
     
 - name: Download psql jdbc driver
   get_url:
@@ -81,6 +82,7 @@
     - "{{ db_jdbc_driver_url }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not jdbc_driver.stat.exists
   
 - name: Copy psql jdbc driver to remote
@@ -103,6 +105,7 @@
   register: stat_ranger_src
   delegate_to: localhost
   connection: local
+  run_once: true
     
 - name: Download Apache ranger
   get_url:
@@ -113,6 +116,7 @@
     - "{{ repository_url }}/apache-ranger/apache-ranger-2.2.0/ranger-{{ version.ranger  }}-usersync.tar.gz"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not stat_ranger_src.stat.exists
 
 - name: Check if the Apache ranger src is already on remote
@@ -226,6 +230,7 @@
   register: stat_download_jar
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Download new guava jar
   get_url:
@@ -234,6 +239,7 @@
   when: not stat_download_jar.stat.exists
   delegate_to: localhost
   connection: local
+  run_once: true
   
 # configure and setup usersync
 - name: Check if usersync Guava jar is present

@@ -15,6 +15,7 @@
   register: stat_python
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Install required packages (RHEL)
   ansible.builtin.package:
@@ -31,6 +32,7 @@
     - "{{ repository_url }}/python/python-{{ version.python }}-rhel79.tar.gz"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not stat_python.stat.exists
 
 - name: Check if Python is already on remote

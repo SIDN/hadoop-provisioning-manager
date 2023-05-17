@@ -9,6 +9,7 @@
         WHERE datname = '{{ jupyterhub_db }}'
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Create jupyterhub db user
   postgresql_user:
@@ -20,6 +21,7 @@
       password: "{{ jupyterhub_db_password }}"
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Create jupyterhub database
   postgresql_db:
@@ -31,5 +33,6 @@
       name: "{{ jupyterhub_db }}"
   delegate_to: localhost
   connection: local
+  run_once: true
 
   

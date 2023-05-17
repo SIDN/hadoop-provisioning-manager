@@ -21,6 +21,7 @@
   register: stat_metastore_db
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Create metastore database
   postgresql_db:
@@ -31,6 +32,7 @@
       name: "{{ hive_db }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: stat_metastore_db.rowcount == 0
     
 - name: Create metastore db user
@@ -43,6 +45,7 @@
       password: "{{ hive_db_password }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: stat_metastore_db.rowcount == 0
     
 - name: Grant metastore user access to metastore db
@@ -57,6 +60,7 @@
       privs: all
   delegate_to: localhost
   connection: local
+  run_once: true
   when: stat_metastore_db.rowcount == 0
   
 - name: Set database owner
@@ -91,6 +95,7 @@
   register: metastore_version
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Show current metastore version
   ansible.builtin.debug:
@@ -120,6 +125,7 @@
         SET "SCHEMA_VERSION" = '2.1.0'
   delegate_to: localhost
   connection: local
+  run_once: true
   when: metastore_version.query_result[0]['SCHEMA_VERSION'] == '2.1.1'
 
 - name: Upgrade existing Hive db (UPDATE)

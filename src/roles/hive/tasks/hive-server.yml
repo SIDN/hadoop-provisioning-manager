@@ -48,6 +48,7 @@
   register: stat_hive_src
   delegate_to: localhost
   connection: local
+  run_once: true
 
 # bug in Impala 4.0.0 causes problems
 # use Impala < 4.0.0 unitil this issue is fixed 
@@ -58,6 +59,7 @@
       dest: "{{ download_root }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not stat_hive_src.stat.exists
 
 - name: Check if the Apache Hive is already on remote
@@ -131,6 +133,7 @@
   register: jdbc_driver
   delegate_to: localhost
   connection: local
+  run_once: true
     
 - name: Download psql jdbc driver
   get_url:
@@ -140,6 +143,7 @@
     - "{{ db_jdbc_driver_url }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not jdbc_driver.stat.exists
   
 - name: Copy psql jdbc driver to remote

@@ -53,6 +53,7 @@
   register: stat_spark_src
   delegate_to: localhost
   connection: local
+  run_once: true
     
 - name: Download Apache Spark {{ version.spark }}
   get_url:
@@ -62,6 +63,7 @@
     - "{{ spark_download_url }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not stat_spark_src.stat.exists
 
 - name: Check if the Apache Spark src is already on remote ({{ spark_download_url | basename }})
@@ -106,6 +108,7 @@
   register: jdbc_driver
   delegate_to: localhost
   connection: local
+  run_once: true
     
 - name: Download psql jdbc driver
   get_url:
@@ -115,6 +118,7 @@
     - "{{ db_jdbc_driver_url }}"
   delegate_to: localhost
   connection: local
+  run_once: true
   when: not jdbc_driver.stat.exists
   
 - name: Copy psql jdbc driver to remote

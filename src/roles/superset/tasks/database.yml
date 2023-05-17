@@ -9,6 +9,7 @@
         WHERE datname = '{{ superset_db }}'
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Create superset db user
   postgresql_user:
@@ -20,6 +21,7 @@
       password: "{{ superset_db_password }}"
   delegate_to: localhost
   connection: local
+  run_once: true
 
 - name: Create superset database
   postgresql_db:
@@ -31,5 +33,6 @@
       name: "{{ superset_db }}"
   delegate_to: localhost
   connection: local
+  run_once: true
 
   
