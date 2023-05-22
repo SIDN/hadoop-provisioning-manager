@@ -5,7 +5,7 @@ services:
     ports:
       - {{ docker_registry_ui_port }}:{{ docker_registry_ui_port }}
     environment:
-      - REGISTRY_TITLE=Hadoop Provisioning Manager Repository
+      - REGISTRY_TITLE={{ docker_registry_ui_title }}
       - SINGLE_REGISTRY=true
       - DELETE_IMAGES=true
     volumes:

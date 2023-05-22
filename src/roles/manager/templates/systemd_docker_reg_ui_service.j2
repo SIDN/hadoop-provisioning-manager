@@ -18,6 +18,7 @@ ExecStart=/usr/bin/docker run --rm -p {{ docker_registry_ui_port }}:{{ docker_re
 -v {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:/etc/nginx/certs/fullchain.pem \
 -v {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:/etc/nginx/certs/privkey.pem \
 -e SINGLE_REGISTRY=true \
+-e CATALOG_ELEMENTS_LIMIT=1000 \
 -e DELETE_IMAGES=true --name docker_reg_ui joxit/docker-registry-ui:{{ version.docker_registry_ui }}
 
 ExecStop=/usr/bin/docker container stop docker_reg_ui
