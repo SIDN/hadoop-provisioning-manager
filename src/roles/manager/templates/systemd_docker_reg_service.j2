@@ -14,7 +14,7 @@ Type=exec
 
 ExecStart=/usr/bin/docker run --rm -p {{ docker_registry_port }}:{{ docker_registry_port }} \
 -v {{ tls_etc_dir }}:/certs \
--v {{ docker_registry_dir }}:/var/lib/registry \
+-v {{ docker_registry_dir }}:{{ docker_registry_dir }} \
 -v /etc/docker/registry.yml:/etc/docker/registry/config.yml \
 -v /etc/docker/registry-htpasswd:/etc/docker/registry/htpasswd \
 -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/{{ tls_remote_pub_chain }} \
