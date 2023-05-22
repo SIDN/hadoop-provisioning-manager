@@ -20,7 +20,8 @@ export SPARK_HOME={{ stack_root }}/apache-spark-latest
 export SPARK_CONF_DIR={{ spark_etc_dir }}
 export PATH=$PATH:{{ stack_root }}/apache-spark-latest/bin
 
-export PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.10.9.2-src.zip:$SPARK_HOME/python/:$PYTHONPATH
+export PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
+export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
 
 # mitigation for: CVE-2021-44228 (Log4jShell)
 # see: https://logging.apache.org/log4j/2.x/security.html
