@@ -32,7 +32,7 @@
   
 - name: Create symlink to TLS certificate
   file:
-      src: "{{ tls_etc_dir }}/"
+      src: "{{ tls_etc_dir }}/{{ item.src }}"
       dest: "/home/{{ minio_os_user }}/.minio/certs/{{ item.dst }}"
       state: link
   loop:
