@@ -5,6 +5,7 @@
   register: stat_minio_src
   delegate_to: localhost
   connection: local
+  run_once: true
   
 - name: Download MinIO.
   get_url:
@@ -18,19 +19,19 @@
 
 - name: Check if the MinIO src is already on remote
   stat:
-    path: "{{ cache_root }}/{{ version.minio }}_amd64.deb"
+    path: "{{ cache_root }}/minio_{{ version.minio }}_amd64.deb"
   register: stat_remote_minio_src
 
 - name: Copy MinIO to remote
   ansible.builtin.copy:
-    src: "{{ download_root }}/{{ version.minio }}_amd64.deb"
+    src: "{{ download_root }}/minio_{{ version.minio }}_amd64.deb"
     dest: "{{ cache_root }}"
     mode: '0644'
   when: not stat_remote_minio_src.stat.exists
   
 - name: Install MinIO package
   shell: >
-    dpkg -i {{ cache_root }}/{{ version.minio }}_amd64.deb
+    dpkg -i {{ cache_root }}/minio_{{ version.minio }}_amd64.deb
   become: yes
 
 - name: Enable MinIO systemd daemon
