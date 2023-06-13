@@ -40,12 +40,18 @@
     - { src: '{{ tls_remote_priv_key }}' , dst: 'minio.key' }
   become: yes
   
-- name: Update location of config in systemd unit
-  ansible.builtin.lineinfile:
-    path: /etc/systemd/system/minio.service
-    search_string: 'EnvironmentFile=-/etc/default/minio'
-    line: 'EnvironmentFile=-{{ minio_etc_dir}}/minio.env'
-  become: yes
+# - name: Update location of config in systemd unit
+#   ansible.builtin.lineinfile:
+#     path: /etc/systemd/system/minio.service
+#     search_string: 'EnvironmentFile=-/etc/default/minio'
+#     line: 'EnvironmentFile=-{{ minio_etc_dir}}/minio.env'
+#   become: yes
 
+- name: Create systemd unit file
+  ansible.builtin.template:
+    src: ../templates/minio.systemd.j2
+    dest: /etc/systemd/system/minio.service
+  become: yes 
+  
 - name: Systemd Reload Daemons
   shell: systemctl daemon-reload
