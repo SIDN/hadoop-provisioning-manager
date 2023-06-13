@@ -36,7 +36,7 @@
       dest: "/home/{{ minio_os_user }}/.minio/certs/{{ item.dst }}"
       state: link
   loop:
-    - { src: '{{ tls_remote_pub_chain }}' , dst: 'public.crt' }
+    - { src: '{{ tls_remote_pub_key }}' , dst: 'public.crt' }
     - { src: '{{ tls_remote_priv_key }}' , dst: 'private.key' }
   become: yes
   
