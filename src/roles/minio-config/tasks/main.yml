@@ -27,7 +27,7 @@
     owner: "{{ minio_os_user }}"
     group: "{{ minio_os_group }}"
   loop:
-    - "{{ minio_disk }}"
+    - "{{ minio_disk | flatten }}"
   become: yes
   
 - name: Create symlink to TLS certificate
