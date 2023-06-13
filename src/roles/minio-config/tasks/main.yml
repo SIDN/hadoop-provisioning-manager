@@ -36,8 +36,8 @@
       dest: "/home/{{ minio_os_user }}/.minio/certs/{{ item.dst }}"
       state: link
   loop:
-    - { src: '{{ tls_remote_pub_chain }}' , dst: 'minio.crt' }
-    - { src: '{{ tls_remote_priv_key }}' , dst: 'minio.key' }
+    - { src: '{{ tls_remote_pub_chain }}' , dst: 'public.crt' }
+    - { src: '{{ tls_remote_priv_key }}' , dst: 'private.key' }
   become: yes
   
 # - name: Update location of config in systemd unit
