@@ -20,6 +20,11 @@
     group: "{{ minio_os_group }}"
   become: yes
   
+- name: with_flattened -> loop
+  ansible.builtin.debug:
+    msg: "disk: {{ item }}"
+  loop: "{{ minio_disk|flatten }}"
+  
 - name: Create data directories
   file:
     path: "{{ item }}"
