@@ -1,3 +1,6 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
 [Unit]
 Description=MinIO
 Documentation=https://min.io/docs/minio/linux/index.html
@@ -15,7 +18,7 @@ ProtectProc=invisible
 #EnvironmentFile=-/etc/default/minio
 EnvironmentFile=-{{ minio_etc_dir}}/minio.env
 
-ExecStartPre=/bin/bash -c "if [ -z \"${MINIO_VOLUMES}\" ]; then echo \"Variable MINIO_VOLUMES not set in /etc/default/minio\"; exit 1; fi"
+#ExecStartPre=/bin/bash -c "if [ -z \"${MINIO_VOLUMES}\" ]; then echo \"Variable MINIO_VOLUMES not set in /etc/default/minio\"; exit 1; fi"
 ExecStart=/usr/local/bin/minio server $MINIO_OPTS $MINIO_VOLUMES
 
 # MinIO RELEASE.2023-05-04T21-44-30Z adds support for Type=notify (https://www.freedesktop.org/software/systemd/man/systemd.service.html#Type=)
