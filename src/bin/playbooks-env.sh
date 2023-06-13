@@ -12,6 +12,7 @@ export PB_HDFS=hdfs.yml
 export PB_YARN=yarn.yml
 export PB_SPARK=spark.yml
 export PB_SOLR=solr.yml
+export PB_MINIO=minio.yml
 export PB_RANGER=ranger.yml
 export PB_HIVE=hive.yml
 export PB_IMPALA=impala.yml
@@ -190,6 +191,9 @@ function run_playbooks()
         ;;
         solr)
           run_playbook "$PB_PREFIX-$PB_SOLR"
+        ;;
+        minio)
+          run_playbook "$PB_PREFIX-$PB_MINIO"
         ;;
         docker-reg-ui)
           run_playbook "$PB_PREFIX-$PB_DOCKER_REG_UI"

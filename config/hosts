@@ -156,3 +156,8 @@ hadoop-dev2.example.nl
 
 [airflow]
 hadoop-dev1.example.nl
+
+[minio]
+hadoop-dev1.example.nl
+hadoop-dev2.example.nl
+hadoop-dev3.example.nl
