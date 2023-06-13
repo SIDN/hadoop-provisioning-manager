@@ -1,4 +1,16 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ minio_os_group }}"
+    state: present
+  become: yes
 
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ minio_os_user }}"
+    new_group: "{{ minio_os_group }}"
+    
 - name: Check if the MinIO is already downloaded
   stat:
     path: "{{ download_root }}/{{ version.minio }}_amd64.deb"
