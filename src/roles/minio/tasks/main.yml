@@ -1,4 +1,8 @@
-
+- name: test local action
+  shell: echo "working"
+  delegate_to: localhost
+  run_once: true
+  
 - name: Check if the MinIO is already downloaded
   stat:
     path: "{{ download_root }}/{{ version.minio }}_amd64.deb"
