@@ -41,7 +41,7 @@ server {
       proxy_set_header Connection "";
       chunked_transfer_encoding off;
 
-      proxy_pass https://minio:{{ minio_listen_port }}/; # This uses the upstream directive definition to load balance
+      proxy_pass https://minio; # This uses the upstream directive definition to load balance
    }
 }
 
@@ -71,6 +71,6 @@ server {
       proxy_set_header Connection "";
       chunked_transfer_encoding off;
 
-      proxy_pass https://minio:{{ minio_console_listen_port }}/; # This uses the upstream directive definition to load balance
+      proxy_pass https://minio_console; # This uses the upstream directive definition to load balance
    }
 }
