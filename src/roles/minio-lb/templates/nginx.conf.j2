@@ -46,9 +46,14 @@ server {
 }
 
 server {
-   listen       {{ minio_console_listen_port }};
-   listen  [::]:{{ minio_console_listen_port }};
+   listen       {{ minio_console_listen_port }} ssl;
+   listen  [::]:{{ minio_console_listen_port }} ssl;
    server_name  {{ inventory_hostname }};
+   
+   ssl on;
+   ssl_certificate         {{ tls_etc_dir}}/{{ tls_remote_pub_chain }};
+   ssl_certificate_key     {{ tls_etc_dir}}/{{ tls_remote_priv_key }};
+   #ssl_trusted_certificate /etc/nginx/ssl/example.com/ca-certs.pem;
 
    # Allow special characters in headers
    ignore_invalid_headers off;
