@@ -1,14 +1,14 @@
 upstream minio {
    least_conn;
    {% for host in groups['minio'] %}
-   server https://{{ host }}:{{ minio_listen_port }};
+   server {{ host }}:{{ minio_listen_port }};
    {% endfor %}
 }
 
 upstream minio_console {
    least_conn;
    {% for host in groups['minio'] %}
-   server https://{{ host }}:{{ minio_console_listen_port }};
+   server {{ host }}:{{ minio_console_listen_port }};
    {% endfor %}
 }
 
