@@ -13,6 +13,8 @@ ExecStart=docker run -d --rm \
   -p {{ minio_listen_port }}:{{ minio_listen_port }} \
   -p {{ minio_console_listen_port }}:{{ minio_console_listen_port }} \
   -v /{{ minio_etc_dir }}/minio-lb-nginx.conf:/etc/nginx/conf.d/minio-lb-nginx.conf \
+  -v {{ tls_etc_dir}}/{{ tls_remote_pub_chain }}:{{ tls_etc_dir}}/{{ tls_remote_pub_chain }} \
+  -v {{ tls_etc_dir}}/{{ tls_remote_priv_key }}:{{ tls_etc_dir}}/{{ tls_remote_priv_key }} \
   --name minio_loadbalancer \
   --hostname minio_loadbalancer \
   nginx:latest
