@@ -9,10 +9,10 @@
   tasks:
     - name: Include component deploy
       include_role:
-        name: minio
+        name: minio-lb
       when: var_deploy_comp | bool
-    
-    - name: Include configuration deploy
-      include_role:
-        name: minio-config
-      when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
+    # 
+    # - name: Include configuration deploy
+    #   include_role:
+    #     name: minio-config
+    #   when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)
