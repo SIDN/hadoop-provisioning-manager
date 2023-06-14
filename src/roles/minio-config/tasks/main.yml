@@ -46,10 +46,13 @@
 #     line: 'EnvironmentFile=-{{ minio_etc_dir}}/minio.env'
 #   become: yes
 
-- name: Create systemd unit file
+- name: Create systemd unit files
   ansible.builtin.template:
-    src: ../templates/minio.systemd.j2
-    dest: /etc/systemd/system/minio.service
+    src: ../templates/{{ item.src }}
+    dest: /etc/systemd/system/{{ item.dst }}.service
+  loop:
+    - { src: 'minio.systemd.j2', dst: 'minio'}
+    - { src: 'loadbalancer_systemd.j2', dst: 'minio-lb'}
   become: yes 
   
 - name: Systemd Reload Daemons

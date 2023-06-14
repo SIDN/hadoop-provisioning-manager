@@ -10,6 +10,7 @@ minio_log_dir: /var/log/minio
 minio_root_user: admin
 minio_root_password: {{ vault_minio_password }}
 
+minio_listen_port: 9000
 minio_console_listen_port: 9001
 
 minio_disk: 
