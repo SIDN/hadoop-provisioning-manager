@@ -8,6 +8,7 @@ minio_etc_dir: "{{ config_root }}/minio"
 minio_log_dir: /var/log/minio
 
 minio_root_user: admin
+minio_root_password: {{ vault_minio_password }}
 
 minio_console_listen_port: 9001
 
