@@ -11,6 +11,7 @@ User=root
 Group=root
 ExecStart=docker run -d --rm \
   -p {{ minio_listen_port }}:{{ minio_listen_port }} \
+  -p {{ minio_console_listen_port }}:{{ minio_console_listen_port }} \
   -v /{{ minio_etc_dir }}/minio-lb-nginx.conf:/etc/nginx/conf.d/minio-lb-nginx.conf \
   --name minio_loadbalancer \
   --hostname minio_loadbalancer \
