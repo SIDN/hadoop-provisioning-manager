@@ -1,14 +1,14 @@
 upstream minio {
    least_conn;
    {% for host in groups['minio'] %}
-   server {{ host }}:{{ minio_listen_port }};
+   server https://{{ host }}:{{ minio_listen_port }};
    {% endfor %}
 }
 
 upstream minio_console {
    least_conn;
    {% for host in groups['minio'] %}
-   server {{ host }}:{{ minio_console_listen_port }};
+   server https://{{ host }}:{{ minio_console_listen_port }};
    {% endfor %}
 }
 
@@ -41,7 +41,7 @@ server {
       proxy_set_header Connection "";
       chunked_transfer_encoding off;
 
-      proxy_pass minio; # This uses the upstream directive definition to load balance
+      proxy_pass https://minio; # This uses the upstream directive definition to load balance
    }
 }
 
@@ -71,6 +71,6 @@ server {
       proxy_set_header Connection "";
       chunked_transfer_encoding off;
 
-      proxy_pass minio_console; # This uses the upstream directive definition to load balance
+      proxy_pass https://minio_console; # This uses the upstream directive definition to load balance
    }
 }
