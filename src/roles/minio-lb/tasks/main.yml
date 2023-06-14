@@ -15,3 +15,13 @@
   loop:
     - { src: 'loadbalancer_systemd.j2', dst: 'minio-lb'}
   become: yes 
+  
+# - name: Systemd Reload Daemons
+#   shell: systemctl daemon-reload
+  
+- name: Enable MinIO loadbalancer systemd daemon
+  systemd:
+    name: minio-lb
+    enabled: yes
+    daemon_reload: true
+  become: yes

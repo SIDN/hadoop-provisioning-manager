@@ -56,9 +56,5 @@
     - { src: 'minio.systemd.j2', dst: 'minio'}
   become: yes 
   
-- name: Install NGINX load balancer
-  include_tasks: nginx-loadbalancer.yml
-  when: (inventory_hostname in groups['minio_loadbalancer'])      
-  
 - name: Systemd Reload Daemons
   shell: systemctl daemon-reload
