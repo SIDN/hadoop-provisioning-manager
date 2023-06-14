@@ -6,10 +6,12 @@
     group: "{{ minio_os_group }}"
   become: yes
   
-- name: Create environment file
+- name: Create Config files
   ansible.builtin.template:
-    src: ../templates/minio.env.j2
-    dest: '{{ minio_etc_dir}}/minio.env'
+    src: ../templates/{{ item.src }}
+    dest: '{{ minio_etc_dir}}/{{ item.dst }}'
+  loop:
+    - { src: 'minio.env.j2', dst: 'minio.env'}
   become: yes
   
 - name: Create TLS config directory
@@ -52,8 +54,11 @@
     dest: /etc/systemd/system/{{ item.dst }}.service
   loop:
     - { src: 'minio.systemd.j2', dst: 'minio'}
-    - { src: 'loadbalancer_systemd.j2', dst: 'minio-lb'}
   become: yes 
+  
+- name: Install NGINX load balancer
+  include_tasks: nginx-loadbalancer.yml
+  when: (inventory_hostname in groups['minio_loadbalancer'])      
   
 - name: Systemd Reload Daemons
   shell: systemctl daemon-reload

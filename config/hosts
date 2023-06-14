@@ -159,5 +159,6 @@ hadoop-dev1.example.nl
 
 [minio]
 hadoop-dev1.example.nl
+
+[minio_loadbalancer]
 hadoop-dev2.example.nl
-hadoop-dev3.example.nl
