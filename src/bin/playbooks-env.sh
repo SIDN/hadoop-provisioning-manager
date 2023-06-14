@@ -13,6 +13,7 @@ export PB_YARN=yarn.yml
 export PB_SPARK=spark.yml
 export PB_SOLR=solr.yml
 export PB_MINIO=minio.yml
+export PB_MINIO_LB=minio-lb.yml
 export PB_RANGER=ranger.yml
 export PB_HIVE=hive.yml
 export PB_IMPALA=impala.yml
@@ -194,6 +195,9 @@ function run_playbooks()
         ;;
         minio)
           run_playbook "$PB_PREFIX-$PB_MINIO"
+        ;;
+        minio-lb)
+          run_playbook "$PB_PREFIX-$PB_MINIO_LB"
         ;;
         docker-reg-ui)
           run_playbook "$PB_PREFIX-$PB_DOCKER_REG_UI"
