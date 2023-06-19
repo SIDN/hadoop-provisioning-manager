@@ -4,6 +4,7 @@
     - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
     - "{{ prov_cfg_dir }}/vars/rancher_vars.yml"
     - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/docker_vars.yml"
   remote_user: hadoop-mgr
   become: yes
   tasks:
