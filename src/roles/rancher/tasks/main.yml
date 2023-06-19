@@ -10,6 +10,18 @@
   vars:
     new_user: "{{ rancher_os_user }}"
     new_group: "{{ rancher_os_group }}"
+    
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ rancher_os_user }}"
+    group: "{{ rancher_os_group }}"
+    mode: '0777'
+  loop:
+    - '{{ rancher_data_dir }}'
+    - '{{ rancher_log_dir }}'
+  become: yes
 
 - name: Check if Docker image already exists
   docker_image_info:

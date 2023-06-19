@@ -2,5 +2,8 @@ rancher_os_user: rancher
 
 rancher_os_group: rancher
 
-rancher_listen_port: 9000
+rancher_listen_port: 8001
 
+rancher_data_dir: /data/1/rancher
+
+rancher_log_dir: /var/log/rancher
