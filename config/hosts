@@ -162,3 +162,6 @@ hadoop-dev1.example.nl
 
 [minio_loadbalancer]
 hadoop-dev2.example.nl
+
+[rancher]
+hadoop-dev1.example.nl

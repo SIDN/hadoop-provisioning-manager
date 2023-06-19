@@ -1,0 +1,6 @@
+rancher_os_user: rancher
+
+rancher_os_group: rancher
+
+rancher_listen_port: 9000
+

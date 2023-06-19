@@ -1,0 +1,84 @@
+- name: Create OS group
+  ansible.builtin.group:
+    name: "{{ rancher_os_group }}"
+    state: present
+  become: yes
+
+- name: Include Create OS user
+  include_role:
+    name: create-system-user
+  vars:
+    new_user: "{{ rancher_os_user }}"
+    new_group: "{{ rancher_os_group }}"
+
+- name: Check if Docker image already exists
+  docker_image_info:
+    name: "{{ groups['manager'][0] }}:{{ docker_registry_port }}/rancher/rancher:v{{ version.rancher }}"
+  register: docker_img_exists
+  delegate_to: localhost
+  connection: local
+  run_once: true
+  become: yes
+
+- name: Show Docker image already exists
+  ansible.builtin.debug:
+    msg: "Rancher image detect ({{ groups['manager'][0] }}:{{ docker_registry_port }}/rancher/rancher:v{{ version.rancher }}) : {{ docker_img_exists.images | length == 1 }}"
+  delegate_to: localhost
+  connection: local
+  run_once: true
+  become: yes
+
+- name: Pull Docker image to controller server
+  command: "docker pull rancher/rancher:v{{ version.rancher }}"
+  delegate_to: localhost
+  connection: local
+  run_once: true
+  become: yes
+  when: docker_img_exists.images | length == 0
+  
+- name: Tag Docker image
+  shell: >
+    docker image tag rancher/rancher:v{{ version.rancher }} {{ groups['manager'][0] }}:{{ docker_registry_port }}/rancher/rancher:v{{ version.rancher }}
+  delegate_to: localhost
+  connection: local
+  run_once: true
+  become: yes
+  when: docker_img_exists.images | length == 0
+
+- name: Push Docker image to registry
+  shell: >
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
+    docker push {{ groups['manager'][0] }}:{{ docker_registry_port }}/rancher/rancher:v{{ version.rancher }}
+  delegate_to: localhost
+  connection: local
+  run_once: true
+  become: yes
+
+- name: Pull Docker image to Rancher server
+  shell: >
+    docker login -u {{ docker_registry_user }} -p {{ docker_registry_password }} {{ groups['manager'][0] }}:{{ docker_registry_port }};
+    docker pull {{ groups['manager'][0] }}:{{ docker_registry_port }}/rancher/rancher:v{{ version.rancher }};
+    docker system prune -f
+  become: yes
+
+- name: "Add user {{ rancher_os_user }} to group docker"
+  user:
+    name: "{{ rancher_os_user }}"
+    groups: docker
+    append: yes
+  become: yes
+  
+- name: Execute templates
+  ansible.builtin.template:
+    src: "../templates/{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { "src": "systemd-rancher.j2", "dest": "/etc/systemd/system/rancher.service"}
+  become: yes
+
+- name: Enable Systemd daemon
+  systemd:
+    name: rancher
+    enabled: yes
+    daemon_reload: true
+  become: yes

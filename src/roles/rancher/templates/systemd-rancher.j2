@@ -1,0 +1,25 @@
+# Created on {{ ansible_date_time.iso8601 }}
+# Pushed to: {{  inventory_hostname }}
+
+[Unit]
+Description=Rancher
+After=docker.service
+Requires=docker.service
+ 
+[Service]
+TimeoutStartSec=0
+Restart=always
+RestartSec=60
+User={{ rancher_os_user }}
+Group={{ rancher_os_group }}
+Type=exec
+ExecStart=docker run -d --restart=unless-stopped \
+         --name rancher \
+         -p {{ rancher_listen_port }}:443 \
+         --privileged \
+         rancher/rancher:{{ version.rancher }}
+ExecStop=/usr/bin/docker stop rancher
+[Install]
+WantedBy=multi-user.target
+
+
