@@ -1,0 +1,8 @@
+- hosts: rancher
+  remote_user: hadoop-mgr
+  become: yes
+  vars:
+    service_name: rancher
+  tasks:
+    - name: "Stop service(s)"
+      include_tasks: shutdown/tasks/generic-service.yml

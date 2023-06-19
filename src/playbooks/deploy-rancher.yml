@@ -1,0 +1,18 @@
+- hosts: rancher
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/rancher_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/tls_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Include component deploy
+      include_role:
+        name: rancher
+      when: var_deploy_comp | bool
+    
+    # - name: Include configuration deploy
+    #   include_role:
+    #     name: minio-config
+    #   when: (var_deploy_comp | bool) or (var_deploy_cfg_only | bool)

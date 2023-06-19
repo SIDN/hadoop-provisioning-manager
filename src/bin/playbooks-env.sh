@@ -15,6 +15,7 @@ export PB_SOLR=solr.yml
 export PB_MINIO=minio.yml
 export PB_MINIO_LB=minio-lb.yml
 export PB_RANGER=ranger.yml
+export PB_RANCHER=rancher.yml
 export PB_HIVE=hive.yml
 export PB_IMPALA=impala.yml
 export PB_IMPALA_SHELL=impala-shell.yml
@@ -198,6 +199,9 @@ function run_playbooks()
         ;;
         minio-lb)
           run_playbook "$PB_PREFIX-$PB_MINIO_LB"
+        ;;
+        rancher)
+          run_playbook "$PB_PREFIX-$PB_RANCHER"
         ;;
         docker-reg-ui)
           run_playbook "$PB_PREFIX-$PB_DOCKER_REG_UI"

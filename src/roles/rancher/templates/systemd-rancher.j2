@@ -16,8 +16,12 @@ Type=exec
 ExecStart=docker run -d --restart=unless-stopped \
          --name rancher \
          -p {{ rancher_listen_port }}:443 \
+         -v {{ tls_etc_dir }}/{{ tls_remote_pub_key }}:/etc/rancher/ssl/cert.pem \
+         -v {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:/etc/rancher/ssl/key.pem \
          --privileged \
-         rancher/rancher:{{ version.rancher }}
+         rancher/rancher:{{ version.rancher }} \
+         --no-cacerts
+         
 ExecStop=/usr/bin/docker stop rancher
 [Install]
 WantedBy=multi-user.target
