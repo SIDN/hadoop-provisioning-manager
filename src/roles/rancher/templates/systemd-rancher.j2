@@ -13,10 +13,11 @@ RestartSec=60
 User={{ rancher_os_user }}
 Group={{ rancher_os_group }}
 Type=exec
-ExecStart=docker run -d --restart=unless-stopped \
+ExecStart=docker run \
+         --rm \
          --name rancher \
          -p {{ rancher_listen_port }}:443 \
-         -v {{ tls_etc_dir }}/{{ tls_remote_pub_key }}:/etc/rancher/ssl/cert.pem \
+         -v {{ tls_etc_dir }}/{{ tls_remote_pub_chain }}:/etc/rancher/ssl/cert.pem \
          -v {{ tls_etc_dir }}/{{ tls_remote_priv_key }}:/etc/rancher/ssl/key.pem \
          -v {{ rancher_log_dir }}:/var/log/auditlog \
          -v {{ rancher_data_dir }}:/var/lib/rancher \

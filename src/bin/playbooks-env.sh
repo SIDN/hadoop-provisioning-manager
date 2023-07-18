@@ -43,7 +43,7 @@ export PB_DO_ENALBLE_HDFS_RANGER_PLUGIN=enable-hdfs-ranger-plugin.yml
 # general cfg vars
 export HOSTS_FILE="hosts"
 export VAULT_PASSWD_FILE=".vault_pass"
-export EXTRA_ARGS=""
+#export EXTRA_ARGS=""
 export PY_EXEC="~/activate-python"
 export SCRIPT_DIR=$( cd "$(dirname "$0")" ; pwd -P )
 export PRJ_ROOT_DIR="$SCRIPT_DIR/.."
