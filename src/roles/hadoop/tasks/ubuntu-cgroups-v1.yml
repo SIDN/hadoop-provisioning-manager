@@ -45,7 +45,7 @@
     port: 22
     state: started
     delay: 10
-    timeout: 300
+    timeout: 600
   delegate_to: localhost
   connection: local
   run_once: true
