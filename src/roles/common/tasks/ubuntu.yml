@@ -18,11 +18,11 @@
     state: latest
   become: yes
 
-- name: Add Ubuntu Python repository for newer versions
-  apt_repository: 
-    repo: 'ppa:deadsnakes/ppa'
-    state: present
-  become: yes  
+# - name: Add Ubuntu Python repository for newer versions
+#   apt_repository: 
+#     repo: 'ppa:deadsnakes/ppa'
+#     state: present
+#   become: yes  
 
 - name: Install Python packages (Ubuntu)
   ansible.builtin.package:
