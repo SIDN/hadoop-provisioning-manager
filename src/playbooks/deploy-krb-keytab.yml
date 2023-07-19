@@ -177,7 +177,7 @@
   tasks:           
     - name: Create Impala service keytabs 
       expect:
-        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        command: kadmin -r {{ kerberos_realm }} -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }} -s {{ groups['kerberos_kdc'] }}
         responses:
           kadmin:
             - "xst -k {{ cache_root }}/krb/{{ inventory_hostname }}-impala.keytab impala/{{ inventory_hostname }}@{{ kerberos_realm }}"
