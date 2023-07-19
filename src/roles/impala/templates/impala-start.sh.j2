@@ -18,7 +18,7 @@ docker run --rm \
   -v /tmp:/tmp \
   -v /etc/krb5.conf:/etc/krb5.conf \
   -v /var/run/hdfs-sockets/dn:/var/run/hdfs-sockets/dn \
-  -v KRB5CCNAME:$KRB_CC_CACHE \
+  -e KRB5CCNAME:$KRB_CC_CACHE \
   -v {{ impala_etc_dir }}:{{ impala_etc_dir }} \
   -v {{ impala_log_dir }}:{{ impala_log_dir }} \
   -v {{ tls_etc_dir }}:{{ tls_etc_dir }} \

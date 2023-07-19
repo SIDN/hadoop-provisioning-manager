@@ -17,6 +17,13 @@
   become: yes
   when: ansible_distribution == 'Ubuntu'
 
+- name: Install required Python packages
+  pip:
+    name: 
+      - requests_gssapi
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+  
 - name: Copy Exporter
   ansible.builtin.copy:
     src: ../files/prometheus-exporter/prometheus-generic-exporter.py
