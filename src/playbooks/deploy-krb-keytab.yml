@@ -182,7 +182,7 @@
           kadmin:
             - "xst -k {{ cache_root }}/krb/{{ inventory_hostname }}-impala.keytab impala/{{ inventory_hostname }}@{{ kerberos_realm }}"
             - "quit"
-          ".*Password for (.*)": "{{ kerberos_hadoop_admin_password }}"  
+          "Password for (.*)": "{{ kerberos_hadoop_admin_password }}"  
       delegate_to: localhost
 
     - name: Change file ownership, group and permissions
