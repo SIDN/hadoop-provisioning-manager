@@ -8,36 +8,36 @@
   become: yes
   
 # no ipv6 support for hadoop
-- name: Create config files non non-gateway hosts
-  ansible.builtin.template:
-    src: "../templates/{{ item.src }}"
-    dest: "{{ item.dest }}"
-    mode: "{{ item.mode }}"
-  loop:
-    - { "src": "disable_ipv6.conf.j2", "dest": "/etc/sysctl.d/hadoop_disable_ipv6.conf", mode: '644'}
-  become: yes
-  when: not (inventory_hostname in groups['gateway']) 
-  
-- name: Activate kernel parameters
-  shell: sysctl -p /etc/sysctl.d/hadoop_disable_ipv6.conf
-  environment: 
-    PATH: "{{ ansible_env.PATH}}:/sbin:/usr/sbin"
-  become: yes
-  when: not (inventory_hostname in groups['gateway']) 
-  
-- name: Copy Chrony.conf
-  ansible.builtin.template:
-    src: ../templates/chrony.conf.j2
-    dest: /etc/chrony.conf
-  become: yes
-
-- name: Restart Chrony
-  ansible.builtin.systemd: 
-    name: chronyd 
-    state: restarted
-  become: yes
-   
-- name: Set timezone
-  timezone: name="{{ timezone }}"
-  become: yes
+# - name: Create config files non non-gateway hosts
+#   ansible.builtin.template:
+#     src: "../templates/{{ item.src }}"
+#     dest: "{{ item.dest }}"
+#     mode: "{{ item.mode }}"
+#   loop:
+#     - { "src": "disable_ipv6.conf.j2", "dest": "/etc/sysctl.d/hadoop_disable_ipv6.conf", mode: '644'}
+#   become: yes
+#   when: not (inventory_hostname in groups['gateway']) 
+# 
+# - name: Activate kernel parameters
+#   shell: sysctl -p /etc/sysctl.d/hadoop_disable_ipv6.conf
+#   environment: 
+#     PATH: "{{ ansible_env.PATH}}:/sbin:/usr/sbin"
+#   become: yes
+#   when: not (inventory_hostname in groups['gateway']) 
+# 
+# - name: Copy Chrony.conf
+#   ansible.builtin.template:
+#     src: ../templates/chrony.conf.j2
+#     dest: /etc/chrony.conf
+#   become: yes
+# 
+# - name: Restart Chrony
+#   ansible.builtin.systemd: 
+#     name: chronyd 
+#     state: restarted
+#   become: yes
+# 
+# - name: Set timezone
+#   timezone: name="{{ timezone }}"
+#   become: yes
   
