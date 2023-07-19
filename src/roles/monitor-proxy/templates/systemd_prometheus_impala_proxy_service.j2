@@ -8,8 +8,8 @@ StartLimitIntervalSec=0
 
 [Service]
 Type=simple
-User={{ impala_os_user }}
-Group={{ impala_os_group }}
+#User={{ impala_os_user }}
+#Group={{ impala_os_group }}
 ExecStart=/bin/bash -c '{{ stack_root }}/apache-impala-latest/bin/start-prometheus-proxy-{{ daemon.service }}.sh'
 Restart=always
 RestartSec=60
