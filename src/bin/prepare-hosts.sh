@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# set LIMIT_HOSTS with 
+
 PB_PREPARE_HOST=prepare-hosts.yml
 
 . playbooks-env.sh
@@ -14,6 +16,12 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
+if [ -n "$LIMIT_HOSTS" ]; then
+    LIMIT_HOSTS="--limit $LIMIT_HOSTS"
+fi
+
+echo "Limit hosts: $LIMIT_HOSTS"
+    
 # read password for new provision_user to create
 echo -n "Enter password (ANSIBLE_BECOME_PASSWORD) for provision user that is going to be created: "; stty -echo; IFS= read -r prov_user_passwd; stty echo
 
@@ -22,4 +30,5 @@ if [ -f "$PY_EXEC" ]; then
 fi
 
 ansible-playbook --user $1 --ask-pass --ask-become-pass -i $SIDN_HADOOP_CFG_DIR/$HOSTS_FILE $PRJ_ROOT_DIR/playbooks/$PB_PREPARE_HOST \
-    --extra-vars="provision_user_passwd=$prov_user_passwd ansible_python_interpreter=python3 prov_cfg_dir={{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}"
+    --extra-vars="provision_user_passwd=$prov_user_passwd ansible_python_interpreter=python3 prov_cfg_dir={{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}" \
+    $LIMIT_HOSTS
