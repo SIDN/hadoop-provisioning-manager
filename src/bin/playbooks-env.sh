@@ -52,6 +52,10 @@ export DEPLOY_MODE_CFG_ONLY="var_deploy_cfg_only=true var_deploy_comp=false"
 CURRENT_SCRIPT=$(basename "$0")
 ENV_FILE=set-env.sh
 
+if [ -n "$LIMIT_HOSTS" ]; then
+    LIMIT_HOSTS="--limit $LIMIT_HOSTS"
+fi
+
 if test -f "$SCRIPT_DIR/$ENV_FILE"; then
     echo "Using environment file: $SCRIPT_DIR/$ENV_FILE"
     . $SCRIPT_DIR/$ENV_FILE
@@ -92,11 +96,12 @@ function run_playbook()
   fi
   
   echo "roles path: $DEFAULT_ROLES_PATH"
+  echo "Limit: $LIMIT_HOSTS"
   
   ansible-playbook -i $SIDN_HADOOP_CFG_DIR/$HOSTS_FILE $PRJ_ROOT_DIR/playbooks/$1 \
       --vault-password-file $SIDN_HADOOP_CFG_DIR/$VAULT_PASSWD_FILE \
       --extra-vars="ansible_become_password={{ lookup('env', 'ANSIBLE_BECOME_PASSWORD') }} prov_cfg_dir={{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }} $DEPLOY_MODE" \
-       $EXTRA_ARGS
+       $LIMIT_HOSTS
 }
 
 function run_playbooks()
@@ -202,7 +207,8 @@ function run_playbooks()
         ;;
         host-gateway)
           # only deploy components on the gateway nodes
-          EXTRA_ARGS="--limit gateway"
+          #EXTRA_ARGS="--limit gateway"
+          LIMIT_HOSTS="--limit gateway"
           run_playbook "$PB_PREFIX-$PB_HOST_GATEWAY"
         ;;
         *)
