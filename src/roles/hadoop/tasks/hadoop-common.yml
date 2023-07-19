@@ -67,6 +67,8 @@
       - libsnappy1v5
       - libsnappy-dev
       - openssl
+      - libssl-dev
+      - libisal-dev
       - htop
     state: latest
   become: yes

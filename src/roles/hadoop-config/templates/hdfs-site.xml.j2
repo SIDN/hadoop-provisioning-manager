@@ -177,6 +177,11 @@ Pushed to: {{  inventory_hostname }}
     <name>dfs.journalnode.keytab.file</name>
     <value>{{ hadoop_etc_dir }}/hdfs.keytab</value>
   </property>
+  <property>
+    <name>dfs.datanode.balance.bandwidthPerSec</name>
+    <value>100m</value>
+  </property>
+  
   
   {% endif %}
   
