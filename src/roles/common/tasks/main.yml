@@ -22,17 +22,17 @@
 - name: Install required packages
   ansible.builtin.package:
     name:
-      - chrony
+      #- chrony
       - net-tools
     state: latest
   become: yes
 
-- name: Make sure chronyd is automatically started
-  ansible.builtin.systemd:
-    name: chronyd
-    state: started
-    enabled: yes
-  become: yes
+# - name: Make sure chronyd is automatically started
+#   ansible.builtin.systemd:
+#     name: chronyd
+#     state: started
+#     enabled: yes
+#   become: yes
 
 # create a directory for all python venvs
 - name: Create venv base directory
