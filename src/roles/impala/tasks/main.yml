@@ -20,4 +20,5 @@
 
 - name: Install Impala-shell client
   include_tasks: impala-shell.yml
+  when: inventory_hostname in groups['gateway']
 
