@@ -17,7 +17,7 @@
     mode: "{{ item.mode }}"
   loop:
     - { name: "{{ hadoop_log_dir }}", owner: "{{ hadoop_os_user.hdfs }}", group: "{{ hadoop_os_group }}", mode: "0774"}
-    - { name: "/var/run/hdfs-sockets", owner: "{{ hadoop_os_user.hdfs }}", group: "root", mode: "0755"}
+    - { name: "/var/run/hdfs-sockets/dn", owner: "{{ hadoop_os_user.hdfs }}", group: "root", mode: "0755"}
     - { name: "{{ hadoop_tmp_dir }}", owner: "{{ hadoop_os_user.hdfs }}", group: "{{ hadoop_os_group }}", mode: "1777"}
     - { name: "{{ hadoop_backup_dir }}", owner: "{{ hadoop_os_user.hdfs }}", group: "{{ hadoop_os_group }}", mode: "0755"}
   become: yes
