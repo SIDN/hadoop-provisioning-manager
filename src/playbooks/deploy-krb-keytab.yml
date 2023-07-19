@@ -177,12 +177,12 @@
   tasks:           
     - name: Create Impala service keytabs 
       expect:
-        command: kadmin -r {{ kerberos_realm }} -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }} -s {{ groups['kerberos_kdc'] }}
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
         responses:
           kadmin:
             - "xst -k {{ cache_root }}/krb/{{ inventory_hostname }}-impala.keytab impala/{{ inventory_hostname }}@{{ kerberos_realm }}"
             - "quit"
-          Password for (.*): "{{ kerberos_hadoop_admin_password }}"  
+          Password for .*: "{{ kerberos_hadoop_admin_password }}"  
       delegate_to: localhost
 
     - name: Change file ownership, group and permissions
