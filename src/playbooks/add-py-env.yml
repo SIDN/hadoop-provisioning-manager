@@ -8,6 +8,12 @@
   remote_user: hadoop-mgr
   tasks:
     
+    - name: Copy requirements file
+      ansible.builtin.copy:
+        src: "{{ py_env_req_file }}"
+        dest: "{{ cache_root }}/{{ py_env_req_file | basename }}"
+      when: py_env_req_file is defined
+
     - name: Include role for Python create venv
       include_role:
         name: python-venv
