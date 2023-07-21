@@ -18,14 +18,14 @@
 # Add kerberos package to req file, only for rhel.
 # for ubuntu we install krb using os package    
 # because pip install does not work for ubuntu
-- name: Add additional Python packages
-  ansible.builtin.lineinfile:
-    path: '{{ cache_root }}/default-pyspark-requirements.txt'
-    line: '{{ item }}'
-    state: present
-  loop:
-    - kerberos
-  when: ansible_distribution == "RedHat"
+# - name: Add additional Python packages
+#   ansible.builtin.lineinfile:
+#     path: '{{ cache_root }}/default-pyspark-requirements.txt'
+#     line: '{{ item }}'
+#     state: present
+#   loop:
+#     - kerberos
+#   when: ansible_distribution == "RedHat"
 
 # Spark containers run as the krb user that started them, therefore the py env group must be ranger_sync_group_name
 # otherwise the krb user has no permission to the py env.
