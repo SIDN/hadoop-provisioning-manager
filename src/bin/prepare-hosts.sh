@@ -15,12 +15,6 @@ if [ "$#" -ne 1 ]; then
     echo "Usage: prepare-hosts.sh remote-admin-user"
     exit 1
 fi
-
-if [ -n "$LIMIT_HOSTS" ]; then
-    LIMIT_HOSTS="--limit $LIMIT_HOSTS"
-fi
-
-echo "Limit hosts: $LIMIT_HOSTS"
     
 # read password for new provision_user to create
 echo -n "Enter password (ANSIBLE_BECOME_PASSWORD) for provision user that is going to be created: "; stty -echo; IFS= read -r prov_user_passwd; stty echo
