@@ -13,6 +13,7 @@
   ansible.builtin.package:
     name:
       - python3-requests-kerberos
+      - libkrb5-dev
     state: latest
   become: yes
   when: ansible_distribution == 'Ubuntu'
