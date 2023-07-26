@@ -15,6 +15,11 @@ ENV=$2
 
 . {{ hadoop_etc_dir }}/$ENV
 
+# make sure dhds socket for Short-circuit reads is created
+mkdir -p /var/run/hdfs-sockets && \
+chown {{ hadoop_os_user.hdfs }}:root && \
+chmod 755 /var/run/hdfs-sockets 
+
 if [ "$SERVICE" = "namenode" ] && [ -f "$HDFS_UPGRADE_FILE" ]; then
   echo "Starting $SERVICE using -upgrade option"
   {{ stack_root }}/hadoop-latest/bin/hdfs --daemon start $SERVICE -rollingUpgrade started
