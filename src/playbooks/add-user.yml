@@ -9,6 +9,7 @@
     - name: Create Kerberos user
       shell: >
           kadmin.local -q 'addprinc -requires_preauth -pw {{ create_password }} {{ create_user }}@{{ kerberos_realm }}'
+      when: create_krb_user
       become: yes
       
 # create user on worker nodes, do not create home dir and do not set password
@@ -37,9 +38,9 @@
       
     # when no entry in passwd then the user already existed and is managed
     # by external system such as ldap.
-    - name: Get all user info
-      getent:
-        database: passwd
+    # - name: Get all user info
+    #   getent:
+    #     database: passwd
       
     # update local user
     - name: Update user login shell
@@ -47,7 +48,7 @@
         name: "{{ create_user }}"
         #group: "{{ ranger_sync_group_name }}"
         shell: '{{ fact_login_shell }}'
-      when: (create_user in ansible_facts.getent_passwd)
+      #when: (create_user in ansible_facts.getent_passwd)
       become: yes
     
 - hosts: ranger
