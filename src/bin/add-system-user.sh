@@ -14,7 +14,7 @@ if [ "$?" -ne 0 ]; then
 fi
 
 # read password for new provision_user to create
-echo -n "Enter password for $1: "; stty -echo; IFS= read -r new_user_passwd; stty echo
+#echo -n "Enter password for $1: "; stty -echo; IFS= read -r new_user_passwd; stty echo
 
 if [ -f "$PY_EXEC" ]; then
   . $PY_EXEC 
