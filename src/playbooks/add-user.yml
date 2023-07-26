@@ -21,19 +21,20 @@
     - "{{ prov_cfg_dir }}/vars/ranger_vars.yml"
   remote_user: hadoop-mgr
   tasks:
-    - name: Determine OS specific config (RHEL)
-      set_fact:
-         fact_login_shell: /sbin/nologin
-      when: ansible_distribution == 'RedHat'
-         
-    - name: Determine OS specific config (Ubuntu)
-      set_fact:
-         fact_login_shell: /usr/sbin/nologin
-      when: ansible_distribution == 'Ubuntu'
+    # - name: Determine OS specific config (RHEL)
+    #   set_fact:
+    #      fact_login_shell: /sbin/nologin
+    #   when: ansible_distribution == 'RedHat'
+    # 
+    # - name: Determine OS specific config (Ubuntu)
+    #   set_fact:
+    #      fact_login_shell: /usr/sbin/nologin
+    #   when: ansible_distribution == 'Ubuntu'
           
     - name: Create New User
       ansible.builtin.user:
         name: "{{ create_user }}"
+        shell: "/usr/sbin/nologin"
       become: yes
       
     # when no entry in passwd then the user already existed and is managed
@@ -43,13 +44,13 @@
     #     database: passwd
       
     # update local user
-    - name: Update user login shell
-      ansible.builtin.user:
-        name: "{{ create_user }}"
-        #group: "{{ ranger_sync_group_name }}"
-        shell: '{{ fact_login_shell }}'
-      #when: (create_user in ansible_facts.getent_passwd)
-      become: yes
+    # - name: Update user login shell
+    #   ansible.builtin.user:
+    #     name: "{{ create_user }}"
+    #     #group: "{{ ranger_sync_group_name }}"
+    #     shell: '{{ fact_login_shell }}'
+    #   #when: (create_user in ansible_facts.getent_passwd)
+    #   become: yes
     
 - hosts: ranger
   vars_files:
