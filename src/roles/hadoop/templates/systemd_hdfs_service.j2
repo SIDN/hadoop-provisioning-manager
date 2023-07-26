@@ -9,6 +9,11 @@ StartLimitIntervalSec=0
 
 [Service]
 {% if item.name == 'datanode' %}
+PermissionsStartOnly=True
+# make sure hdfs socket for short-circuit reads is created
+ExecStartPre=/usr/bin/mkdir -p /var/run/hdfs-sockets
+ExecStartPre=/usr/bin/chown  {{ hadoop_os_user.hdfs }}:root /var/run/hdfs-sockets
+ExecStartPre=/usr/bin/chmod 0755 /var/run/hdfs-sockets
 Slice=hadoop_hdfs_datanode.slice
 {% endif %}
 Type=forking
