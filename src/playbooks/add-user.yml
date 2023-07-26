@@ -9,7 +9,7 @@
     - name: Create Kerberos user
       shell: >
           kadmin.local -q 'addprinc -requires_preauth -pw {{ create_password }} {{ create_user }}@{{ kerberos_realm }}'
-      when: create_krb_user
+      when: create_krb_user is defined
       become: yes
       
 # create user on worker nodes, do not create home dir and do not set password
