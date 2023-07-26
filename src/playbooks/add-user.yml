@@ -35,6 +35,7 @@
       ansible.builtin.user:
         name: "{{ create_user }}"
         shell: "/usr/sbin/nologin"
+        state: present
       become: yes
       
     # when no entry in passwd then the user already existed and is managed
