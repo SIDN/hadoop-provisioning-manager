@@ -25,6 +25,6 @@ for new_user in "$@"
 do
   echo "Create user: $new_user"
   ansible-playbook -i $SIDN_HADOOP_CFG_DIR/$HOSTS_FILE $PRJ_ROOT_DIR/playbooks/$PB_ADD_USER \
-      --extra-vars="create_krb_user='false' create_type='system' create_user=$new_user create_password='' ansible_become_password={{ lookup('env', 'ANSIBLE_BECOME_PASSWORD') }} prov_cfg_dir={{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}" \
+      --extra-vars="create_type='system' create_user=$new_user create_password='' ansible_become_password={{ lookup('env', 'ANSIBLE_BECOME_PASSWORD') }} prov_cfg_dir={{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}" \
       $LIMIT_HOSTS
 done
