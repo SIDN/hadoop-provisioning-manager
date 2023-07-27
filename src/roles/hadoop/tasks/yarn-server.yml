@@ -133,7 +133,8 @@
     
 - name: Enable cgroups v1
   include_tasks: tasks/ubuntu-cgroups-v1.yml
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
+  when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04")
+     and (inventory_hostname in groups['hadoop'])
   
 # - name: Create cgroup directory
 #   ansible.builtin.shell: |
