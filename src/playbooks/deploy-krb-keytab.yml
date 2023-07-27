@@ -17,7 +17,7 @@
     # HTTP keytabs may be used by multiple services    
     - name: Create HTTP service keytab
       expect:
-        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin
+        command: kadmin.local -p {{ kerberos_hadoop_admin_user }}/admin
         responses:
           kadmin:
             - "xst -k {{ cache_root }}/krb/{{ item }}-http.keytab HTTP/{{ item }}@{{ kerberos_realm }}"
