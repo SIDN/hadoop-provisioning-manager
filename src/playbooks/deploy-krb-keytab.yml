@@ -392,7 +392,7 @@
 
     - name: Create Ranger service keytabs 
       expect:
-        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        command: kadmin.local -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
         responses:
           kadmin:
             - "xst -k {{ ranger_etc_dir }}/{{ item }}.keytab {{ item }}/{{ inventory_hostname }}@{{ kerberos_realm }}"
