@@ -34,6 +34,48 @@
       with_fileglob:
         - "{{ cache_root }}/krb/*-http.keytab"
 
+- hosts: hue
+  vars_files:
+    - "{{ prov_cfg_dir }}/vars/all.yml"
+    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
+    - "{{ prov_cfg_dir }}/vars/hue_vars.yml"
+  remote_user: hadoop-mgr
+  become: yes
+  tasks:
+    - name: Delete old keytabs
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ hue_etc_dir }}/hue.keytab"
+        - "{{ hue_etc_dir }}/http.keytab"
+
+    - name: Copy http.keytab for hue web
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ hue_etc_dir }}/{{ item.dest }}"
+      loop:
+        - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
+
+    - name: Create Hue service keytabs 
+      expect:
+        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
+        responses:
+          kadmin:
+            - "xst -k {{ hue_etc_dir }}/hue.keytab hue/{{ inventory_hostname }}@{{ kerberos_realm }}"
+            - "quit"
+          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
+
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0444'  
+      with_items:
+        - "{{ hue_etc_dir }}/hue.keytab"
+        - "{{ hue_etc_dir }}/http.keytab"
+
+
   # Create Hadoop keytabs        
 - hosts: hadoop:hdfs_nn:hdfs_journalnode:hdfs_httpfs:yarn_resource_mgr:yarn_timelineserver
   vars_files:
@@ -278,48 +320,6 @@
         owner: "{{ zookeeper_os_user }}"
         group: "{{ zookeeper_os_group }}"
         mode: '0440'  
-
-- hosts: hue
-  vars_files:
-    - "{{ prov_cfg_dir }}/vars/all.yml"
-    - "{{ prov_cfg_dir }}/vars/vault_password_vars.yml"
-    - "{{ prov_cfg_dir }}/vars/kerberos_vars.yml"
-    - "{{ prov_cfg_dir }}/vars/hue_vars.yml"
-  remote_user: hadoop-mgr
-  become: yes
-  tasks:
-    - name: Delete old keytabs
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-      with_items:
-        - "{{ hue_etc_dir }}/hue.keytab"
-        - "{{ hue_etc_dir }}/http.keytab"
-
-    - name: Copy http.keytab for hue web
-      ansible.builtin.copy:
-        src: "{{ item.src }}"
-        dest: "{{ hue_etc_dir }}/{{ item.dest }}"
-      loop:
-        - { src: "{{ cache_root }}/krb/{{ inventory_hostname }}-http.keytab", dest: "http.keytab" }
-
-    - name: Create Hue service keytabs 
-      expect:
-        command: kadmin -p {{ kerberos_hadoop_admin_user }}/admin@{{ kerberos_realm }}
-        responses:
-          kadmin:
-            - "xst -k {{ hue_etc_dir }}/hue.keytab hue/{{ inventory_hostname }}@{{ kerberos_realm }}"
-            - "quit"
-          Password for (.*): "{{ kerberos_hadoop_admin_password }}"
-
-    - name: Change file ownership, group and permissions
-      ansible.builtin.file:
-        path: "{{ item }}"
-        mode: '0444'  
-      with_items:
-        - "{{ hue_etc_dir }}/hue.keytab"
-        - "{{ hue_etc_dir }}/http.keytab"
-
 
 - hosts: livy
   vars_files:
