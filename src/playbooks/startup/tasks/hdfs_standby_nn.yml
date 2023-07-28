@@ -21,6 +21,7 @@
       . {{ hadoop_etc_dir }}/hadoop-env.sh;
       {{ stack_root }}/hadoop-latest/bin/hdfs namenode -bootstrapStandby -force -nonInteractive
   become_user: "{{ hadoop_os_user.hdfs }}"
+  become: yes
   when: reg_new.stat.exists and not reg_upgrade.stat.exists
   
 # if not Initializing new cluster or upgrading an existing cluster 
