@@ -16,12 +16,12 @@
   register: reg_upgrade
   
 # initialize new HDFS fs
-- name: HDFS format namenode
-  shell: >
-        . {{ hadoop_etc_dir }}/hadoop-env.sh;
-        {{ stack_root }}/hadoop-latest/bin/hdfs namenode -format -force {{ hadoop_fs_nameservices }}
-  become_user: "{{ hadoop_os_user.hdfs }}"
-  when: reg_new.stat.exists and not reg_upgrade.stat.exists
+# - name: HDFS format namenode
+#   shell: >
+#         . {{ hadoop_etc_dir }}/hadoop-env.sh;
+#         {{ stack_root }}/hadoop-latest/bin/hdfs namenode -format -force {{ hadoop_fs_nameservices }}
+#   become_user: "{{ hadoop_os_user.hdfs }}"
+#   when: reg_new.stat.exists and not reg_upgrade.stat.exists
   
 # check if the znode for hdfs HA exists in Zookeeper, must be at path: /hadoop-ha
 # make sure to run this check on a zookeeper node.
