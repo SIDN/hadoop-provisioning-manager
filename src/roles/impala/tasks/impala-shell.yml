@@ -29,8 +29,8 @@
 - name: Install required Python packages
   pip:
     name: 
-      - kerberos
       - impala-shell
+    # - kerberos
   become: yes
   when: ansible_distribution == 'Ubuntu'
   
