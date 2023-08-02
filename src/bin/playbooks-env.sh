@@ -208,7 +208,7 @@ function run_playbooks()
         host-gateway)
           # only deploy components on the gateway nodes
           #EXTRA_ARGS="--limit gateway"
-          LIMIT_HOSTS="--limit gateway"
+          #LIMIT_HOSTS="--limit gateway"
           run_playbook "$PB_PREFIX-$PB_HOST_GATEWAY"
         ;;
         *)
