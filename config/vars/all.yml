@@ -63,6 +63,8 @@ version:
   jupyterhub: '4.0.0'
   jupyterlab: '4.0.0'
   docker_registry_ui: '2.4.1'
+  minio: '20230609073212.0.0'
+  rancher: '2.7.4'
   
 
 # set path for python2 on the remote systems here

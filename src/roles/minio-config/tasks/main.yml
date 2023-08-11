@@ -1,0 +1,60 @@
+- name: Create config directory
+  file:
+    path: "{{ minio_etc_dir }}"
+    state: directory
+    owner: "{{ minio_os_user }}"
+    group: "{{ minio_os_group }}"
+  become: yes
+  
+- name: Create Config files
+  ansible.builtin.template:
+    src: ../templates/{{ item.src }}
+    dest: '{{ minio_etc_dir}}/{{ item.dst }}'
+  loop:
+    - { src: 'minio.env.j2', dst: 'minio.env'}
+  become: yes
+  
+- name: Create TLS config directory
+  file:
+    path: "/home/{{ minio_os_user }}/.minio/certs"
+    state: directory
+    owner: "{{ minio_os_user }}"
+    group: "{{ minio_os_group }}"
+  become: yes
+
+- name: Create data directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ minio_os_user }}"
+    group: "{{ minio_os_group }}"
+  loop: "{{ minio_disk | flatten }}"
+  become: yes
+  
+- name: Create symlink to TLS certificate
+  file:
+      src: "{{ tls_etc_dir }}/{{ item.src }}"
+      dest: "/home/{{ minio_os_user }}/.minio/certs/{{ item.dst }}"
+      state: link
+  loop:
+    - { src: '{{ tls_remote_pub_key }}' , dst: 'public.crt' }
+    - { src: '{{ tls_remote_priv_key }}' , dst: 'private.key' }
+  become: yes
+  
+# - name: Update location of config in systemd unit
+#   ansible.builtin.lineinfile:
+#     path: /etc/systemd/system/minio.service
+#     search_string: 'EnvironmentFile=-/etc/default/minio'
+#     line: 'EnvironmentFile=-{{ minio_etc_dir}}/minio.env'
+#   become: yes
+
+- name: Create systemd unit files
+  ansible.builtin.template:
+    src: ../templates/{{ item.src }}
+    dest: /etc/systemd/system/{{ item.dst }}.service
+  loop:
+    - { src: 'minio.systemd.j2', dst: 'minio'}
+  become: yes 
+  
+- name: Systemd Reload Daemons
+  shell: systemctl daemon-reload
