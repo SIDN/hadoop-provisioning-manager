@@ -68,7 +68,7 @@ This project installs the following components
 
 ## Versions
 
-The default component versions are found in `config/vars/all/yml` these versions are known good versions and have been tested to correctly work together. It is possible to change the version of a component, but be sure to test if everything functions correctly after deployment.
+The default component versions are found in `config/vars/all.yml` these versions are known good versions and have been tested to correctly work together. It is possible to change the version of a component, but be sure to test if everything functions correctly after deployment.
 
 ## Binary packages
 
@@ -224,7 +224,7 @@ Create keys using: `ssh-keygen -t rsa -b 4096`
 
 On the management host, as the manager user, fetch the repository from Github.
 
-`git clone git@gitlab.sidnlabs.nl:maarten/hadoop-provision.git`
+`git clone https://github.com/SIDN/hadoop-provisioning-manager`
 
 ## Install Ansible
 
@@ -266,7 +266,7 @@ The configuration directory contains the following:
 | Item                     | Description           | 
 | ---------------------------- |-----------------------| 
 | hosts file                   | Contains a mapping between components and hosts | 
-| ansible.cfgfile                   | Contains Ansible configuration | 
+| ansible.cfg file                  | Contains Ansible configuration | 
 | vars directory          | This directory contains the configuration files for every component |
 | python directory          | This directory contains requirements files for Python environments |
 
