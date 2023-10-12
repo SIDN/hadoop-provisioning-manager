@@ -224,7 +224,7 @@ Create keys using: `ssh-keygen -t rsa -b 4096`
 
 On the management host, as the manager user, fetch the repository from Github.
 
-`git clone git@gitlab.sidnlabs.nl:maarten/hadoop-provision.git`
+`git clone https://github.com/SIDN/hadoop-provisioning-manager`
 
 ## Install Ansible
 
