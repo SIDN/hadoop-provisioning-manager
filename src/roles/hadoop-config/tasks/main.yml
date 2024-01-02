@@ -7,4 +7,4 @@
     group: "{{ hadoop_os_group }}"
   loop:
     - { name: 'hdfs-site.xml.j2', dest: '{{ hadoop_etc_dir }}/hdfs-site.xml', perm: '0644' }
-   become: yes
+  become: yes
