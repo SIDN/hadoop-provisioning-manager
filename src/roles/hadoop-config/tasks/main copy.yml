@@ -1,0 +1,61 @@
+# create hadoop cfg directory
+- name: Create cfg directory
+  file:
+    path: "{{ hadoop_etc_dir }}"
+    state: directory
+    owner: root
+    group: "{{ hadoop_os_group }}"
+    mode: '0755'
+  become: yes
+  
+- name: Hadoop configuration
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.perm }}"
+    owner: root
+    group: "{{ hadoop_os_group }}"
+  loop:
+    - { name: 'hdfs-site.xml.j2', dest: '{{ hadoop_etc_dir }}/hdfs-site.xml', perm: '0644' }
+    - { name: 'httpfs-site.xml.j2', dest: '{{ hadoop_etc_dir }}/httpfs-site.xml', perm: '0644' }
+    - { name: 'core-site.xml.j2', dest: '{{ hadoop_etc_dir }}/core-site.xml', perm: '0644' }
+    - { name: 'mapred-site.xml.j2', dest: '{{ hadoop_etc_dir }}/mapred-site.xml', perm: '0644' }
+    - { name: 'log4j.properties.j2', dest: '{{ hadoop_etc_dir }}/log4j.properties', perm: '0644' }
+    - { name: 'httpfs-log4j.properties.j2', dest: '{{ hadoop_etc_dir }}/httpfs-log4j.properties', perm: '0644' }
+    - { name: 'ssl-server.xml.j2', dest: '{{ hadoop_etc_dir }}/ssl-server.xml', perm: '0644' }
+    - { name: 'ssl-client.xml.j2', dest: '{{ hadoop_etc_dir }}/ssl-client.xml', perm: '0644' }
+    - { name: 'workers.j2', dest: '{{ hadoop_etc_dir }}/workers', perm: '0644' }
+    - { name: 'hadoop-env.sh.j2', dest: '{{ hadoop_etc_dir }}/hadoop-env.sh', perm: '0755' }
+    - { name: 'httpfs-env.sh.j2', dest: '{{ hadoop_etc_dir }}/httpfs-env.sh', perm: '0755' }
+    - { name: 'prometheus-config.yml.j2', dest: '{{ hadoop_etc_dir }}/prometheus-config.yml', perm: '0644' }
+  become: yes
+
+# - name: Set HDFS datanode cgroup cpu-shares
+#   shell: >
+#       systemctl set-property hdfs_datanode.service CPUShares={{ hadoop_cgroups.cpu_shares.hdfs_datanode }}
+#   when: ('hadoop' in groups and inventory_hostname in groups['hadoop'])
+#   become: yes
+    
+- name: YARN configuration
+  ansible.builtin.template:
+    src: "../templates/{{ item.name }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.perm }}"
+    owner: root
+    group: "{{ hadoop_os_group }}"
+  loop:
+    - { name: 'yarn-site.xml.j2', dest: '{{ hadoop_etc_dir }}/yarn-site.xml', perm: '0644', owner: "{{ hadoop_os_user.yarn }}", group: "{{ hadoop_os_group }}" }
+    - { name: 'yarn-env.sh.j2', dest: '{{ hadoop_etc_dir }}/yarn-env.sh', perm: '0755', owner: "{{ hadoop_os_user.yarn }}", group: "{{ hadoop_os_group }}" }
+    - { name: 'fair-scheduler.xml.j2', dest: '{{ hadoop_etc_dir }}/fair-scheduler.xml', perm: '0644', owner: "{{ hadoop_os_user.yarn }}", group: "{{ hadoop_os_group }}" }
+    - { name: 'capacity-scheduler.xml.j2', dest: '{{ hadoop_etc_dir }}/capacity-scheduler.xml', perm: '0644', owner: "{{ hadoop_os_user.yarn }}", group: "{{ hadoop_os_group }}" }
+    - { name: 'container-executor.cfg.j2', dest: "{{ hadoop_etc_dir }}/container-executor.cfg", perm: '0440', owner: 'root', group: "{{ hadoop_os_group }}" }
+  become: yes
+  
+# - name: Prometheus configuration
+#   ansible.builtin.template:
+#     src: ../templates/prometheus-config.yml
+#     dest: "{{ hadoop_etc_dir }}"
+#     mode: "0644"
+#     owner: root
+#     group: "{{ hadoop_os_group }}"
+#   become: yes
