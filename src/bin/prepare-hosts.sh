@@ -2,6 +2,10 @@
 
 # set LIMIT_HOSTS with 
 
+if [ -n "$LIMIT_HOSTS" ]; then
+    LIMIT_HOSTS="--limit $LIMIT_HOSTS"
+fi
+
 PB_PREPARE_HOST=prepare-hosts.yml
 
 . playbooks-env.sh
@@ -22,6 +26,8 @@ echo -n "Enter password (ANSIBLE_BECOME_PASSWORD) for provision user that is goi
 if [ -f "$PY_EXEC" ]; then
   . $PY_EXEC 
 fi
+
+echo "Limit: $LIMIT_HOSTS"
 
 ansible-playbook --user $1 --ask-pass --ask-become-pass -i $SIDN_HADOOP_CFG_DIR/$HOSTS_FILE $PRJ_ROOT_DIR/playbooks/$PB_PREPARE_HOST \
     --extra-vars="provision_user_passwd=$prov_user_passwd ansible_python_interpreter=python3 prov_cfg_dir={{ lookup('env', 'SIDN_HADOOP_CFG_DIR') }}" \
