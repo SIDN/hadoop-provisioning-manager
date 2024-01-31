@@ -2,10 +2,6 @@
 
 # set LIMIT_HOSTS with 
 
-if [ -n "$LIMIT_HOSTS" ]; then
-    LIMIT_HOSTS="--limit $LIMIT_HOSTS"
-fi
-
 PB_PREPARE_HOST=prepare-hosts.yml
 
 . playbooks-env.sh
