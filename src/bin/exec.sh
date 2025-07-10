@@ -18,7 +18,7 @@ elif [[ "$CURRENT_SCRIPT" == "stop.sh" ]]; then
   PB_PREFIX="stop"
   DEPLOY_MODE=$DEPLOY_MODE_COMP
 elif [[ "$CURRENT_SCRIPT" == "deploy.sh" ]]; then
-  SCRIPT_SUPPORT="all common db tls console manager monitor monitor-proxy hadoop spark hive impala impala-shell impala-proxy hue livy krb-kdc krb-keytab krb-principal ranger solr client-config host-gateway superset jupyterhub airflow minio minio-lb"
+  SCRIPT_SUPPORT="all common db tls console manager monitor monitor-proxy hadoop spark hive impala impala-shell impala-proxy hue livy krb-kdc krb-keytab krb-principal ranger solr client-config host-gateway superset jupyterhub airflow minio minio-lb nexpose"
   PB_PREFIX="deploy"
   DEPLOY_MODE=$DEPLOY_MODE_COMP
 elif [[ "$CURRENT_SCRIPT" == "deploy-config.sh" ]]; then
