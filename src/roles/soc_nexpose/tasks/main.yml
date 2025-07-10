@@ -1,0 +1,22 @@
+- name: add user
+  ansible.builtin.user:
+    name: "{{ nexpose_user }}"
+    comment: "Nexpose (scanner from SOC)"
+    uid: "{{ nexpose_uid }}"
+
+- name: configure authorized_keys
+  ansible.posix.authorized_key:
+    user: "{{ nexpose_user }}"
+    key: "{{ nexpose_ssh_authorized_key }}"
+    state: present
+    exclusive: True
+
+- name: configure passwordless sudo
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/99-soc_nexpose"
+    content: |
+      # Ansible managed
+      {{ nexpose_user }} ALL=(ALL:ALL) NOPASSWD: ALL
+    validate: "visudo -cf %s"
+    backup: yes
+
