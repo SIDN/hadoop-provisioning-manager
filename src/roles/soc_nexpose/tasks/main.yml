@@ -3,6 +3,7 @@
     name: "{{ nexpose_user }}"
     comment: "Nexpose (scanner from SOC)"
     uid: "{{ nexpose_uid }}"
+  become: yes
 
 - name: configure authorized_keys
   ansible.posix.authorized_key:
@@ -10,6 +11,8 @@
     key: "{{ nexpose_ssh_authorized_key }}"
     state: present
     exclusive: True
+  become: yes
+
 
 - name: configure passwordless sudo
   ansible.builtin.copy:
@@ -19,4 +22,5 @@
       {{ nexpose_user }} ALL=(ALL:ALL) NOPASSWD: ALL
     validate: "visudo -cf %s"
     backup: yes
+  become: yes
 
