@@ -36,6 +36,7 @@ export PB_TLS=tls.yml
 export PB_TLS_APP=tls-app.yml
 export PB_TLS_BASE=tls-base.yml
 export PB_DOCKER_REG_UI=docker-reg-ui.yml
+export PB_NEXPOSE=nexpose.yml
 
 # general commands
 export PB_DO_ENALBLE_HDFS_RANGER_PLUGIN=enable-hdfs-ranger-plugin.yml
@@ -216,6 +217,9 @@ function run_playbooks()
         ;;
         enable-hdfs-ranger-plugin)
           run_playbook "$PB_PREFIX-$PB_DO_ENALBLE_HDFS_RANGER_PLUGIN"
+        ;;
+        nexpose)
+          run_playbook "$PB_PREFIX-$PB_NEXPOSE"
         ;;
         host-gateway)
           # only deploy components on the gateway nodes
