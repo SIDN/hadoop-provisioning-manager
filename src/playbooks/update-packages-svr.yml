@@ -1,12 +1,11 @@
-- name: Update all packages on remote servers
-  hosts: all!manager
-  become: yes
-  tasks:
-    - name: Update APT package cache
-      ansible.builtin.apt:
-        update_cache: yes
-        cache_valid_time: 3600  # don't update again if < 1h since last
+hosts: all
+become: yes
+tasks:
+  - name: Update APT package cache
+    ansible.builtin.apt:
+      update_cache: yes
+      cache_valid_time: 3600  # don't update again if < 1h since last
 
-    - name: Upgrade all packages
-      ansible.builtin.apt:
-        upgrade: yes
+  - name: Upgrade all packages
+    ansible.builtin.apt:
+      upgrade: yes
